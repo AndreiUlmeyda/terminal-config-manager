@@ -1,13 +1,31 @@
 module Main where
 
 import Brick
-import Graphics.Vty.Input.Events
+  ( App (..),
+    BrickEvent (VtyEvent),
+    EventM,
+    Next,
+    Widget,
+    attrMap,
+    continue,
+    defaultMain,
+    halt,
+    showFirstCursor,
+    str,
+    vBox,
+  )
+import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar))
 import System.Directory
+  ( getCurrentDirectory,
+    getDirectoryContents,
+  )
 
-data TCMState =
-  TCMState { tcmStatePaths :: [FilePath]
-  } deriving (Show, Eq)
+data TCMState = TCMState
+  { tcmStatePaths :: [FilePath]
+  }
+  deriving (Show, Eq)
 
+main :: IO ()
 main = do
   initialState <- buildInitialState
   endState <- defaultMain tcmApp initialState
@@ -17,20 +35,20 @@ buildInitialState :: IO TCMState
 buildInitialState = do
   here <- getCurrentDirectory
   contents <- getDirectoryContents here
-  pure TCMState { tcmStatePaths = contents}
+  pure TCMState {tcmStatePaths = contents}
 
 tcmApp :: App TCMState e ResourceName
 tcmApp =
   App
-    { appDraw = drawTCM
-    , appChooseCursor = showFirstCursor
-    , appHandleEvent = handleEvent
-    , appStartEvent = pure
-    , appAttrMap = const $ attrMap mempty []
+    { appDraw = drawTCM,
+      appChooseCursor = showFirstCursor,
+      appHandleEvent = handleEvent,
+      appStartEvent = pure,
+      appAttrMap = const $ attrMap mempty []
     }
 
-data ResourceName =
-  ResourceName
+data ResourceName
+  = ResourceName
   deriving (Show, Eq, Ord)
 
 ui :: Widget ResourceName
@@ -53,4 +71,4 @@ handleEvent s e =
     _ -> continue s
 
 deleteFirstEntry :: TCMState -> TCMState
-deleteFirstEntry s = TCMState { tcmStatePaths = tail (tcmStatePaths s) }
+deleteFirstEntry (TCMState paths) = TCMState {tcmStatePaths = tail paths}
