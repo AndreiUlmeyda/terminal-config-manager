@@ -48,5 +48,9 @@ handleEvent s e =
     VtyEvent vtye ->
       case vtye of
         EvKey (KChar 'q') [] -> halt s
+        EvKey (KChar 'd') [] -> continue $ deleteFirstEntry s
         _ -> continue s
     _ -> continue s
+
+deleteFirstEntry :: TCMState -> TCMState
+deleteFirstEntry s = TCMState { tcmStatePaths = tail (tcmStatePaths s) }
