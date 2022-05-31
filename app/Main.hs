@@ -2,8 +2,11 @@ module Main where
 
 import Brick
 import Graphics.Vty.Input.Events
+import System.Directory
 
-data TCMState = TCMState deriving (Show, Eq)
+data TCMState =
+  TCMState { tcmStatePaths :: [FilePath]
+  } deriving (Show, Eq)
 
 main = do
   initialState <- buildInitialState
@@ -11,7 +14,10 @@ main = do
   print endState
 
 buildInitialState :: IO TCMState
-buildInitialState = pure TCMState
+buildInitialState = do
+  here <- getCurrentDirectory
+  contents <- getDirectoryContents here
+  pure TCMState { tcmStatePaths = contents}
 
 tcmApp :: App TCMState e ResourceName
 tcmApp =
@@ -23,7 +29,6 @@ tcmApp =
     , appAttrMap = const $ attrMap mempty []
     }
 
-
 data ResourceName =
   ResourceName
   deriving (Show, Eq, Ord)
@@ -32,7 +37,10 @@ ui :: Widget ResourceName
 ui = str "Hello, world!"
 
 drawTCM :: TCMState -> [Widget ResourceName]
-drawTCM _ts = [ui]
+drawTCM ts = [vBox $ map drawPath $ tcmStatePaths ts]
+
+drawPath :: FilePath -> Widget ResourceName
+drawPath = str
 
 handleEvent :: TCMState -> BrickEvent n e -> EventM n (Next TCMState)
 handleEvent s e =
