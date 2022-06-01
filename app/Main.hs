@@ -14,14 +14,18 @@ import Brick
     str,
     vBox,
   )
-import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar))
+import Cursor.Simple.List.NonEmpty (NonEmptyCursor, makeNonEmptyCursor, nonEmptyCursorSelectNext)
+import Data.List.NonEmpty (NonEmpty (..))
+import Data.List.NonEmpty as NE (nonEmpty)
+import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown))
 import System.Directory
   ( getCurrentDirectory,
     getDirectoryContents,
   )
+import System.Exit (die)
 
 data TCMState = TCMState
-  { tcmStatePaths :: [FilePath]
+  { tcmStatePaths :: NonEmptyCursor FilePath
   }
   deriving (Show, Eq)
 
@@ -35,6 +39,9 @@ buildInitialState :: IO TCMState
 buildInitialState = do
   here <- getCurrentDirectory
   contents <- getDirectoryContents here
+  case NE.nonEmpty contents of
+    Nothing -> die "There are no directory contents to show."
+    Just ne -> makeNonEmptyCursor ne
   pure TCMState {tcmStatePaths = contents}
 
 tcmApp :: App TCMState e ResourceName
@@ -55,19 +62,26 @@ ui :: Widget ResourceName
 ui = str "Hello, world!"
 
 drawTCM :: TCMState -> [Widget ResourceName]
-drawTCM ts = [vBox $ map drawPath $ tcmStatePaths ts]
+drawTCM ts = [vBox $ Prelude.map drawPath $ tcmStatePaths ts]
 
-drawPath :: FilePath -> Widget ResourceName
-drawPath = str
+drawPath :: NonEmptyCursor FilePath -> Widget ResourceName
+drawPath (NonEmptyCursor filePath) = str filePath
 
 handleEvent :: TCMState -> BrickEvent n e -> EventM n (Next TCMState)
 handleEvent s e
   | VtyEvent vtye <- e =
     case vtye of
-      EvKey (KChar 'q') [] -> halt s
-      EvKey (KChar 'd') [] -> continue $ deleteFirstEntry s
+      EvKey (KChar 'q') noModifiers -> halt s
+      -- EvKey (KChar 'd') noModifiers -> continue $ deleteFirstEntry s
+      EvKey KDown noModifiers -> do
+        let nonEmptyCursor = tcmStatePaths s
+        case nonEmptyCursorSelectNext nonEmptyCursor of
+          Nothing -> continue s
+          Just nonEmptyCursor' -> continue $ s {tcmStatePaths = nonEmptyCursor'}
       _ -> continue s
   | otherwise = continue s
 
-deleteFirstEntry :: TCMState -> TCMState
-deleteFirstEntry (TCMState paths) = TCMState {tcmStatePaths = tail paths}
+-- deleteFirstEntry :: TCMState -> TCMState
+-- deleteFirstEntry (TCMState paths) = TCMState {tcmStatePaths = tail paths}
+
+noModifiers = []
