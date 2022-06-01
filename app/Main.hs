@@ -61,14 +61,13 @@ drawPath :: FilePath -> Widget ResourceName
 drawPath = str
 
 handleEvent :: TCMState -> BrickEvent n e -> EventM n (Next TCMState)
-handleEvent s e =
-  case e of
-    VtyEvent vtye ->
-      case vtye of
-        EvKey (KChar 'q') [] -> halt s
-        EvKey (KChar 'd') [] -> continue $ deleteFirstEntry s
-        _ -> continue s
-    _ -> continue s
+handleEvent s e
+  | VtyEvent vtye <- e =
+    case vtye of
+      EvKey (KChar 'q') [] -> halt s
+      EvKey (KChar 'd') [] -> continue $ deleteFirstEntry s
+      _ -> continue s
+  | otherwise = continue s
 
 deleteFirstEntry :: TCMState -> TCMState
 deleteFirstEntry (TCMState paths) = TCMState {tcmStatePaths = tail paths}
