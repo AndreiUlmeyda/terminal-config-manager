@@ -14,9 +14,21 @@ import Brick
     str,
     vBox,
   )
-import Cursor.Simple.List.NonEmpty (NonEmptyCursor, makeNonEmptyCursor, nonEmptyCursorSelectNext)
+import Cursor.Simple.List.NonEmpty
+  ( NonEmptyCursor,
+    makeNonEmptyCursor,
+    mapNonEmptyCursor,
+    nonEmptyCursorCurrent,
+    nonEmptyCursorDeleteElemAndSelectNext,
+    nonEmptyCursorNext,
+    nonEmptyCursorPrev,
+    nonEmptyCursorSelectNext,
+    rebuildNonEmptyCursor,
+    singletonNonEmptyCursor,
+  )
 import Data.List.NonEmpty (NonEmpty (..))
-import Data.List.NonEmpty as NE (nonEmpty)
+import Data.List.NonEmpty as NE (nonEmpty, tail)
+import Data.Maybe (fromJust)
 import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown))
 import System.Directory
   ( getCurrentDirectory,
@@ -41,8 +53,7 @@ buildInitialState = do
   contents <- getDirectoryContents here
   case NE.nonEmpty contents of
     Nothing -> die "There are no directory contents to show."
-    Just ne -> makeNonEmptyCursor ne
-  pure TCMState {tcmStatePaths = contents}
+    Just ne -> pure TCMState {tcmStatePaths = makeNonEmptyCursor ne}
 
 tcmApp :: App TCMState e ResourceName
 tcmApp =
@@ -62,17 +73,25 @@ ui :: Widget ResourceName
 ui = str "Hello, world!"
 
 drawTCM :: TCMState -> [Widget ResourceName]
-drawTCM ts = [vBox $ Prelude.map drawPath $ tcmStatePaths ts]
+drawTCM ts =
+  let nec = tcmStatePaths ts
+   in [ vBox $
+          concat
+            [ map drawPath $ reverse $ nonEmptyCursorPrev nec,
+              [drawPath $ nonEmptyCursorCurrent nec],
+              map drawPath $ nonEmptyCursorNext nec
+            ]
+      ]
 
-drawPath :: NonEmptyCursor FilePath -> Widget ResourceName
-drawPath (NonEmptyCursor filePath) = str filePath
+drawPath :: FilePath -> Widget ResourceName
+drawPath = str
 
 handleEvent :: TCMState -> BrickEvent n e -> EventM n (Next TCMState)
 handleEvent s e
   | VtyEvent vtye <- e =
     case vtye of
       EvKey (KChar 'q') noModifiers -> halt s
-      -- EvKey (KChar 'd') noModifiers -> continue $ deleteFirstEntry s
+      EvKey (KChar 'd') noModifiers -> continue $ deleteFirstEntry s
       EvKey KDown noModifiers -> do
         let nonEmptyCursor = tcmStatePaths s
         case nonEmptyCursorSelectNext nonEmptyCursor of
@@ -81,7 +100,10 @@ handleEvent s e
       _ -> continue s
   | otherwise = continue s
 
--- deleteFirstEntry :: TCMState -> TCMState
--- deleteFirstEntry (TCMState paths) = TCMState {tcmStatePaths = tail paths}
+deleteFirstEntry :: TCMState -> TCMState
+deleteFirstEntry state =
+  TCMState
+    { tcmStatePaths = (makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor . tcmStatePaths) state
+    }
 
 noModifiers = []
