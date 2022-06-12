@@ -62,16 +62,13 @@ data ResourceName
   = ResourceName
   deriving stock (Show, Eq, Ord)
 
-ui :: Widget ResourceName
-ui = str "Hello, world!"
-
 drawTCM :: TCMState -> [Widget ResourceName]
 drawTCM ts =
   let nec = tcmStatePaths ts
    in [ vBox $
           concat
             [ map (drawPath False) $ reverse $ nonEmptyCursorPrev nec,
-              [(drawPath True) $ nonEmptyCursorCurrent nec],
+              [drawPath True $ nonEmptyCursorCurrent nec],
               map (drawPath False) $ nonEmptyCursorNext nec
             ]
       ]
@@ -105,4 +102,4 @@ deleteFirstEntry state =
     }
   where
     tailOfNonEmptyCursor :: NonEmptyCursor a -> NonEmptyCursor a
-    tailOfNonEmptyCursor = makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor
+    tailOfNonEmptyCursor = makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor -- FIXME handle Maybe + preserve cursor position
