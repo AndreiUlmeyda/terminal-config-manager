@@ -22,13 +22,16 @@ import Cursor.Simple.List.NonEmpty
     nonEmptyCursorCurrent,
     nonEmptyCursorNext,
     nonEmptyCursorPrev,
+    nonEmptyCursorSelectIndex,
     nonEmptyCursorSelectNext,
+    nonEmptyCursorSelectPrev,
+    nonEmptyCursorSelection,
     rebuildNonEmptyCursor,
   )
 import Data.List.NonEmpty as NE (nonEmpty, tail)
 import Data.Maybe (fromJust)
 import Graphics.Vty.Attributes (red)
-import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown))
+import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown, KUp))
 import System.Directory
   ( getCurrentDirectory,
     getDirectoryContents,
@@ -84,15 +87,19 @@ drawPath highlight =
 handleEvent :: TCMState -> BrickEvent n e -> EventM n (Next TCMState)
 handleEvent s e
   | VtyEvent vtye <- e =
-    case vtye of
-      EvKey (KChar 'q') [] -> halt s
-      EvKey (KChar 'd') [] -> continue $ deleteFirstEntry s
-      EvKey KDown [] -> do
-        let nonEmptyCursor = tcmStatePaths s
-        case nonEmptyCursorSelectNext nonEmptyCursor of
-          Nothing -> continue s
-          Just nonEmptyCursor' -> continue $ s {tcmStatePaths = nonEmptyCursor'}
-      _ -> continue s
+    let nonEmptyCursor = tcmStatePaths s
+     in case vtye of
+          EvKey (KChar 'q') [] -> halt s
+          EvKey (KChar 'd') [] -> continue $ deleteFirstEntry s
+          EvKey KDown [] -> do
+            case nonEmptyCursorSelectNext nonEmptyCursor of
+              Nothing -> continue s
+              Just nonEmptyCursor' -> continue $ s {tcmStatePaths = nonEmptyCursor'}
+          EvKey KUp [] -> do
+            case nonEmptyCursorSelectPrev nonEmptyCursor of
+              Nothing -> continue s
+              Just nonEmptyCursor' -> continue $ s {tcmStatePaths = nonEmptyCursor'}
+          _ -> continue s
   | otherwise = continue s
 
 deleteFirstEntry :: TCMState -> TCMState
@@ -102,4 +109,6 @@ deleteFirstEntry state =
     }
   where
     tailOfNonEmptyCursor :: NonEmptyCursor a -> NonEmptyCursor a
-    tailOfNonEmptyCursor = makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor -- FIXME handle Maybe + preserve cursor position
+    tailOfNonEmptyCursor = fromJust . nonEmptyCursorSelectIndex selectionPosition . makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor -- FIXME handle Maybe
+      where
+        selectionPosition = nonEmptyCursorSelection $ tcmStatePaths state -- FIXME preserving the selection index is not the correct behavious, the item it points to needs to be preserved instead, handle Maybe
