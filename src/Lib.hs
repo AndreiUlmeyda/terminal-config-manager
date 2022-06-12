@@ -7,11 +7,14 @@ import Brick
     Next,
     Widget,
     attrMap,
+    attrName,
     continue,
+    fg,
     halt,
     showFirstCursor,
     str,
     vBox,
+    withAttr,
   )
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
@@ -24,6 +27,7 @@ import Cursor.Simple.List.NonEmpty
   )
 import Data.List.NonEmpty as NE (nonEmpty, tail)
 import Data.Maybe (fromJust)
+import Graphics.Vty.Attributes (red)
 import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown))
 import System.Directory
   ( getCurrentDirectory,
@@ -51,7 +55,7 @@ tcmApp =
       appChooseCursor = showFirstCursor,
       appHandleEvent = handleEvent,
       appStartEvent = pure,
-      appAttrMap = const $ attrMap mempty []
+      appAttrMap = const $ attrMap mempty [(attrName "selected", fg red)]
     }
 
 data ResourceName
@@ -66,14 +70,19 @@ drawTCM ts =
   let nec = tcmStatePaths ts
    in [ vBox $
           concat
-            [ map drawPath $ reverse $ nonEmptyCursorPrev nec,
-              [drawPath $ nonEmptyCursorCurrent nec],
-              map drawPath $ nonEmptyCursorNext nec
+            [ map (drawPath False) $ reverse $ nonEmptyCursorPrev nec,
+              [(drawPath True) $ nonEmptyCursorCurrent nec],
+              map (drawPath False) $ nonEmptyCursorNext nec
             ]
       ]
 
-drawPath :: FilePath -> Widget ResourceName
-drawPath = str
+drawPath :: Bool -> FilePath -> Widget ResourceName
+drawPath highlight =
+  ( if highlight
+      then withAttr $ attrName "selected"
+      else id
+  )
+    . str
 
 handleEvent :: TCMState -> BrickEvent n e -> EventM n (Next TCMState)
 handleEvent s e
