@@ -111,4 +111,4 @@ deleteFirstEntry state =
     tailOfNonEmptyCursor :: NonEmptyCursor a -> NonEmptyCursor a
     tailOfNonEmptyCursor = fromJust . nonEmptyCursorSelectIndex selectionPosition . makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor -- FIXME handle Maybe
       where
-        selectionPosition = nonEmptyCursorSelection $ tcmStatePaths state -- FIXME preserving the selection index is not the correct behavious, the item it points to needs to be preserved instead, handle Maybe
+        selectionPosition = max 0 $ nonEmptyCursorSelection (tcmStatePaths state) - 1 -- FIXME handle Maybe
