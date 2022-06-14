@@ -16,7 +16,7 @@ import Brick
     vBox,
     withAttr,
   )
-import Brick.Widgets.Border
+import Brick.Widgets.Border (border)
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
