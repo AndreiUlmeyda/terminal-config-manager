@@ -71,13 +71,12 @@ data ResourceName
 drawTCM :: TCMState -> [Widget ResourceName]
 drawTCM ts =
   let nec = tcmStatePaths ts
-   in [ border $
-          vBox $
-            concat
-              [ map (drawPath False) $ reverse $ nonEmptyCursorPrev nec,
-                [drawPath True $ nonEmptyCursorCurrent nec],
-                map (drawPath False) $ nonEmptyCursorNext nec
-              ]
+   in [ vBox $
+          concat
+            [ map (drawPath False) $ reverse $ nonEmptyCursorPrev nec,
+              [border $ drawPath True $ nonEmptyCursorCurrent nec],
+              map (drawPath False) $ nonEmptyCursorNext nec
+            ]
       ]
 
 drawPath :: Bool -> FilePath -> Widget ResourceName
