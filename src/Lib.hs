@@ -16,6 +16,7 @@ import Brick
     vBox,
     withAttr,
   )
+import Control.Monad.IO.Class (MonadIO (liftIO))
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
     makeNonEmptyCursor,
@@ -30,11 +31,12 @@ import Cursor.Simple.List.NonEmpty
   )
 import Data.List.NonEmpty as NE (nonEmpty, tail)
 import Data.Maybe (fromJust)
-import Graphics.Vty.Attributes (red)
-import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown, KUp))
+import Graphics.Vty.Attributes (cyan)
+import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown, KEnter, KUp))
 import System.Directory
   ( getCurrentDirectory,
     getDirectoryContents,
+    setCurrentDirectory,
   )
 import System.Exit (die)
 
@@ -58,7 +60,7 @@ tcmApp =
       appChooseCursor = showFirstCursor,
       appHandleEvent = handleEvent,
       appStartEvent = pure,
-      appAttrMap = const $ attrMap mempty [(attrName "selected", fg red)]
+      appAttrMap = const $ attrMap mempty [(attrName "selected", fg cyan)]
     }
 
 data ResourceName
@@ -99,16 +101,16 @@ handleEvent s e
             case nonEmptyCursorSelectPrev nonEmptyCursor of
               Nothing -> continue s
               Just nonEmptyCursor' -> continue $ s {tcmStatePaths = nonEmptyCursor'}
+          EvKey KEnter [] -> do
+            liftIO $ setCurrentDirectory $ nonEmptyCursorCurrent $ tcmStatePaths s
+            s' <- liftIO buildInitialState
+            continue s'
           _ -> continue s
   | otherwise = continue s
 
 deleteFirstEntry :: TCMState -> TCMState
-deleteFirstEntry state =
-  TCMState
-    { tcmStatePaths = (tailOfNonEmptyCursor . tcmStatePaths) state
-    }
+deleteFirstEntry state = TCMState {tcmStatePaths = (tailOfNonEmptyCursor . tcmStatePaths) state}
   where
     tailOfNonEmptyCursor :: NonEmptyCursor a -> NonEmptyCursor a
     tailOfNonEmptyCursor = fromJust . nonEmptyCursorSelectIndex selectionPosition . makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor -- FIXME handle Maybe
-      where
-        selectionPosition = max 0 $ nonEmptyCursorSelection (tcmStatePaths state) - 1 -- FIXME handle Maybe
+    selectionPosition = max 0 $ nonEmptyCursorSelection (tcmStatePaths state) - 1 -- FIXME handle Maybe
