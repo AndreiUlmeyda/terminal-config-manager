@@ -16,6 +16,7 @@ import Brick
     vBox,
     withAttr,
   )
+import Brick.Widgets.Border
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
@@ -70,12 +71,13 @@ data ResourceName
 drawTCM :: TCMState -> [Widget ResourceName]
 drawTCM ts =
   let nec = tcmStatePaths ts
-   in [ vBox $
-          concat
-            [ map (drawPath False) $ reverse $ nonEmptyCursorPrev nec,
-              [drawPath True $ nonEmptyCursorCurrent nec],
-              map (drawPath False) $ nonEmptyCursorNext nec
-            ]
+   in [ border $
+          vBox $
+            concat
+              [ map (drawPath False) $ reverse $ nonEmptyCursorPrev nec,
+                [drawPath True $ nonEmptyCursorCurrent nec],
+                map (drawPath False) $ nonEmptyCursorNext nec
+              ]
       ]
 
 drawPath :: Bool -> FilePath -> Widget ResourceName
