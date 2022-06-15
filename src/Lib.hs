@@ -80,12 +80,12 @@ drawTCM ts =
       ]
 
 drawPath :: Bool -> FilePath -> Widget ResourceName
-drawPath highlight =
-  ( if highlight
-      then withAttr $ attrName "selected"
-      else id
-  )
-    . str
+drawPath isHighlighted = attachAttrWhenHighlighted isHighlighted . str
+
+attachAttrWhenHighlighted :: Bool -> Widget n -> Widget n
+attachAttrWhenHighlighted isHighlighted
+  | isHighlighted = withAttr $ attrName "selected"
+  | otherwise = id
 
 handleEvent :: TCMState -> BrickEvent n e -> EventM n (Next TCMState)
 handleEvent s e
