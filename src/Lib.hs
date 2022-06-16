@@ -17,7 +17,6 @@ import Brick
     withAttr,
   )
 import Brick.Widgets.Border (border)
-import Control.Monad.IO.Class (MonadIO (liftIO))
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
     makeNonEmptyCursor,
@@ -32,29 +31,29 @@ import Cursor.Simple.List.NonEmpty
   )
 import Data.List.NonEmpty as NE (nonEmpty, tail)
 import Data.Maybe (fromJust)
+import Data.Text hiding (concat, map, reverse)
 import Graphics.Vty.Attributes (cyan)
-import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown, KEnter, KUp))
+import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown, KUp))
 import System.Directory
   ( getCurrentDirectory,
     getDirectoryContents,
-    setCurrentDirectory,
   )
 import System.Exit (die)
 
-data TCMState = TCMState
-  { tcmStatePaths :: NonEmptyCursor FilePath
-  }
-  deriving stock (Show, Eq)
+data Item = Item Text FilePath deriving stock (Show, Eq)
 
-buildInitialState :: IO TCMState
+data AppState = AppState (NonEmptyCursor Item) deriving stock (Show, Eq)
+
+buildInitialState :: IO AppState
 buildInitialState = do
-  here <- getCurrentDirectory
+  here <- getCurrentDirectory -- TODO read items from config file
   contents <- getDirectoryContents here
-  case NE.nonEmpty contents of
-    Nothing -> die "There are no directory contents to show."
-    Just ne -> pure TCMState {tcmStatePaths = makeNonEmptyCursor ne}
+  let items = map (Item "") contents
+   in case NE.nonEmpty items of
+        Nothing -> die "There are no directory contents to show."
+        Just ne -> pure $ AppState (makeNonEmptyCursor ne)
 
-tcmApp :: App TCMState e ResourceName
+tcmApp :: App AppState e ResourceName
 tcmApp =
   App
     { appDraw = drawTCM,
@@ -68,50 +67,44 @@ data ResourceName
   = ResourceName
   deriving stock (Show, Eq, Ord)
 
-drawTCM :: TCMState -> [Widget ResourceName]
-drawTCM ts =
-  let nec = tcmStatePaths ts
-   in [ vBox $
-          concat
-            [ map (drawPath False) $ reverse $ nonEmptyCursorPrev nec,
-              [border $ drawPath True $ nonEmptyCursorCurrent nec],
-              map (drawPath False) $ nonEmptyCursorNext nec
-            ]
-      ]
+drawTCM :: AppState -> [Widget ResourceName]
+drawTCM (AppState items) =
+  [ vBox $
+      concat
+        [ map (drawPath False) $ reverse $ nonEmptyCursorPrev items,
+          [border $ drawPath True $ nonEmptyCursorCurrent items],
+          map (drawPath False) $ nonEmptyCursorNext items
+        ]
+  ]
 
-drawPath :: Bool -> FilePath -> Widget ResourceName
-drawPath isHighlighted = attachAttrWhenHighlighted isHighlighted . str
+drawPath :: Bool -> Item -> Widget ResourceName
+drawPath isHighlighted (Item _ path) = (attachAttrWhenHighlighted isHighlighted . str) path
 
 attachAttrWhenHighlighted :: Bool -> Widget n -> Widget n
 attachAttrWhenHighlighted isHighlighted
   | isHighlighted = withAttr $ attrName "selected"
   | otherwise = id
 
-handleEvent :: TCMState -> BrickEvent n e -> EventM n (Next TCMState)
-handleEvent s e
+handleEvent :: AppState -> BrickEvent n e -> EventM n (Next AppState)
+handleEvent (AppState items) e
   | VtyEvent vtye <- e =
-    let nonEmptyCursor = tcmStatePaths s
-     in case vtye of
-          EvKey (KChar 'q') [] -> halt s
-          EvKey (KChar 'd') [] -> continue $ deleteFirstEntry s
-          EvKey KDown [] -> do
-            case nonEmptyCursorSelectNext nonEmptyCursor of
-              Nothing -> continue s
-              Just nonEmptyCursor' -> continue $ s {tcmStatePaths = nonEmptyCursor'}
-          EvKey KUp [] -> do
-            case nonEmptyCursorSelectPrev nonEmptyCursor of
-              Nothing -> continue s
-              Just nonEmptyCursor' -> continue $ s {tcmStatePaths = nonEmptyCursor'}
-          EvKey KEnter [] -> do
-            liftIO $ setCurrentDirectory $ nonEmptyCursorCurrent $ tcmStatePaths s
-            s' <- liftIO buildInitialState
-            continue s'
-          _ -> continue s
-  | otherwise = continue s
+    case vtye of
+      EvKey (KChar 'q') [] -> halt (AppState items)
+      EvKey (KChar 'd') [] -> continue $ deleteFirstEntry (AppState items)
+      EvKey KDown [] -> do
+        case nonEmptyCursorSelectNext items of
+          Nothing -> continue (AppState items)
+          Just nonEmptyCursor' -> continue $ AppState nonEmptyCursor'
+      EvKey KUp [] -> do
+        case nonEmptyCursorSelectPrev items of
+          Nothing -> continue (AppState items)
+          Just nonEmptyCursor' -> continue $ AppState nonEmptyCursor'
+      _ -> continue (AppState items)
+  | otherwise = continue (AppState items)
 
-deleteFirstEntry :: TCMState -> TCMState
-deleteFirstEntry state = TCMState {tcmStatePaths = (tailOfNonEmptyCursor . tcmStatePaths) state}
+deleteFirstEntry :: AppState -> AppState
+deleteFirstEntry (AppState items) = (AppState . tailOfNonEmptyCursor) items
   where
     tailOfNonEmptyCursor :: NonEmptyCursor a -> NonEmptyCursor a
     tailOfNonEmptyCursor = fromJust . nonEmptyCursorSelectIndex selectionPosition . makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor -- FIXME handle Maybe
-    selectionPosition = max 0 $ nonEmptyCursorSelection (tcmStatePaths state) - 1 -- FIXME handle Maybe
+    selectionPosition = max 0 $ nonEmptyCursorSelection items - 1 -- FIXME handle Maybe
