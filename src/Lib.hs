@@ -31,24 +31,24 @@ import Cursor.Simple.List.NonEmpty
   )
 import Data.List.NonEmpty as NE (nonEmpty, tail)
 import Data.Maybe (fromJust)
-import Data.Text hiding (concat, map, reverse)
-import Graphics.Vty.Attributes (cyan)
+import Data.Text hiding (concat, lines, map, reverse, take)
+import Graphics.Vty.Attributes (currentAttr, cyan)
 import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown, KUp))
 import System.Directory
   ( getCurrentDirectory,
     getDirectoryContents,
   )
 import System.Exit (die)
+import System.IO (Handle, IOMode (ReadMode), hClose, openFile, readFile, withFile)
 
-data Item = Item Text FilePath deriving stock (Show, Eq)
+data Item = Item Text deriving stock (Show, Eq)
 
 data AppState = AppState (NonEmptyCursor Item) deriving stock (Show, Eq)
 
 buildInitialState :: IO AppState
 buildInitialState = do
-  here <- getCurrentDirectory -- TODO read items from config file
-  contents <- getDirectoryContents here
-  let items = map (Item "") contents
+  contents <- fmap lines $ readFile "test/data/config"
+  let items = map (Item . pack) contents
    in case NE.nonEmpty items of
         Nothing -> die "There are no directory contents to show."
         Just ne -> pure $ AppState (makeNonEmptyCursor ne)
@@ -60,7 +60,7 @@ tcmApp =
       appChooseCursor = showFirstCursor,
       appHandleEvent = handleEvent,
       appStartEvent = pure,
-      appAttrMap = const $ attrMap mempty [(attrName "selected", fg cyan)]
+      appAttrMap = const $ attrMap currentAttr [(attrName "selected", fg cyan)]
     }
 
 data ResourceName
@@ -78,7 +78,7 @@ drawTCM (AppState items) =
   ]
 
 drawPath :: Bool -> Item -> Widget ResourceName
-drawPath isHighlighted (Item _ path) = (attachAttrWhenHighlighted isHighlighted . str) path
+drawPath isHighlighted (Item content) = (attachAttrWhenHighlighted isHighlighted . str . unpack) content
 
 attachAttrWhenHighlighted :: Bool -> Widget n -> Widget n
 attachAttrWhenHighlighted isHighlighted
@@ -88,18 +88,18 @@ attachAttrWhenHighlighted isHighlighted
 handleEvent :: AppState -> BrickEvent n e -> EventM n (Next AppState)
 handleEvent (AppState items) e
   | VtyEvent vtye <- e =
-    case vtye of
-      EvKey (KChar 'q') [] -> halt (AppState items)
-      EvKey (KChar 'd') [] -> continue $ deleteFirstEntry (AppState items)
-      EvKey KDown [] -> do
-        case nonEmptyCursorSelectNext items of
-          Nothing -> continue (AppState items)
-          Just nonEmptyCursor' -> continue $ AppState nonEmptyCursor'
-      EvKey KUp [] -> do
-        case nonEmptyCursorSelectPrev items of
-          Nothing -> continue (AppState items)
-          Just nonEmptyCursor' -> continue $ AppState nonEmptyCursor'
-      _ -> continue (AppState items)
+      case vtye of
+        EvKey (KChar 'q') [] -> halt (AppState items)
+        EvKey (KChar 'd') [] -> continue $ deleteFirstEntry (AppState items)
+        EvKey KDown [] -> do
+          case nonEmptyCursorSelectNext items of
+            Nothing -> continue (AppState items)
+            Just nonEmptyCursor' -> continue $ AppState nonEmptyCursor'
+        EvKey KUp [] -> do
+          case nonEmptyCursorSelectPrev items of
+            Nothing -> continue (AppState items)
+            Just nonEmptyCursor' -> continue $ AppState nonEmptyCursor'
+        _ -> continue (AppState items)
   | otherwise = continue (AppState items)
 
 deleteFirstEntry :: AppState -> AppState
