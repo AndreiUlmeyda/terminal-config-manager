@@ -31,24 +31,43 @@ import Cursor.Simple.List.NonEmpty
   )
 import Data.List.NonEmpty as NE (nonEmpty, tail)
 import Data.Maybe (fromJust)
-import Data.Text hiding (concat, lines, map, reverse, take)
+import Data.Text (Text, pack, splitOn, unpack)
 import Graphics.Vty.Attributes (currentAttr, cyan)
 import Graphics.Vty.Input.Events (Event (EvKey), Key (KChar, KDown, KUp))
-import System.Directory
-  ( getCurrentDirectory,
-    getDirectoryContents,
-  )
 import System.Exit (die)
-import System.IO (Handle, IOMode (ReadMode), hClose, openFile, readFile, withFile)
 
-data Item = Item Text deriving stock (Show, Eq)
+type Title = Text
+
+type TargetFile = FilePath
+
+type CurrentValue = Text
+
+type PossibleValues = [Text]
+
+data Item = Item Title TargetFile CurrentValue PossibleValues deriving stock (Show, Eq)
 
 data AppState = AppState (NonEmptyCursor Item) deriving stock (Show, Eq)
 
+testConfigFilePath :: FilePath
+testConfigFilePath = "test/data/config"
+
+toItem :: [Text] -> Item
+toItem chunks = Item title (unpack path) currentValue possibleValues
+  where
+    title = chunks !! 0
+    path = chunks !! 1
+    currentValue = chunks !! 2
+    possibleValues = drop 3 chunks
+
+separateValues :: Text -> [Text]
+separateValues = splitOn ","
+
 buildInitialState :: IO AppState
 buildInitialState = do
-  contents <- fmap lines $ readFile "test/data/config"
-  let items = map (Item . pack) contents
+  configLines <- fmap (map pack . lines) $ readFile testConfigFilePath :: IO [Text]
+  let a = map separateValues configLines
+      items :: [Item]
+      items = map toItem a
    in case NE.nonEmpty items of
         Nothing -> die "There are no directory contents to show."
         Just ne -> pure $ AppState (makeNonEmptyCursor ne)
@@ -78,7 +97,7 @@ drawTCM (AppState items) =
   ]
 
 drawPath :: Bool -> Item -> Widget ResourceName
-drawPath isHighlighted (Item content) = (attachAttrWhenHighlighted isHighlighted . str . unpack) content
+drawPath isHighlighted (Item title targetFile currentValue possibleValues) = (attachAttrWhenHighlighted isHighlighted . str . unpack) title
 
 attachAttrWhenHighlighted :: Bool -> Widget n -> Widget n
 attachAttrWhenHighlighted isHighlighted
