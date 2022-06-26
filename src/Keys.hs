@@ -55,11 +55,13 @@ cycleValuesForward :: AppState -> AppState
 cycleValuesForward (AppState items) = (AppState . cycleForward) items
   where
     cycleForward :: NonEmptyCursor Item -> NonEmptyCursor Item
-    cycleForward = makeNonEmptyCursor . changeNthElement selectionPosition cycleA . rebuildNonEmptyCursor
+    cycleForward = makeNonEmptyCursor . changeNthElement selectionPosition cycleForward' . rebuildNonEmptyCursor
     selectionPosition = nonEmptyCursorSelection items
 
-cycleA :: Item -> Item
-cycleA (Item title targetFile _ possibleValues) = (Item title targetFile "derp" possibleValues)
+cycleForward' :: Item -> Item
+cycleForward' (Item title targetFile currentValue possibleValues) = (Item title targetFile nextValue possibleValues)
+  where
+    nextValue = (head . Prelude.tail . dropWhile (/= currentValue) . cycle) possibleValues
 
 cycleValuesBackward :: AppState -> AppState
 cycleValuesBackward (AppState items) = (AppState . cycleBackward) items

@@ -25,7 +25,6 @@ dependencies:
 - base >= 4.7 && < 5
 - brick
 - vty
-- directory
 - cursor
 - text
 
