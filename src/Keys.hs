@@ -52,10 +52,15 @@ handleEvent (AppState items) e
   | otherwise = continue (AppState items)
 
 cycleValuesForward :: AppState -> AppState
-cycleValuesForward (AppState items) = (AppState . cycleForward) items
+cycleValuesForward (AppState items) = (AppState . cycleSelected) items
   where
-    cycleForward :: NonEmptyCursor Item -> NonEmptyCursor Item
-    cycleForward = fromJust . nonEmptyCursorSelectIndex selectionPosition . makeNonEmptyCursor . changeNthElement selectionPosition cycleForward' . rebuildNonEmptyCursor
+    restorePosition :: NonEmptyCursor a -> Maybe (NonEmptyCursor a)
+    restorePosition = nonEmptyCursorSelectIndex selectionPosition
+    cycledSelected = (makeNonEmptyCursor . changeNthElement selectionPosition cycleForward' . rebuildNonEmptyCursor) items
+    cycleSelected :: NonEmptyCursor Item -> NonEmptyCursor Item
+    cycleSelected = case restorePosition cycledSelected of
+      Nothing -> const cycledSelected
+      Just restored -> const restored
     selectionPosition = nonEmptyCursorSelection items
 
 cycleForward' :: Item -> Item
