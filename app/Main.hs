@@ -1,10 +1,10 @@
 module Main where
 
-import Brick (defaultMain)
-import Lib
+import App
   ( buildInitialState,
     tcmApp,
   )
+import Brick (defaultMain)
 import System.Exit (exitSuccess)
 
 main :: IO ()

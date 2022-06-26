@@ -25,7 +25,10 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      App
+      Keys
+      Render
+      State
   other-modules:
       Paths_terminal_config_manager
   hs-source-dirs:

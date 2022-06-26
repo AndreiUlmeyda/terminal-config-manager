@@ -1,1 +1,2 @@
 test entry,/home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: value1,value1,alternative-value1,alternative-value2
+another entry, /home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: value1,value1,alternative-value1,alternative-value2
