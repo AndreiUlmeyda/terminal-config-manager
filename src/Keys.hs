@@ -55,7 +55,7 @@ cycleValuesForward :: AppState -> AppState
 cycleValuesForward (AppState items) = (AppState . cycleForward) items
   where
     cycleForward :: NonEmptyCursor Item -> NonEmptyCursor Item
-    cycleForward = makeNonEmptyCursor . changeNthElement selectionPosition cycleForward' . rebuildNonEmptyCursor
+    cycleForward = fromJust . nonEmptyCursorSelectIndex selectionPosition . makeNonEmptyCursor . changeNthElement selectionPosition cycleForward' . rebuildNonEmptyCursor
     selectionPosition = nonEmptyCursorSelection items
 
 cycleForward' :: Item -> Item
