@@ -1,3 +1,3 @@
-test entry,/home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: aaaaa,aaaaa,bbbbb,ccccc
-another entry, /home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: ddddd,ddddd,eeeee,fffff
-a third one, /home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: ggggg,ggggg,hhhhh,xxxxx
+local bookany logs to file,/home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: true, true, false
+testfall-api environment, /home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: adrian-local, testing, staging, production, local, adrian-local
+phpunit suite, /home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: Unit, Unit, Integration, System, Development
