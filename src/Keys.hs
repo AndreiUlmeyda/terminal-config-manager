@@ -74,12 +74,12 @@ cycleValuesBackward (AppState items) = (AppState . cycleBackward) items
     cycleBackward :: NonEmptyCursor a -> NonEmptyCursor a
     cycleBackward = id
 
-deleteFirstEntry :: AppState -> AppState
+deleteFirstEntry :: AppState -> AppState -- define a "mapSelected", express all item operations using it
 deleteFirstEntry (AppState items) = (AppState . tailOfNonEmptyCursor) items
   where
     tailOfNonEmptyCursor :: NonEmptyCursor a -> NonEmptyCursor a
     tailOfNonEmptyCursor = fromJust . nonEmptyCursorSelectIndex selectionPosition . makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor -- FIXME handle Maybe
-    selectionPosition = max 0 $ nonEmptyCursorSelection items - 1 -- FIXME handle Maybe
+    selectionPosition = max 0 $ nonEmptyCursorSelection items - 1 :: Int
 
 changeNthElement :: Int -> (a -> a) -> NonEmpty a -> NonEmpty a
 changeNthElement n fn = fromList . changeNthElement' n fn . toList

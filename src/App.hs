@@ -4,7 +4,6 @@ import Brick
   ( App (..),
     attrMap,
     attrName,
-    fg,
     showFirstCursor,
   )
 import Cursor.Simple.List.NonEmpty
@@ -21,10 +20,9 @@ import Data.Text
   )
 import Graphics.Vty.Attributes
   ( currentAttr,
-    cyan,
   )
 import Keys (handleEvent)
-import Render (drawApp)
+import Render (drawApp, selectionStyling)
 import State
   ( AppState (AppState),
     ConfigValue,
@@ -43,7 +41,7 @@ tcmApp =
       appChooseCursor = showFirstCursor,
       appHandleEvent = handleEvent,
       appStartEvent = pure,
-      appAttrMap = const $ attrMap currentAttr [(attrName "selected", fg cyan)]
+      appAttrMap = const $ attrMap currentAttr [(attrName "selected", selectionStyling)]
     }
 
 testConfigFilePath :: FilePath

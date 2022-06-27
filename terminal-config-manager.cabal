@@ -29,6 +29,7 @@ library
       Keys
       Render
       State
+      Util
   other-modules:
       Paths_terminal_config_manager
   hs-source-dirs:
