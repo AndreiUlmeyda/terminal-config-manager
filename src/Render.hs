@@ -1,4 +1,4 @@
-module Render (drawApp, selectionStyling) where
+module Render (drawApp, selectionStyling, valueStyling) where
 
 import Brick
   ( Widget,
@@ -18,7 +18,10 @@ import Cursor.Simple.List.NonEmpty
   )
 import Graphics.Vty.Attributes
   ( Attr,
+    bold,
+    currentAttr,
     cyan,
+    withStyle,
   )
 import State
   ( AppState (MkAppState),
@@ -30,7 +33,7 @@ drawApp (MkAppState items) =
   [ vBox $
       concat
         [ map (drawPath False) $ reverse $ nonEmptyCursorPrev items,
-          [drawPath True $ nonEmptyCursorCurrent items],
+          [withAttr (attrName "selected") $ drawPath True $ nonEmptyCursorCurrent items],
           map (drawPath False) $ nonEmptyCursorNext items
         ]
   ]
@@ -38,15 +41,18 @@ drawApp (MkAppState items) =
 drawPath :: Bool -> ConfigItem -> Widget ResourceName
 drawPath isHighlighted (MkConfigItem title _ currentValue _) =
   hBox
-    [ (attachAttrWhenHighlighted isHighlighted . txt) title,
+    [ txt title,
       str " → ",
       (attachAttrWhenHighlighted isHighlighted . txt) currentValue
     ]
 
 attachAttrWhenHighlighted :: Bool -> Widget n -> Widget n
 attachAttrWhenHighlighted isHighlighted
-  | isHighlighted = withAttr (attrName "selected")
+  | isHighlighted = withAttr (attrName "value")
   | otherwise = id
 
 selectionStyling :: Attr
-selectionStyling = fg cyan
+selectionStyling = withStyle currentAttr bold
+
+valueStyling :: Attr
+valueStyling = withStyle (fg cyan) bold

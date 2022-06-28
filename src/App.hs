@@ -17,7 +17,7 @@ import Graphics.Vty.Attributes
   ( currentAttr,
   )
 import Keys (handleEvent)
-import Render (drawApp, selectionStyling)
+import Render (drawApp, selectionStyling, valueStyling)
 import State
   ( AppState (MkAppState),
     ResourceName,
@@ -34,7 +34,7 @@ tcmApp =
       appChooseCursor = showFirstCursor,
       appHandleEvent = handleEvent,
       appStartEvent = pure,
-      appAttrMap = const $ attrMap currentAttr [(attrName "selected", selectionStyling)]
+      appAttrMap = const $ attrMap currentAttr [(attrName "selected", selectionStyling), (attrName "value", valueStyling)]
     }
 
 buildInitialState :: Config -> IO AppState
