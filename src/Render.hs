@@ -10,7 +10,7 @@ import Brick
     vBox,
     withAttr,
   )
-import Config (ConfigItem (ConfigItem))
+import Config (ConfigItem (MkConfigItem))
 import Cursor.Simple.List.NonEmpty
   ( nonEmptyCursorCurrent,
     nonEmptyCursorNext,
@@ -21,12 +21,12 @@ import Graphics.Vty.Attributes
     cyan,
   )
 import State
-  ( AppState (AppState),
+  ( AppState (MkAppState),
     ResourceName,
   )
 
 drawApp :: AppState -> [Widget ResourceName]
-drawApp (AppState items) =
+drawApp (MkAppState items) =
   [ vBox $
       concat
         [ map (drawPath False) $ reverse $ nonEmptyCursorPrev items,
@@ -36,7 +36,7 @@ drawApp (AppState items) =
   ]
 
 drawPath :: Bool -> ConfigItem -> Widget ResourceName
-drawPath isHighlighted (ConfigItem title _ currentValue _) =
+drawPath isHighlighted (MkConfigItem title _ currentValue _) =
   hBox
     [ (attachAttrWhenHighlighted isHighlighted . txt) title,
       str " → ",

@@ -1,5 +1,5 @@
 module State
-  ( AppState (AppState),
+  ( AppState (MkAppState),
     ResourceName,
   )
 where
@@ -8,7 +8,7 @@ import Config (ConfigItem)
 import Cursor.Simple.List.NonEmpty (NonEmptyCursor)
 
 data ResourceName
-  = ResourceName
+  = MkResourceName
   deriving stock (Show, Eq, Ord)
 
-data AppState = AppState (NonEmptyCursor ConfigItem) deriving stock (Show, Eq)
+data AppState = MkAppState (NonEmptyCursor ConfigItem) deriving stock (Show, Eq)

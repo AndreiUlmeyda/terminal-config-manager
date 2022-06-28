@@ -6,7 +6,7 @@ import Brick
     attrName,
     showFirstCursor,
   )
-import Config (Config (Config))
+import Config (Config (MkConfig))
 import Cursor.Simple.List.NonEmpty
   ( makeNonEmptyCursor,
   )
@@ -19,7 +19,7 @@ import Graphics.Vty.Attributes
 import Keys (handleEvent)
 import Render (drawApp, selectionStyling)
 import State
-  ( AppState (AppState),
+  ( AppState (MkAppState),
     ResourceName,
   )
 import System.Exit (die)
@@ -38,7 +38,7 @@ tcmApp =
     }
 
 buildInitialState :: Config -> IO AppState
-buildInitialState (Config configItems) = do
+buildInitialState (MkConfig configItems) = do
   case NE.nonEmpty configItems of
     Nothing -> die errorMsgNoConfigEntries
-    Just ne -> pure $ AppState (makeNonEmptyCursor ne)
+    Just ne -> pure $ MkAppState (makeNonEmptyCursor ne)

@@ -31,29 +31,29 @@ import Graphics.Vty.Input.Events
   ( Event (EvKey),
     Key (KChar, KDown, KLeft, KRight, KUp),
   )
-import State (AppState (AppState))
+import State (AppState (MkAppState))
 
 handleEvent :: AppState -> BrickEvent n e -> EventM n (Next AppState)
-handleEvent (AppState items) e
+handleEvent (MkAppState items) e
   | VtyEvent vtye <- e =
       case vtye of
-        EvKey (KChar 'q') [] -> halt (AppState items)
-        EvKey (KChar 'd') [] -> continue $ deleteFirstEntry (AppState items)
+        EvKey (KChar 'q') [] -> halt (MkAppState items)
+        EvKey (KChar 'd') [] -> continue $ deleteFirstEntry (MkAppState items)
         EvKey KDown [] -> do
           case nonEmptyCursorSelectNext items of
-            Nothing -> continue (AppState items)
-            Just nonEmptyCursor' -> continue $ AppState nonEmptyCursor'
+            Nothing -> continue (MkAppState items)
+            Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
         EvKey KUp [] -> do
           case nonEmptyCursorSelectPrev items of
-            Nothing -> continue (AppState items)
-            Just nonEmptyCursor' -> continue $ AppState nonEmptyCursor'
-        EvKey KRight [] -> continue $ cycleValuesForward (AppState items)
-        EvKey KLeft [] -> continue $ cycleValuesBackward (AppState items)
-        _ -> continue (AppState items)
-  | otherwise = continue (AppState items)
+            Nothing -> continue (MkAppState items)
+            Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
+        EvKey KRight [] -> continue $ cycleValuesForward (MkAppState items)
+        EvKey KLeft [] -> continue $ cycleValuesBackward (MkAppState items)
+        _ -> continue (MkAppState items)
+  | otherwise = continue (MkAppState items)
 
 cycleValuesForward :: AppState -> AppState
-cycleValuesForward (AppState items) = (AppState . cycleSelected) items
+cycleValuesForward (MkAppState items) = (MkAppState . cycleSelected) items
   where
     restorePosition :: NonEmptyCursor a -> Maybe (NonEmptyCursor a)
     restorePosition = nonEmptyCursorSelectIndex selectionPosition
@@ -65,18 +65,18 @@ cycleValuesForward (AppState items) = (AppState . cycleSelected) items
     selectionPosition = nonEmptyCursorSelection items
 
 cycleForward' :: ConfigItem -> ConfigItem
-cycleForward' (ConfigItem title targetFile currentValue possibleValues) = (ConfigItem title targetFile nextValue possibleValues)
+cycleForward' (MkConfigItem title targetFile currentValue possibleValues) = (MkConfigItem title targetFile nextValue possibleValues)
   where
     nextValue = (head . Prelude.tail . dropWhile (/= currentValue) . cycle) possibleValues
 
 cycleValuesBackward :: AppState -> AppState
-cycleValuesBackward (AppState items) = (AppState . cycleBackward) items
+cycleValuesBackward (MkAppState items) = (MkAppState . cycleBackward) items
   where
     cycleBackward :: NonEmptyCursor a -> NonEmptyCursor a
     cycleBackward = id
 
 deleteFirstEntry :: AppState -> AppState -- define a "mapSelected", express all item operations using it
-deleteFirstEntry (AppState items) = (AppState . tailOfNonEmptyCursor) items
+deleteFirstEntry (MkAppState items) = (MkAppState . tailOfNonEmptyCursor) items
   where
     tailOfNonEmptyCursor :: NonEmptyCursor a -> NonEmptyCursor a
     tailOfNonEmptyCursor = fromJust . nonEmptyCursorSelectIndex selectionPosition . makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor -- FIXME handle Maybe
