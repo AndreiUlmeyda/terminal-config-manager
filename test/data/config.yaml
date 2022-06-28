@@ -1,0 +1,24 @@
+config_lines_to_manage:
+  - title: local bookany logs to file
+    path: /home/adrian/workspace/terminal-config-manager/test/data/target.conf
+    value : "true"
+    possibleValues:
+      - "true"
+      - "false"
+  - title: testfall-api environment
+    path: /home/adrian/workspace/terminal-config-manager/test/data/target.conf
+    value : adrian-local
+    possibleValues:
+      - testing
+      - staging
+      - production
+      - local
+      - adrian-local
+  - title: phpunit suite
+    path: /home/adrian/workspace/terminal-config-manager/test/data/target.conf
+    value : Unit
+    possibleValues:
+      - Unit
+      - Integration
+      - System
+      - Development

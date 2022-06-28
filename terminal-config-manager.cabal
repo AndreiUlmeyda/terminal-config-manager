@@ -26,10 +26,10 @@ source-repository head
 library
   exposed-modules:
       App
+      Config
       Keys
       Render
       State
-      Util
   other-modules:
       Paths_terminal_config_manager
   hs-source-dirs:
@@ -40,12 +40,14 @@ library
   build-depends:
       base >=4.7 && <5
     , brick
+    , bytestring
     , cursor
     , text
     , vty
+    , yaml
   default-language: Haskell2010
 
-executable terminal-config-manager-exe
+executable terminal-config-manager
   main-is: Main.hs
   other-modules:
       Paths_terminal_config_manager
@@ -57,10 +59,12 @@ executable terminal-config-manager-exe
   build-depends:
       base >=4.7 && <5
     , brick
+    , bytestring
     , cursor
     , terminal-config-manager
     , text
     , vty
+    , yaml
   default-language: Haskell2010
 
 test-suite terminal-config-manager-test
@@ -76,8 +80,10 @@ test-suite terminal-config-manager-test
   build-depends:
       base >=4.7 && <5
     , brick
+    , bytestring
     , cursor
     , terminal-config-manager
     , text
     , vty
+    , yaml
   default-language: Haskell2010

@@ -7,6 +7,7 @@ import Brick
     continue,
     halt,
   )
+import Config (ConfigItem (..))
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
     makeNonEmptyCursor,
@@ -30,7 +31,7 @@ import Graphics.Vty.Input.Events
   ( Event (EvKey),
     Key (KChar, KDown, KLeft, KRight, KUp),
   )
-import State (AppState (AppState), Item (Item))
+import State (AppState (AppState))
 
 handleEvent :: AppState -> BrickEvent n e -> EventM n (Next AppState)
 handleEvent (AppState items) e
@@ -57,14 +58,14 @@ cycleValuesForward (AppState items) = (AppState . cycleSelected) items
     restorePosition :: NonEmptyCursor a -> Maybe (NonEmptyCursor a)
     restorePosition = nonEmptyCursorSelectIndex selectionPosition
     cycledSelected = (makeNonEmptyCursor . changeNthElement selectionPosition cycleForward' . rebuildNonEmptyCursor) items
-    cycleSelected :: NonEmptyCursor Item -> NonEmptyCursor Item
+    cycleSelected :: NonEmptyCursor ConfigItem -> NonEmptyCursor ConfigItem
     cycleSelected = case restorePosition cycledSelected of
       Nothing -> const cycledSelected
       Just restored -> const restored
     selectionPosition = nonEmptyCursorSelection items
 
-cycleForward' :: Item -> Item
-cycleForward' (Item title targetFile currentValue possibleValues) = (Item title targetFile nextValue possibleValues)
+cycleForward' :: ConfigItem -> ConfigItem
+cycleForward' (ConfigItem title targetFile currentValue possibleValues) = (ConfigItem title targetFile nextValue possibleValues)
   where
     nextValue = (head . Prelude.tail . dropWhile (/= currentValue) . cycle) possibleValues
 

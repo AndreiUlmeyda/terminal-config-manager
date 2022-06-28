@@ -6,17 +6,12 @@ import Brick
     attrName,
     showFirstCursor,
   )
+import Config (Config (Config))
 import Cursor.Simple.List.NonEmpty
   ( makeNonEmptyCursor,
   )
 import Data.List.NonEmpty as NE
   ( nonEmpty,
-  )
-import Data.Text
-  ( Text,
-    pack,
-    splitOn,
-    unpack,
   )
 import Graphics.Vty.Attributes
   ( currentAttr,
@@ -25,8 +20,6 @@ import Keys (handleEvent)
 import Render (drawApp, selectionStyling)
 import State
   ( AppState (AppState),
-    ConfigValue,
-    Item (Item),
     ResourceName,
   )
 import System.Exit (die)
@@ -44,25 +37,8 @@ tcmApp =
       appAttrMap = const $ attrMap currentAttr [(attrName "selected", selectionStyling)]
     }
 
-testConfigFilePath :: FilePath
-testConfigFilePath = "test/data/config"
-
-buildInitialState :: IO AppState
-buildInitialState = do
-  configLines <- fmap (map pack . lines) $ readFile testConfigFilePath :: IO [Text]
-  let configValues = map separateValues configLines :: [[ConfigValue]]
-      items = map toItem configValues :: [Item]
-   in case NE.nonEmpty items of
-        Nothing -> die errorMsgNoConfigEntries
-        Just ne -> pure $ AppState (makeNonEmptyCursor ne)
-
-toItem :: [Text] -> Item
-toItem chunks = Item title (unpack path) currentValue possibleValues
-  where
-    title = chunks !! 0
-    path = chunks !! 1
-    currentValue = chunks !! 3
-    possibleValues = drop 3 chunks
-
-separateValues :: Text -> [Text]
-separateValues = splitOn ","
+buildInitialState :: Config -> IO AppState
+buildInitialState (Config configItems) = do
+  case NE.nonEmpty configItems of
+    Nothing -> die errorMsgNoConfigEntries
+    Just ne -> pure $ AppState (makeNonEmptyCursor ne)

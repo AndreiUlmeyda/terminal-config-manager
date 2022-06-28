@@ -3,27 +3,25 @@ module Render (drawApp, selectionStyling) where
 import Brick
   ( Widget,
     attrName,
-    bg,
     fg,
     hBox,
-    on,
     str,
     txt,
     vBox,
     withAttr,
   )
-import Brick.Widgets.Border
-  ( border,
-  )
+import Config (ConfigItem (ConfigItem))
 import Cursor.Simple.List.NonEmpty
   ( nonEmptyCursorCurrent,
     nonEmptyCursorNext,
     nonEmptyCursorPrev,
   )
-import Graphics.Vty.Attributes (Attr, blue, cyan, green, white, yellow)
+import Graphics.Vty.Attributes
+  ( Attr,
+    cyan,
+  )
 import State
   ( AppState (AppState),
-    Item (Item),
     ResourceName,
   )
 
@@ -37,11 +35,11 @@ drawApp (AppState items) =
         ]
   ]
 
-drawPath :: Bool -> Item -> Widget ResourceName
-drawPath isHighlighted (Item title _ currentValue _) =
+drawPath :: Bool -> ConfigItem -> Widget ResourceName
+drawPath isHighlighted (ConfigItem title _ currentValue _) =
   hBox
     [ (attachAttrWhenHighlighted isHighlighted . txt) title,
-      str " => ",
+      str " → ",
       (attachAttrWhenHighlighted isHighlighted . txt) currentValue
     ]
 

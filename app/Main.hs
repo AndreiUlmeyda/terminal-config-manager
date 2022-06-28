@@ -5,10 +5,12 @@ import App
     tcmApp,
   )
 import Brick (defaultMain)
+import Config (loadConfig)
 import System.Exit (exitSuccess)
 
 main :: IO ()
 main = do
-  initialState <- buildInitialState
+  config <- loadConfig
+  initialState <- buildInitialState config
   endState <- defaultMain tcmApp initialState
   exitSuccess

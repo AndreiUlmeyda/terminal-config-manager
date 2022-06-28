@@ -1,3 +1,0 @@
-local bookany logs to file,/home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: true, true, false
-testfall-api environment, /home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: adrian-local, testing, staging, production, local, adrian-local
-phpunit suite, /home/adrian/workspace/terminal-config-manager/test/data/target.conf,identifier: Unit, Unit, Integration, System, Development

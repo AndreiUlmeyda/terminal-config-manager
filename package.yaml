@@ -27,6 +27,8 @@ dependencies:
 - vty
 - cursor
 - text
+- yaml
+- bytestring
 
 library:
   source-dirs: src
@@ -48,7 +50,7 @@ library:
     - -Wcompat
 
 executables:
-  terminal-config-manager-exe:
+  terminal-config-manager:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
