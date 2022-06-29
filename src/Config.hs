@@ -39,7 +39,4 @@ instance FromJSON ConfigItem where
   parseJSON _ = fail "Expected Object for Config value"
 
 loadConfig :: IO Config
-loadConfig = do
-  configYaml <- readFile testYamlFilePath
-  config <- decodeThrow configYaml
-  return config
+loadConfig = readFile testYamlFilePath >>= decodeThrow
