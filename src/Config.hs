@@ -1,13 +1,14 @@
 module Config (Config (MkConfig), ConfigItem (MkConfigItem), loadConfig) where
 
-import Data.ByteString as BS (readFile)
+import Data.ByteString (readFile)
 import Data.Text (Text)
-import Data.Yaml as Y
+import Data.Yaml
   ( FromJSON (parseJSON),
     Value (Object),
     decodeThrow,
     (.:),
   )
+import Prelude hiding (readFile)
 
 testYamlFilePath :: FilePath
 testYamlFilePath = "test/data/config.yaml"
@@ -23,13 +24,13 @@ data ConfigItem = MkConfigItem
   deriving stock (Eq, Show)
 
 instance FromJSON Config where
-  parseJSON (Y.Object v) =
+  parseJSON (Object v) =
     MkConfig
       <$> v .: "config_lines_to_manage"
   parseJSON _ = fail "Expected Object for Config value"
 
 instance FromJSON ConfigItem where
-  parseJSON (Y.Object v) =
+  parseJSON (Object v) =
     MkConfigItem
       <$> v .: "title"
       <*> v .: "path"
@@ -39,6 +40,6 @@ instance FromJSON ConfigItem where
 
 loadConfig :: IO Config
 loadConfig = do
-  configYaml <- BS.readFile testYamlFilePath
-  config <- Y.decodeThrow configYaml
+  configYaml <- readFile testYamlFilePath
+  config <- decodeThrow configYaml
   return config

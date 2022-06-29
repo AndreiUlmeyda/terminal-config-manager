@@ -38,7 +38,7 @@ tcmApp =
     }
 
 buildInitialState :: Config -> IO AppState
-buildInitialState (MkConfig configItems) = do
+buildInitialState (MkConfig configItems) =
   case NE.nonEmpty configItems of
     Nothing -> die errorMsgNoConfigEntries
     Just ne -> pure $ MkAppState (makeNonEmptyCursor ne)
