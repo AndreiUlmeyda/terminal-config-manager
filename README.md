@@ -13,6 +13,7 @@ target file missing
 target file changed
 config entry invalid
 no config entries
+pattern matches twice
 
 # nice to have
 append comment to invalid config entries

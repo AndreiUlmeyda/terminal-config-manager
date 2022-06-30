@@ -8,6 +8,7 @@ import Brick
     halt,
   )
 import Config (ConfigItem (..))
+import Control.Monad.IO.Class (MonadIO (liftIO))
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
     makeNonEmptyCursor,
@@ -20,12 +21,7 @@ import Cursor.Simple.List.NonEmpty
 import Data.List.NonEmpty as NE
   ( NonEmpty,
     fromList,
-    nonEmpty,
-    tail,
     toList,
-  )
-import Data.Maybe
-  ( fromJust,
   )
 import Graphics.Vty.Input.Events
   ( Event (EvKey),
@@ -38,7 +34,6 @@ handleEvent (MkAppState items) e
   | VtyEvent vtye <- e =
       case vtye of
         EvKey (KChar 'q') [] -> halt (MkAppState items)
-        EvKey (KChar 'd') [] -> continue $ deleteFirstEntry (MkAppState items)
         EvKey KDown [] -> do
           case nonEmptyCursorSelectNext items of
             Nothing -> continue (MkAppState items)
@@ -48,9 +43,13 @@ handleEvent (MkAppState items) e
             Nothing -> continue (MkAppState items)
             Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
         EvKey KRight [] -> continue $ cycleValuesForward (MkAppState items)
-        EvKey KLeft [] -> continue $ cycleValuesBackward (MkAppState items)
+        EvKey KLeft [] -> do
+          liftIO $ writeFile "derp.cfg" "content"
+          continue (MkAppState items)
         _ -> continue (MkAppState items)
   | otherwise = continue (MkAppState items)
+
+-- replaceStrInFile infileName outfileName needle replacement = T.readFile infileName >>= \txt -> T.writeFile outfileName (T.replace needle replacement txt)
 
 cycleValuesForward :: AppState -> AppState
 cycleValuesForward (MkAppState items) = (MkAppState . cycleSelected) items
@@ -74,13 +73,6 @@ cycleValuesBackward (MkAppState items) = (MkAppState . cycleBackward) items
   where
     cycleBackward :: NonEmptyCursor a -> NonEmptyCursor a
     cycleBackward = id
-
-deleteFirstEntry :: AppState -> AppState -- define a "mapSelected", express all item operations using it
-deleteFirstEntry (MkAppState items) = (MkAppState . tailOfNonEmptyCursor) items
-  where
-    tailOfNonEmptyCursor :: NonEmptyCursor a -> NonEmptyCursor a
-    tailOfNonEmptyCursor = fromJust . nonEmptyCursorSelectIndex selectionPosition . makeNonEmptyCursor . fromJust . NE.nonEmpty . NE.tail . rebuildNonEmptyCursor -- FIXME handle Maybe
-    selectionPosition = max 0 $ nonEmptyCursorSelection items - 1 :: Int
 
 changeNthElement :: Int -> (a -> a) -> NonEmpty a -> NonEmpty a
 changeNthElement n fn = fromList . changeNthElement' n fn . toList
