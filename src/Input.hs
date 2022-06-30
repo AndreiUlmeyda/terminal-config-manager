@@ -1,4 +1,4 @@
-module Keys (handleEvent) where
+module Input (handleEvent) where
 
 import Brick
   ( BrickEvent (VtyEvent),
@@ -28,6 +28,7 @@ import Graphics.Vty.Input.Events
     Key (KChar, KDown, KLeft, KRight, KUp),
   )
 import State (AppState (MkAppState))
+import System.IO (IOMode (ReadMode), withFile)
 
 handleEvent :: AppState -> BrickEvent n e -> EventM n (Next AppState)
 handleEvent (MkAppState items) e
@@ -44,10 +45,15 @@ handleEvent (MkAppState items) e
             Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
         EvKey KRight [] -> continue $ cycleValuesForward (MkAppState items)
         EvKey KLeft [] -> do
-          liftIO $ writeFile "derp.cfg" "content"
+          oldContent <- liftIO $ readFile "derp.cfg"
+          let newContent = modify oldContent
+           in liftIO $ writeFile "derp2.cfg" newContent
           continue (MkAppState items)
         _ -> continue (MkAppState items)
   | otherwise = continue (MkAppState items)
+
+modify :: String -> String
+modify = (++) "herpderp"
 
 -- replaceStrInFile infileName outfileName needle replacement = T.readFile infileName >>= \txt -> T.writeFile outfileName (T.replace needle replacement txt)
 

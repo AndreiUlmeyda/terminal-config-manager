@@ -16,7 +16,7 @@ import Data.List.NonEmpty as NE
 import Graphics.Vty.Attributes
   ( currentAttr,
   )
-import Keys (handleEvent)
+import Input (handleEvent)
 import Render (drawApp, selectionStyling, valueStyling)
 import State
   ( AppState (MkAppState),

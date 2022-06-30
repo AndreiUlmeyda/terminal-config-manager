@@ -27,7 +27,7 @@ library
   exposed-modules:
       App
       Config
-      Keys
+      Input
       Render
       State
   other-modules:
