@@ -2,6 +2,7 @@ config_lines_to_manage:
 
   - title: local bookany dumps stats to file
     path: /home/adrian/workspace/terminal-config-manager/test/data/target.conf
+    pattern: "'statspush_enabled' => {{value}},"
     value : "true"
     possibleValues:
       - "true"
@@ -9,6 +10,7 @@ config_lines_to_manage:
 
   - title: testfall-api environment
     path: /home/adrian/workspace/terminal-config-manager/test/data/target.conf
+    pattern: "BOOKANCY_ENV={{value}}"
     value : adrian-local
     possibleValues:
       - testing
@@ -16,9 +18,10 @@ config_lines_to_manage:
       - production
       - local
       - adrian-local
-      
+
   - title: phpunit suite
     path: /home/adrian/workspace/terminal-config-manager/test/data/target.conf
+    pattern: "defaultTestSuite= \"{{value}}\""
     value : Unit
     possibleValues:
       - Unit
