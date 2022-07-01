@@ -39,7 +39,7 @@ drawApp (MkAppState items) =
   ]
 
 drawPath :: Bool -> ConfigItem -> Widget ResourceName
-drawPath isHighlighted (MkConfigItem title _ currentValue _) =
+drawPath isHighlighted (MkConfigItem title _ _ currentValue _) =
   hBox
     [ txt title,
       str " → ",

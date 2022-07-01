@@ -12,6 +12,7 @@ import Control.Monad.IO.Class (MonadIO (liftIO))
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
     makeNonEmptyCursor,
+    nonEmptyCursorCurrent,
     nonEmptyCursorSelectIndex,
     nonEmptyCursorSelectNext,
     nonEmptyCursorSelectPrev,
@@ -23,6 +24,7 @@ import Data.List.NonEmpty as NE
     fromList,
     toList,
   )
+import Data.Text hiding (dropWhile, head)
 import Graphics.Vty.Input.Events
   ( Event (EvKey),
     Key (KChar, KDown, KLeft, KRight, KUp),
@@ -44,17 +46,24 @@ handleEvent (MkAppState items) e
           case nonEmptyCursorSelectPrev items of
             Nothing -> continue (MkAppState items)
             Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
-        EvKey KRight [] -> continue $ cycleValuesForward (MkAppState items)
+        EvKey KRight [] ->
+          let (MkAppState newItems) = cycleValuesForward (MkAppState items)
+              currentItem = nonEmptyCursorCurrent newItems
+           in do
+                oldContent <- liftIO $ readFile (path currentItem)
+                let newContent = modify (pack oldContent)
+                 in liftIO $ writeFile (path currentItem) (unpack newContent)
+                continue (MkAppState newItems)
         EvKey KLeft [] -> do
-          oldContent <- liftIO $ readFile "derp.cfg"
-          let newContent = modify oldContent
-           in liftIO $ writeFile "derp.cfg" newContent
+          oldContent <- (liftIO . readFile) "derp.cfg"
+          let newContent = modify (pack oldContent)
+           in liftIO $ writeFile "derp.cfg" (unpack newContent)
           continue (MkAppState items)
         _ -> continue (MkAppState items)
   | otherwise = continue (MkAppState items)
 
-modify :: String -> String
-modify = (++) "herpderp"
+modify :: Text -> Text
+modify = id
 
 -- replaceStrInFile infileName outfileName needle replacement = T.readFile infileName >>= \txt -> T.writeFile outfileName (T.replace needle replacement txt)
 
@@ -71,7 +80,7 @@ cycleValuesForward (MkAppState items) = (MkAppState . cycleSelected) items
     selectionPosition = nonEmptyCursorSelection items
 
 cycleForward' :: ConfigItem -> ConfigItem
-cycleForward' (MkConfigItem title targetFile currentValue possibleValues) = (MkConfigItem title targetFile nextValue possibleValues)
+cycleForward' (MkConfigItem title targetFile pattern currentValue possibleValues) = (MkConfigItem title targetFile pattern nextValue possibleValues)
   where
     nextValue = (head . Prelude.tail . dropWhile (/= currentValue) . cycle) possibleValues
 
