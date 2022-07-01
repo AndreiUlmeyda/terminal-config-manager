@@ -38,11 +38,11 @@ handleEvent (MkAppState items) e
   | VtyEvent vtye <- e =
       case vtye of
         EvKey (KChar 'q') [] -> halt (MkAppState items)
-        EvKey KDown [] -> do
+        EvKey KDown [] ->
           case nonEmptyCursorSelectNext items of
             Nothing -> continue (MkAppState items)
             Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
-        EvKey KUp [] -> do
+        EvKey KUp [] ->
           case nonEmptyCursorSelectPrev items of
             Nothing -> continue (MkAppState items)
             Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
@@ -91,4 +91,8 @@ changeNthElement' n fn (x : xs)
   | (n == 0) = (fn x) : xs
   | otherwise = x : (changeNthElement' (n - 1) fn xs)
 
--- TODO write state back to config file
+-- TODO write state back to config file (on program exit should suffice)
+-- TODO move all the logic into a more appropriate module
+-- TODO how about some tests, eh?
+-- TODO find and handle every operation that can fail
+-- TODO handle the case where the target file value and config value dont match
