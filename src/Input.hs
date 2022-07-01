@@ -24,10 +24,10 @@ import Data.List.NonEmpty as NE
     fromList,
     toList,
   )
-import Data.Text hiding (dropWhile, head)
+import Data.Text (Text, pack, replace, unpack)
 import Graphics.Vty.Input.Events
   ( Event (EvKey),
-    Key (KChar, KDown, KLeft, KRight, KUp),
+    Key (KChar, KDown, KRight, KUp),
   )
 import State (AppState (MkAppState))
 import System.IO.Strict (readFile)
@@ -49,23 +49,20 @@ handleEvent (MkAppState items) e
         EvKey KRight [] ->
           let (MkAppState newItems) = cycleValuesForward (MkAppState items)
               currentItem = nonEmptyCursorCurrent newItems
+              previousItem = nonEmptyCursorCurrent items
            in do
                 oldContent <- liftIO $ readFile (path currentItem)
-                let newContent = modify (pack oldContent)
+                let newContent = modify (value previousItem) (value currentItem) (pattern currentItem) (pack oldContent)
                  in liftIO $ writeFile (path currentItem) (unpack newContent)
                 continue (MkAppState newItems)
-        EvKey KLeft [] -> do
-          oldContent <- (liftIO . readFile) "derp.cfg"
-          let newContent = modify (pack oldContent)
-           in liftIO $ writeFile "derp.cfg" (unpack newContent)
-          continue (MkAppState items)
         _ -> continue (MkAppState items)
   | otherwise = continue (MkAppState items)
 
-modify :: Text -> Text
-modify = id
-
--- replaceStrInFile infileName outfileName needle replacement = T.readFile infileName >>= \txt -> T.writeFile outfileName (T.replace needle replacement txt)
+modify :: Text -> Text -> Text -> Text -> Text
+modify oldValue newValue pattern content = replace oldSubstring newSubstring content
+  where
+    oldSubstring = replace "{{value}}" oldValue pattern
+    newSubstring = replace oldValue newValue oldSubstring
 
 cycleValuesForward :: AppState -> AppState
 cycleValuesForward (MkAppState items) = (MkAppState . cycleSelected) items
@@ -84,12 +81,6 @@ cycleForward' (MkConfigItem title targetFile pattern currentValue possibleValues
   where
     nextValue = (head . Prelude.tail . dropWhile (/= currentValue) . cycle) possibleValues
 
-cycleValuesBackward :: AppState -> AppState
-cycleValuesBackward (MkAppState items) = (MkAppState . cycleBackward) items
-  where
-    cycleBackward :: NonEmptyCursor a -> NonEmptyCursor a
-    cycleBackward = id
-
 changeNthElement :: Int -> (a -> a) -> NonEmpty a -> NonEmpty a
 changeNthElement n fn = fromList . changeNthElement' n fn . toList
 
@@ -99,3 +90,5 @@ changeNthElement' n fn (x : xs)
   | (n < 0) = x : xs
   | (n == 0) = (fn x) : xs
   | otherwise = x : (changeNthElement' (n - 1) fn xs)
+
+-- TODO write state back to config file

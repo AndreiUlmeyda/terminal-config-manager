@@ -21,7 +21,7 @@ config_lines_to_manage:
 
   - title: phpunit suite
     path: /home/adrian/workspace/terminal-config-manager/test/data/target.conf
-    pattern: "defaultTestSuite= \"{{value}}\""
+    pattern: 'defaultTestSuite="{{value}}"'
     value : Unit
     possibleValues:
       - Unit

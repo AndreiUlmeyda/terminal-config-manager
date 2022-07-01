@@ -1,4 +1,4 @@
-module Config (Config (MkConfig), ConfigItem (MkConfigItem, path), loadConfig) where
+module Config (Config (MkConfig), ConfigItem (..), loadConfig) where
 
 import Data.ByteString (readFile)
 import Data.Text (Text)
