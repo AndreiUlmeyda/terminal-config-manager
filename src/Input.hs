@@ -28,7 +28,8 @@ import Graphics.Vty.Input.Events
     Key (KChar, KDown, KLeft, KRight, KUp),
   )
 import State (AppState (MkAppState))
-import System.IO (IOMode (ReadMode), withFile)
+import System.IO.Strict (readFile)
+import Prelude hiding (readFile)
 
 handleEvent :: AppState -> BrickEvent n e -> EventM n (Next AppState)
 handleEvent (MkAppState items) e
@@ -47,7 +48,7 @@ handleEvent (MkAppState items) e
         EvKey KLeft [] -> do
           oldContent <- liftIO $ readFile "derp.cfg"
           let newContent = modify oldContent
-           in liftIO $ writeFile "derp2.cfg" newContent
+           in liftIO $ writeFile "derp.cfg" newContent
           continue (MkAppState items)
         _ -> continue (MkAppState items)
   | otherwise = continue (MkAppState items)

@@ -29,6 +29,7 @@ dependencies:
 - text
 - yaml
 - bytestring
+- strict
 
 library:
   source-dirs: src
