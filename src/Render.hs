@@ -29,14 +29,15 @@ import State
   )
 
 drawApp :: AppState -> [Widget ResourceName]
-drawApp (MkAppState items) =
-  [ vBox $
-      concat
-        [ map (drawPath False) $ reverse $ nonEmptyCursorPrev items,
-          [withAttr (attrName "selected") $ drawPath True $ nonEmptyCursorCurrent items],
-          map (drawPath False) $ nonEmptyCursorNext items
-        ]
-  ]
+drawApp (MkAppState items) = [singleLayer]
+  where
+    singleLayer =
+      vBox $
+        concat
+          [ map (drawPath False) (reverse (nonEmptyCursorPrev items)),
+            [withAttr (attrName "selected") $ drawPath True $ nonEmptyCursorCurrent items],
+            map (drawPath False) $ nonEmptyCursorNext items
+          ]
 
 drawPath :: Bool -> ConfigItem -> Widget ResourceName
 drawPath isHighlighted (MkConfigItem title _ _ currentValue _) =

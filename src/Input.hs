@@ -34,34 +34,51 @@ import System.IO.Strict (readFile)
 import Prelude hiding (readFile)
 
 handleEvent :: AppState -> BrickEvent n e -> EventM n (Next AppState)
-handleEvent (MkAppState items) e
-  | VtyEvent vtye <- e =
-      case vtye of
-        EvKey (KChar 'q') [] -> halt (MkAppState items)
-        EvKey KDown [] ->
-          case nonEmptyCursorSelectNext items of
-            Nothing -> continue (MkAppState items)
-            Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
-        EvKey KUp [] ->
-          case nonEmptyCursorSelectPrev items of
-            Nothing -> continue (MkAppState items)
-            Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
-        EvKey KRight [] ->
-          let (MkAppState newItems) = cycleValuesForward (MkAppState items)
-              currentItem = nonEmptyCursorCurrent newItems
-              previousItem = nonEmptyCursorCurrent items
-           in do
-                oldContent <- liftIO $ readFile (path currentItem)
-                let newContent = modify (value previousItem) (value currentItem) (pattern currentItem) (pack oldContent)
-                 in liftIO $ writeFile (path currentItem) (unpack newContent)
-                continue (MkAppState newItems)
-        _ -> continue (MkAppState items)
-  | otherwise = continue (MkAppState items)
+handleEvent currentState event
+  | VtyEvent vtye <- event = handleVtyEvent vtye currentState
+  | otherwise = continue currentState
+
+handleVtyEvent :: Event -> AppState -> EventM n (Next AppState)
+handleVtyEvent event (MkAppState items) = case event of
+  EvKey (KChar 'q') [] -> halt (MkAppState items)
+  EvKey KDown [] -> select next items
+  EvKey KUp [] -> select previous items
+  EvKey KRight [] -> selectNextValueAndModifyTargetFile items
+  _ -> continue (MkAppState items)
+
+selectNextValueAndModifyTargetFile :: NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+selectNextValueAndModifyTargetFile items =
+  let (MkAppState newItems) = cycleValuesForward (MkAppState items)
+      currentItem = nonEmptyCursorCurrent newItems
+      currentValue = value currentItem
+      currentPath = path currentItem
+      currentPattern = pattern currentItem
+      previousItem = nonEmptyCursorCurrent items
+      previousValue = value previousItem
+   in do
+        oldContent <- liftIO $ readFile currentPath
+        let newContent = modify previousValue currentValue currentPattern (pack oldContent)
+         in liftIO $ writeFile currentPath (unpack newContent)
+        continue (MkAppState newItems)
+
+select :: (NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem)) -> NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+select selectionPolicy items = case selectionPolicy items of
+  Nothing -> continue (MkAppState items)
+  Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
+
+next :: NonEmptyCursor a -> Maybe (NonEmptyCursor a)
+next = nonEmptyCursorSelectNext
+
+previous :: NonEmptyCursor a -> Maybe (NonEmptyCursor a)
+previous = nonEmptyCursorSelectPrev
+
+valueMarker :: Text
+valueMarker = "{{value}}"
 
 modify :: Text -> Text -> Text -> Text -> Text
 modify oldValue newValue pattern content = replace oldSubstring newSubstring content
   where
-    oldSubstring = replace "{{value}}" oldValue pattern
+    oldSubstring = replace valueMarker oldValue pattern
     newSubstring = replace oldValue newValue oldSubstring
 
 cycleValuesForward :: AppState -> AppState
@@ -91,6 +108,7 @@ changeNthElement' n fn (x : xs)
   | (n == 0) = (fn x) : xs
   | otherwise = x : (changeNthElement' (n - 1) fn xs)
 
+-- TODO chop long functions apart
 -- TODO write state back to config file (on program exit should suffice)
 -- TODO move all the logic into a more appropriate module
 -- TODO how about some tests, eh?
