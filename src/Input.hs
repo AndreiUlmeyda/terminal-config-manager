@@ -117,15 +117,16 @@ cycleValuesBackward (MkAppState items) = (MkAppState . cycleSelected) items
       Just restored -> const restored
     selectionPosition = nonEmptyCursorSelection items
 
+-- TODO cut the infinite list shenanigans, just split possible values and select appropriately
 cycleForward :: ConfigItem -> ConfigItem
-cycleForward (MkConfigItem title targetFile patt currentValue possibleVals) = (MkConfigItem title targetFile patt nextValue possibleVals)
+cycleForward item = item {value = nextValue}
   where
-    nextValue = (head . Prelude.tail . dropWhile (/= currentValue) . cycle) possibleVals
+    nextValue = (head . Prelude.tail . dropWhile (/= value item) . cycle) (possibleValues item)
 
 cycleBackward :: ConfigItem -> ConfigItem
-cycleBackward (MkConfigItem title targetFile patt currentValue possibleVals) = (MkConfigItem title targetFile patt nextValue possibleVals)
+cycleBackward item = item {value = nextValue}
   where
-    nextValue = (head . Prelude.tail . dropWhile (/= currentValue) . tail . cycle . reverse) possibleVals
+    nextValue = (head . Prelude.tail . dropWhile (/= value item) . tail . cycle . reverse) (possibleValues item)
 
 changeNthElement :: Int -> (a -> a) -> NonEmpty a -> NonEmpty a
 changeNthElement n fn = fromList . changeNthElement' n fn . toList
