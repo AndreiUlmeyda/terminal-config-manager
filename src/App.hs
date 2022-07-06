@@ -34,11 +34,11 @@ tcmApp =
       appChooseCursor = showFirstCursor,
       appHandleEvent = handleEvent,
       appStartEvent = pure,
-      appAttrMap = const $ attrMap currentAttr [(attrName "selected", selectionStyling), (attrName "value", valueStyling)]
+      appAttrMap = (const . attrMap currentAttr) [(attrName "selected", selectionStyling), (attrName "value", valueStyling)]
     }
 
 buildInitialState :: Config -> IO AppState
 buildInitialState (MkConfig configItems) =
   case NE.nonEmpty configItems of
     Nothing -> die errorMsgNoConfigEntries
-    Just ne -> pure $ MkAppState (makeNonEmptyCursor ne)
+    Just ne -> (pure . MkAppState . makeNonEmptyCursor) ne

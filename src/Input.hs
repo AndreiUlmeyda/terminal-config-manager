@@ -59,9 +59,9 @@ selectValueAndModifyTargetFile selectionPolicy items =
       previousItem = nonEmptyCursorCurrent items
       previousValue = value previousItem
    in do
-        oldContent <- liftIO $ readFile currentPath
+        oldContent <- (liftIO . readFile) currentPath
         let newContent = modify previousValue currentValue currentPattern (pack oldContent)
-         in liftIO $ writeFile currentPath (unpack newContent)
+         in (liftIO . writeFile currentPath) (unpack newContent)
         continue (MkAppState newItems)
 
 type ItemSelectionPolicy = NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem)
@@ -69,7 +69,7 @@ type ItemSelectionPolicy = NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor Co
 select :: ItemSelectionPolicy -> NonEmptyCursor ConfigItem -> EventM n (Next AppState)
 select selectionPolicy items = case selectionPolicy items of
   Nothing -> continue (MkAppState items)
-  Just nonEmptyCursor' -> continue $ MkAppState nonEmptyCursor'
+  Just nonEmptyCursor' -> (continue . MkAppState) nonEmptyCursor'
 
 next :: ItemSelectionPolicy
 next = nonEmptyCursorSelectNext
