@@ -43,8 +43,8 @@ handleVtyEvent event (MkAppState items) = case event of
   EvKey (KChar 'q') [] -> halt (MkAppState items)
   EvKey KDown [] -> select next items
   EvKey KUp [] -> select previous items
-  EvKey KRight [] -> selectValueAndModifyTargetFile cycleValuesForward items
-  EvKey KLeft [] -> selectValueAndModifyTargetFile cycleValuesBackward items
+  EvKey KRight [] -> selectValueAndModifyTargetFile (cycleValues elementAfter) items
+  EvKey KLeft [] -> selectValueAndModifyTargetFile (cycleValues elementBefore) items
   _ -> continue (MkAppState items)
 
 type ValueSelectionPolicy = AppState -> AppState
@@ -93,12 +93,6 @@ modify oldValue newValue pattern content = replace oldSubstring newSubstring con
     newSubstring = replace oldValue newValue oldSubstring
 
 -- TODO revisit the naming of the functions below
-cycleValuesForward :: AppState -> AppState
-cycleValuesForward = cycleValues elementAfter
-
-cycleValuesBackward :: AppState -> AppState
-cycleValuesBackward = cycleValues elementBefore
-
 cycleValues :: ValueCyclingPolicy -> AppState -> AppState
 cycleValues policy (MkAppState items) = (MkAppState . cycleSelected) items
   where

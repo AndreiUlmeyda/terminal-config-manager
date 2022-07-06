@@ -1,4 +1,4 @@
-module Util (changeNthElement, elementAfter, elementBefore) where
+module Util (changeNthElement, changeNthElement', elementAfter, elementBefore) where
 
 import Data.List.NonEmpty (NonEmpty, fromList, toList)
 
