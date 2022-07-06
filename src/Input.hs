@@ -19,11 +19,6 @@ import Cursor.Simple.List.NonEmpty
     nonEmptyCursorSelection,
     rebuildNonEmptyCursor,
   )
-import Data.List.NonEmpty as NE
-  ( NonEmpty,
-    fromList,
-    toList,
-  )
 import Data.Text (Text, pack, replace, unpack)
 import Graphics.Vty.Input.Events
   ( Event (EvKey),
@@ -31,6 +26,11 @@ import Graphics.Vty.Input.Events
   )
 import State (AppState (MkAppState))
 import System.IO.Strict (readFile)
+import Util
+  ( changeNthElement,
+    elementAfter,
+    elementBefore,
+  )
 import Prelude hiding (readFile)
 
 handleEvent :: AppState -> BrickEvent n e -> EventM n (Next AppState)
@@ -98,7 +98,7 @@ cycleValuesForward (MkAppState items) = (MkAppState . cycleSelected) items
   where
     restorePosition :: NonEmptyCursor a -> Maybe (NonEmptyCursor a)
     restorePosition = nonEmptyCursorSelectIndex selectionPosition
-    cycledSelected = (makeNonEmptyCursor . changeNthElement selectionPosition cycleForward . rebuildNonEmptyCursor) items
+    cycledSelected = (makeNonEmptyCursor . changeNthElement selectionPosition (cycleTo elementAfter) . rebuildNonEmptyCursor) items
     cycleSelected :: NonEmptyCursor ConfigItem -> NonEmptyCursor ConfigItem
     cycleSelected = case restorePosition cycledSelected of
       Nothing -> const cycledSelected
@@ -110,36 +110,19 @@ cycleValuesBackward (MkAppState items) = (MkAppState . cycleSelected) items
   where
     restorePosition :: NonEmptyCursor a -> Maybe (NonEmptyCursor a)
     restorePosition = nonEmptyCursorSelectIndex selectionPosition
-    cycledSelected = (makeNonEmptyCursor . changeNthElement selectionPosition cycleBackward . rebuildNonEmptyCursor) items
+    cycledSelected = (makeNonEmptyCursor . changeNthElement selectionPosition (cycleTo elementBefore) . rebuildNonEmptyCursor) items
     cycleSelected :: NonEmptyCursor ConfigItem -> NonEmptyCursor ConfigItem
     cycleSelected = case restorePosition cycledSelected of
       Nothing -> const cycledSelected
       Just restored -> const restored
     selectionPosition = nonEmptyCursorSelection items
 
--- TODO cut the infinite list shenanigans, just split possible values and select appropriately
-cycleForward :: ConfigItem -> ConfigItem
-cycleForward item = item {value = nextValue}
-  where
-    nextValue = (head . Prelude.tail . dropWhile (/= value item) . cycle) (possibleValues item)
+type ValueCyclingPolicy = (Text -> [Text] -> Text)
 
-cycleBackward :: ConfigItem -> ConfigItem
-cycleBackward item = item {value = nextValue}
-  where
-    nextValue = (head . Prelude.tail . dropWhile (/= value item) . tail . cycle . reverse) (possibleValues item)
-
-changeNthElement :: Int -> (a -> a) -> NonEmpty a -> NonEmpty a
-changeNthElement n fn = fromList . changeNthElement' n fn . toList
-
-changeNthElement' :: Int -> (a -> a) -> [a] -> [a]
-changeNthElement' _ _ [] = []
-changeNthElement' n fn (x : xs)
-  | (n < 0) = x : xs
-  | (n == 0) = (fn x) : xs
-  | otherwise = x : (changeNthElement' (n - 1) fn xs)
+cycleTo :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
+cycleTo policy item = item {value = policy (value item) (possibleValues item)}
 
 -- TODO chop long functions apart
--- TODO implement cycling backwards
 -- TODO write state back to config file (on program exit should suffice)
 -- TODO move all the logic into a more appropriate module
 -- TODO how about some tests, eh?

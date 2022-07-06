@@ -30,6 +30,7 @@ library
       Input
       Render
       State
+      Util
   other-modules:
       Paths_terminal_config_manager
   hs-source-dirs:
@@ -73,6 +74,7 @@ test-suite terminal-config-manager-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      UtilSpec
       Paths_terminal_config_manager
   hs-source-dirs:
       test
@@ -80,10 +82,12 @@ test-suite terminal-config-manager-test
       DerivingStrategies OverloadedStrings
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      QuickCheck
+    , base >=4.7 && <5
     , brick
     , bytestring
     , cursor
+    , hspec
     , strict
     , terminal-config-manager
     , text
