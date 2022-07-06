@@ -92,25 +92,19 @@ modify oldValue newValue pattern content = replace oldSubstring newSubstring con
     oldSubstring = replace valueMarker oldValue pattern
     newSubstring = replace oldValue newValue oldSubstring
 
--- TODO refactor the duplications below
+-- TODO revisit the naming of the functions below
 cycleValuesForward :: AppState -> AppState
-cycleValuesForward (MkAppState items) = (MkAppState . cycleSelected) items
-  where
-    restorePosition :: NonEmptyCursor a -> Maybe (NonEmptyCursor a)
-    restorePosition = nonEmptyCursorSelectIndex selectionPosition
-    cycledSelected = (makeNonEmptyCursor . changeNthElement selectionPosition (cycleTo elementAfter) . rebuildNonEmptyCursor) items
-    cycleSelected :: NonEmptyCursor ConfigItem -> NonEmptyCursor ConfigItem
-    cycleSelected = case restorePosition cycledSelected of
-      Nothing -> const cycledSelected
-      Just restored -> const restored
-    selectionPosition = nonEmptyCursorSelection items
+cycleValuesForward = cycleValues elementAfter
 
 cycleValuesBackward :: AppState -> AppState
-cycleValuesBackward (MkAppState items) = (MkAppState . cycleSelected) items
+cycleValuesBackward = cycleValues elementBefore
+
+cycleValues :: ValueCyclingPolicy -> AppState -> AppState
+cycleValues policy (MkAppState items) = (MkAppState . cycleSelected) items
   where
     restorePosition :: NonEmptyCursor a -> Maybe (NonEmptyCursor a)
     restorePosition = nonEmptyCursorSelectIndex selectionPosition
-    cycledSelected = (makeNonEmptyCursor . changeNthElement selectionPosition (cycleTo elementBefore) . rebuildNonEmptyCursor) items
+    cycledSelected = (makeNonEmptyCursor . changeNthElement selectionPosition (cycleTo policy) . rebuildNonEmptyCursor) items
     cycleSelected :: NonEmptyCursor ConfigItem -> NonEmptyCursor ConfigItem
     cycleSelected = case restorePosition cycledSelected of
       Nothing -> const cycledSelected
