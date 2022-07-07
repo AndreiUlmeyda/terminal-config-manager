@@ -4,6 +4,7 @@ import Data.List.NonEmpty (NonEmpty, fromList, toList)
 
 data NeighborSelection = SelectSuccessor | SelectPredecessor
 
+-- | Finds the first element equal to the input element inside of a list and returns an element next to it depending on the supplied selection policy.
 elementNextTo :: Eq t => NeighborSelection -> t -> [t] -> t
 elementNextTo neighborSelection targetItem list
   | null list = targetItem

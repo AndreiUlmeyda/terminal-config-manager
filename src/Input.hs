@@ -33,24 +33,28 @@ import Util
   )
 import Prelude hiding (readFile)
 
+-- | Handle an event emitted by brick by unpacking the underlying vty event and passing it the appropriate handler.
 handleEvent :: AppState -> BrickEvent n e -> EventM n (Next AppState)
 handleEvent currentState event
   | VtyEvent vtye <- event = handleVtyEvent vtye currentState
   | otherwise = continue currentState
 
+-- | Handle a keyboard event, up and down keys for selection, left and right for changing the associated value and q to quit.
 handleVtyEvent :: Event -> AppState -> EventM n (Next AppState)
 handleVtyEvent event (MkAppState items) = case event of
   EvKey (KChar 'q') [] -> halt (MkAppState items)
   EvKey KDown [] -> select next items
   EvKey KUp [] -> select previous items
-  EvKey KRight [] -> selectValueAndModifyTargetFile (cycleValues elementAfter) items
-  EvKey KLeft [] -> selectValueAndModifyTargetFile (cycleValues elementBefore) items
+  EvKey KRight [] -> selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleValues (MkValueCyclingPolicy elementAfter))) items
+  EvKey KLeft [] -> selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleValues (MkValueCyclingPolicy elementBefore))) items
   _ -> continue (MkAppState items)
 
-type ValueSelectionPolicy = AppState -> AppState
+data ValueSelectionPolicy = MkValueSelectionPolicy (AppState -> AppState)
 
+-- | Depending on the supplied policy, either switch the value to the next or previous possible value.
+--   A switched value is written back to the configured file at the place identified by the pattern.
 selectValueAndModifyTargetFile :: ValueSelectionPolicy -> NonEmptyCursor ConfigItem -> EventM n (Next AppState)
-selectValueAndModifyTargetFile selectionPolicy items =
+selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
   let (MkAppState newItems) = selectionPolicy (MkAppState items)
       currentItem = nonEmptyCursorCurrent newItems
       currentValue = value currentItem
@@ -60,34 +64,35 @@ selectValueAndModifyTargetFile selectionPolicy items =
       previousValue = value previousItem
    in do
         oldContent <- (liftIO . readFile) currentPath
-        let newContent = modify previousValue currentValue currentPattern (pack oldContent)
+        let (MkContent newContent) = modify (MkValue previousValue) (MkValue currentValue) (MkPattern currentPattern) (MkContent (pack oldContent))
          in (liftIO . writeFile currentPath) (unpack newContent)
         continue (MkAppState newItems)
 
-type ItemSelectionPolicy = NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem)
+data ItemSelectionPolicy = MkItemSelectionPolicy (NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem))
 
+-- | Depending on the supplied policy, either select the next or previous item
 select :: ItemSelectionPolicy -> NonEmptyCursor ConfigItem -> EventM n (Next AppState)
-select selectionPolicy items = case selectionPolicy items of
+select (MkItemSelectionPolicy selectionPolicy) items = case selectionPolicy items of
   Nothing -> continue (MkAppState items)
   Just nonEmptyCursor' -> (continue . MkAppState) nonEmptyCursor'
 
 next :: ItemSelectionPolicy
-next = nonEmptyCursorSelectNext
+next = MkItemSelectionPolicy nonEmptyCursorSelectNext
 
 previous :: ItemSelectionPolicy
-previous = nonEmptyCursorSelectPrev
+previous = MkItemSelectionPolicy nonEmptyCursorSelectPrev
 
 valueMarker :: Text
 valueMarker = "{{value}}"
 
-type Value = Text
+data Value = MkValue Text
 
-type Pattern = Text
+data Pattern = MkPattern Text
 
-type Content = Text
+data Content = MkContent Text
 
 modify :: Value -> Value -> Pattern -> Content -> Content
-modify oldValue newValue pattern content = replace oldSubstring newSubstring content
+modify (MkValue oldValue) (MkValue newValue) (MkPattern pattern) (MkContent content) = MkContent (replace oldSubstring newSubstring content)
   where
     oldSubstring = replace valueMarker oldValue pattern
     newSubstring = replace oldValue newValue oldSubstring
@@ -105,10 +110,10 @@ cycleValues policy (MkAppState items) = (MkAppState . cycleSelected) items
       Just restored -> const restored
     selectionPosition = nonEmptyCursorSelection items
 
-type ValueCyclingPolicy = (Text -> [Text] -> Text)
+data ValueCyclingPolicy = MkValueCyclingPolicy (Text -> [Text] -> Text)
 
 cycleTo :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
-cycleTo policy item = item {value = policy (value item) (possibleValues item)}
+cycleTo (MkValueCyclingPolicy policy) item = item {value = policy (value item) (possibleValues item)}
 
 -- TODO write state back to config file (on program exit should suffice)
 -- TODO move all the logic into a more appropriate module
