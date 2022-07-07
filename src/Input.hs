@@ -27,7 +27,7 @@ import Graphics.Vty.Input.Events
 import State (AppState (MkAppState))
 import System.IO.Strict (readFile)
 import Util
-  ( changeNthElement,
+  ( changeNthElementNonEmpty,
     elementAfter,
     elementBefore,
   )
@@ -98,7 +98,7 @@ cycleValues policy (MkAppState items) = (MkAppState . cycleSelected) items
   where
     restorePosition :: NonEmptyCursor a -> Maybe (NonEmptyCursor a)
     restorePosition = nonEmptyCursorSelectIndex selectionPosition
-    cycledSelected = (makeNonEmptyCursor . changeNthElement selectionPosition (cycleTo policy) . rebuildNonEmptyCursor) items
+    cycledSelected = (makeNonEmptyCursor . changeNthElementNonEmpty selectionPosition (cycleTo policy) . rebuildNonEmptyCursor) items
     cycleSelected :: NonEmptyCursor ConfigItem -> NonEmptyCursor ConfigItem
     cycleSelected = case restorePosition cycledSelected of
       Nothing -> const cycledSelected
@@ -110,9 +110,8 @@ type ValueCyclingPolicy = (Text -> [Text] -> Text)
 cycleTo :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
 cycleTo policy item = item {value = policy (value item) (possibleValues item)}
 
--- TODO chop long functions apart
 -- TODO write state back to config file (on program exit should suffice)
 -- TODO move all the logic into a more appropriate module
--- TODO how about some tests, eh?
 -- TODO find and handle every operation that can fail
 -- TODO handle the case where the target file value and config value dont match
+-- TODO supply docblocks

@@ -7,7 +7,7 @@ import Test.Hspec
     shouldBe,
   )
 import Util
-  ( changeNthElement',
+  ( changeNthElement,
     elementAfter,
     elementBefore,
   )
@@ -37,19 +37,19 @@ spec = do
   describe "changing the element at a certain index inside of a list" $ do
     it "given index 0, an empty list and id as a function should do nothing" $ do
       let emptyList = [] :: [Int]
-       in changeNthElement' 0 id emptyList `shouldBe` emptyList
+       in changeNthElement 0 id emptyList `shouldBe` emptyList
     it "given a negative index, should do nothing" $ do
       let someList = [1, 2, 3] :: [Int]
           someFunction = (*) 2
           negativeIndex = -5
-       in changeNthElement' negativeIndex someFunction someList `shouldBe` someList
+       in changeNthElement negativeIndex someFunction someList `shouldBe` someList
     it "given a valid index and a function should apply it at the appropriate index" $ do
       let someList = [1, 2, 3] :: [Int]
           someFunction = (*) 2
           validIndex = 1
-       in changeNthElement' validIndex someFunction someList `shouldBe` [1, 4, 3]
+       in changeNthElement validIndex someFunction someList `shouldBe` [1, 4, 3]
     it "given an index exceeding the length of the list should do nothing" $ do
       let someList = [1, 2, 3] :: [Int]
           someFunction = (+) 17
           outOfBoundsIndex = 500
-       in changeNthElement' outOfBoundsIndex someFunction someList `shouldBe` someList
+       in changeNthElement outOfBoundsIndex someFunction someList `shouldBe` someList
