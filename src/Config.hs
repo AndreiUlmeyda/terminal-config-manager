@@ -1,4 +1,4 @@
-module Config (Config (MkConfig), ConfigItem (..), loadConfig) where
+module Config (Config (MkConfig), ConfigItem (..), loadConfig, Config.Value (MkValue)) where
 
 import Data.ByteString (readFile)
 import Data.Text (Text)
@@ -8,6 +8,7 @@ import Data.Yaml
     decodeThrow,
     (.:),
   )
+import GHC.Generics (Generic)
 import Prelude hiding (readFile)
 
 testYamlFilePath :: FilePath
@@ -19,8 +20,8 @@ data ConfigItem = MkConfigItem
   { title :: Text,
     path :: FilePath,
     pattern :: Text,
-    value :: Text,
-    possibleValues :: [Text]
+    value :: Config.Value,
+    possibleValues :: [Config.Value]
   }
   deriving stock (Eq, Show)
 
@@ -39,6 +40,10 @@ instance FromJSON ConfigItem where
       <*> v .: "value"
       <*> v .: "possibleValues"
   parseJSON _ = fail "Each config entry is expected to contain 4 items. 'title', 'path', 'value and 'possibleValues'"
+
+data Value = MkValue Text deriving stock (Show, Eq, Generic)
+
+instance FromJSON Config.Value
 
 loadConfig :: IO Config
 loadConfig = readFile testYamlFilePath >>= decodeThrow

@@ -36,7 +36,7 @@ library
   hs-source-dirs:
       src
   default-extensions:
-      DerivingStrategies OverloadedStrings
+      DerivingStrategies OverloadedStrings DeriveGeneric
   ghc-options: -O2 -Wall -Wincomplete-uni-patterns -Wmonomorphism-restriction -Wmissing-local-signatures -Wmissing-export-lists -Wmissing-home-modules -Widentities -Wredundant-constraints -Wpartial-fields -Wcpp-undef -Wmissing-deriving-strategies -Wunused-packages -Wunused-type-patterns -Wcompat
   build-depends:
       base >=4.7 && <5
@@ -56,7 +56,7 @@ executable terminal-config-manager
   hs-source-dirs:
       app
   default-extensions:
-      DerivingStrategies OverloadedStrings
+      DerivingStrategies OverloadedStrings DeriveGeneric
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
@@ -79,7 +79,7 @@ test-suite terminal-config-manager-test
   hs-source-dirs:
       test
   default-extensions:
-      DerivingStrategies OverloadedStrings
+      DerivingStrategies OverloadedStrings DeriveGeneric
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck

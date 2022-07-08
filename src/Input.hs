@@ -7,7 +7,7 @@ import Brick
     continue,
     halt,
   )
-import Config (ConfigItem (..))
+import Config (ConfigItem (..), Value (..))
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
@@ -64,7 +64,7 @@ selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
       previousValue = value previousItem
    in do
         oldContent <- (liftIO . readFile) currentPath
-        let (MkContent newContent) = modify (MkValue previousValue) (MkValue currentValue) (MkPattern currentPattern) (MkContent (pack oldContent))
+        let (MkContent newContent) = modify previousValue currentValue (MkPattern currentPattern) (MkContent (pack oldContent))
          in (liftIO . writeFile currentPath) (unpack newContent)
         continue (MkAppState newItems)
 
@@ -84,8 +84,6 @@ previous = MkItemSelectionPolicy nonEmptyCursorSelectPrev
 
 valueMarker :: Text
 valueMarker = "{{value}}"
-
-data Value = MkValue Text
 
 data Pattern = MkPattern Text
 
@@ -110,7 +108,7 @@ cycleValues policy (MkAppState items) = (MkAppState . cycleSelected) items
       Just restored -> const restored
     selectionPosition = nonEmptyCursorSelection items
 
-data ValueCyclingPolicy = MkValueCyclingPolicy (Text -> [Text] -> Text)
+data ValueCyclingPolicy = MkValueCyclingPolicy (Value -> [Value] -> Value)
 
 cycleTo :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
 cycleTo (MkValueCyclingPolicy policy) item = item {value = policy (value item) (possibleValues item)}
