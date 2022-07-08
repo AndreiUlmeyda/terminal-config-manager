@@ -7,7 +7,7 @@ import Brick
     continue,
     halt,
   )
-import Config (ConfigItem (..), Value (..))
+import Config (ConfigItem (..), Pattern (MkPattern), TargetValue (..))
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
@@ -57,14 +57,14 @@ selectValueAndModifyTargetFile :: ValueSelectionPolicy -> NonEmptyCursor ConfigI
 selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
   let (MkAppState newItems) = selectionPolicy (MkAppState items)
       currentItem = nonEmptyCursorCurrent newItems
-      currentValue = value currentItem
+      currentValue = targetValue currentItem
       currentPath = path currentItem
       currentPattern = pattern currentItem
       previousItem = nonEmptyCursorCurrent items
-      previousValue = value previousItem
+      previousValue = targetValue previousItem
    in do
         oldContent <- (liftIO . readFile) currentPath
-        let (MkContent newContent) = modify previousValue currentValue (MkPattern currentPattern) (MkContent (pack oldContent))
+        let (MkContent newContent) = modify previousValue currentValue currentPattern (MkContent (pack oldContent))
          in (liftIO . writeFile currentPath) (unpack newContent)
         continue (MkAppState newItems)
 
@@ -85,12 +85,10 @@ previous = MkItemSelectionPolicy nonEmptyCursorSelectPrev
 valueMarker :: Text
 valueMarker = "{{value}}"
 
-data Pattern = MkPattern Text
-
 data Content = MkContent Text
 
-modify :: Value -> Value -> Pattern -> Content -> Content
-modify (MkValue oldValue) (MkValue newValue) (MkPattern pattern) (MkContent content) = MkContent (replace oldSubstring newSubstring content)
+modify :: TargetValue -> TargetValue -> Pattern -> Content -> Content
+modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern pattern) (MkContent content) = MkContent (replace oldSubstring newSubstring content)
   where
     oldSubstring = replace valueMarker oldValue pattern
     newSubstring = replace oldValue newValue oldSubstring
@@ -108,10 +106,10 @@ cycleValues policy (MkAppState items) = (MkAppState . cycleSelected) items
       Just restored -> const restored
     selectionPosition = nonEmptyCursorSelection items
 
-data ValueCyclingPolicy = MkValueCyclingPolicy (Value -> [Value] -> Value)
+data ValueCyclingPolicy = MkValueCyclingPolicy (TargetValue -> [TargetValue] -> TargetValue)
 
 cycleTo :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
-cycleTo (MkValueCyclingPolicy policy) item = item {value = policy (value item) (possibleValues item)}
+cycleTo (MkValueCyclingPolicy policy) item = item {targetValue = policy (targetValue item) (possibleValues item)}
 
 -- TODO write state back to config file (on program exit should suffice)
 -- TODO move all the logic into a more appropriate module

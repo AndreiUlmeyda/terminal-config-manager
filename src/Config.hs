@@ -1,4 +1,4 @@
-module Config (Config (MkConfig), ConfigItem (..), loadConfig, Config.Value (MkValue)) where
+module Config (Config (MkConfig), ConfigItem (..), loadConfig, TargetValue (MkTargetValue), Pattern (MkPattern)) where
 
 import Data.ByteString (readFile)
 import Data.Text (Text)
@@ -19,9 +19,9 @@ data Config = MkConfig [ConfigItem] deriving stock (Eq, Show)
 data ConfigItem = MkConfigItem
   { title :: Text,
     path :: FilePath,
-    pattern :: Text,
-    value :: Config.Value,
-    possibleValues :: [Config.Value]
+    pattern :: Pattern,
+    targetValue :: TargetValue,
+    possibleValues :: [TargetValue]
   }
   deriving stock (Eq, Show)
 
@@ -37,13 +37,17 @@ instance FromJSON ConfigItem where
       <$> v .: "title"
       <*> v .: "path"
       <*> v .: "pattern"
-      <*> v .: "value"
+      <*> v .: "targetValue"
       <*> v .: "possibleValues"
   parseJSON _ = fail "Each config entry is expected to contain 4 items. 'title', 'path', 'value and 'possibleValues'"
 
-data Value = MkValue Text deriving stock (Show, Eq, Generic)
+data TargetValue = MkTargetValue Text deriving stock (Show, Eq, Generic)
 
-instance FromJSON Config.Value
+instance FromJSON TargetValue
+
+data Pattern = MkPattern Text deriving stock (Show, Eq, Generic)
+
+instance FromJSON Pattern
 
 loadConfig :: IO Config
 loadConfig = readFile testYamlFilePath >>= decodeThrow

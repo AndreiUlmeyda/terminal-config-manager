@@ -10,7 +10,7 @@ import Brick
     vBox,
     withAttr,
   )
-import Config (ConfigItem (MkConfigItem), Value (MkValue))
+import Config (ConfigItem (MkConfigItem), TargetValue (MkTargetValue))
 import Cursor.Simple.List.NonEmpty
   ( nonEmptyCursorCurrent,
     nonEmptyCursorNext,
@@ -39,7 +39,7 @@ drawApp (MkAppState items) = [singleLayer]
         ]
 
 drawPath :: Bool -> ConfigItem -> Widget ResourceName
-drawPath isHighlighted (MkConfigItem title _ _ (MkValue currentValue) _) =
+drawPath isHighlighted (MkConfigItem title _ _ (MkTargetValue currentValue) _) =
   hBox
     [ txt title,
       str " → ",
