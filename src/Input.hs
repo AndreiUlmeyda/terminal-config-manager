@@ -116,3 +116,4 @@ cycleTo (MkValueCyclingPolicy policy) item = item {targetValue = policy (targetV
 -- TODO find and handle every operation that can fail
 -- TODO handle the case where the target file value and config value dont match
 -- TODO supply docblocks
+-- TODO handle case where targetValue is not an element of possibleValues
