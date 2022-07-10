@@ -119,13 +119,3 @@ data ValueCyclingPolicy = MkValueCyclingPolicy (TargetValue -> [TargetValue] -> 
 -- | Switch the active target value to another value contained in possibleValues according to the supplied policy.
 cycleTo :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
 cycleTo (MkValueCyclingPolicy policy) item = item {targetValue = policy (targetValue item) (possibleValues item)}
-
--- TODO write state back to config file (on program exit should suffice)
--- TODO move all the logic into a more appropriate module
--- TODO find and handle every operation that can fail
--- TODO handle the case where the target file value and config value dont match
--- TODO handle the case where the pattern does not match anything 
--- TODO supply docblocks
--- TODO handle case where targetValue is not an element of possibleValues
--- TODO revisit the naming of the functions the 'cycling' functions
--- TODO wrap the yaml parsing exceptions and communicate that it happened during config file parsing
