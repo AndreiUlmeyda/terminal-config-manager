@@ -28,28 +28,31 @@ import State
     ResourceName,
   )
 
+-- The rendering consists of a single layer, each line consists of an items title and current value. The selected line
+-- is rendered boldface, the selected value, additionally, has a separate color.
 drawApp :: AppState -> [Widget ResourceName]
 drawApp (MkAppState items) = [singleLayer]
   where
     singleLayer =
       (vBox . concat)
-        [ map (drawPath False) (reverse (nonEmptyCursorPrev items)),
-          [(withAttr (attrName "selected") . drawPath True . nonEmptyCursorCurrent) items],
-          (map (drawPath False) . nonEmptyCursorNext) items
+        [ map (drawPath NotHighlighted) (reverse (nonEmptyCursorPrev items)),
+          [(withAttr (attrName "selected") . drawPath Highlighted . nonEmptyCursorCurrent) items],
+          (map (drawPath NotHighlighted) . nonEmptyCursorNext) items
         ]
 
-drawPath :: Bool -> ConfigItem -> Widget ResourceName
-drawPath isHighlighted (MkConfigItem title _ _ (MkTargetValue currentValue) _) =
+data Highlighting = Highlighted | NotHighlighted deriving stock (Eq)
+
+drawPath :: Highlighting -> ConfigItem -> Widget ResourceName
+drawPath highlighting (MkConfigItem title _ _ (MkTargetValue currentValue) _) =
   hBox
     [ txt title,
       str " → ",
-      (attachAttrWhenHighlighted isHighlighted . txt) currentValue
+      (attachAttrWhenHighlighted highlighting . txt) currentValue
     ]
 
-attachAttrWhenHighlighted :: Bool -> Widget n -> Widget n
-attachAttrWhenHighlighted isHighlighted
-  | isHighlighted = withAttr (attrName "value")
-  | otherwise = id
+attachAttrWhenHighlighted :: Highlighting -> Widget n -> Widget n
+attachAttrWhenHighlighted Highlighted = withAttr (attrName "value")
+attachAttrWhenHighlighted NotHighlighted = id
 
 selectionStyling :: Attr
 selectionStyling = withStyle currentAttr bold
