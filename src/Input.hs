@@ -76,9 +76,13 @@ select (MkItemSelectionPolicy selectionPolicy) items = case selectionPolicy item
   Nothing -> continue (MkAppState items)
   Just nonEmptyCursor' -> (continue . MkAppState) nonEmptyCursor'
 
+-- | Since the item is represented as a non empty colletion the policy for selecting the next one is
+--   just the respective function from the non empty cursor library
 next :: ItemSelectionPolicy
 next = MkItemSelectionPolicy nonEmptyCursorSelectNext
 
+-- | Since the item is represented as a non empty colletion the policy for selecting the previous one is
+--   just the respective function from the non empty cursor library
 previous :: ItemSelectionPolicy
 previous = MkItemSelectionPolicy nonEmptyCursorSelectPrev
 
@@ -87,13 +91,17 @@ valueMarker = "{{value}}"
 
 data Content = MkContent Text
 
+-- | Substitute the newly selected value into the old content of the target file. Both the previous value
+--   and the pattern are needed to choose the correct substitution.
 modify :: TargetValue -> TargetValue -> Pattern -> Content -> Content
-modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern pattern) (MkContent content) = MkContent (replace oldSubstring newSubstring content)
+modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern pattern) (MkContent content) =
+  MkContent (replace oldSubstring newSubstring content)
   where
     oldSubstring = replace valueMarker oldValue pattern
     newSubstring = replace oldValue newValue oldSubstring
 
--- TODO revisit the naming of the functions below
+-- | Produce a new AppState where the value of the currently selected item is switched to a new one according to the
+--   supplied policy
 cycleValues :: ValueCyclingPolicy -> AppState -> AppState
 cycleValues policy (MkAppState items) = (MkAppState . cycleSelected) items
   where
@@ -108,6 +116,7 @@ cycleValues policy (MkAppState items) = (MkAppState . cycleSelected) items
 
 data ValueCyclingPolicy = MkValueCyclingPolicy (TargetValue -> [TargetValue] -> TargetValue)
 
+-- | Switch the active target value to another value contained in possibleValues according to the supplied policy.
 cycleTo :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
 cycleTo (MkValueCyclingPolicy policy) item = item {targetValue = policy (targetValue item) (possibleValues item)}
 
@@ -115,5 +124,8 @@ cycleTo (MkValueCyclingPolicy policy) item = item {targetValue = policy (targetV
 -- TODO move all the logic into a more appropriate module
 -- TODO find and handle every operation that can fail
 -- TODO handle the case where the target file value and config value dont match
+-- TODO handle the case where the pattern does not match anything 
 -- TODO supply docblocks
 -- TODO handle case where targetValue is not an element of possibleValues
+-- TODO revisit the naming of the functions the 'cycling' functions
+-- TODO wrap the yaml parsing exceptions and communicate that it happened during config file parsing

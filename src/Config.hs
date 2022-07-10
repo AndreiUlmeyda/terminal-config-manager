@@ -5,7 +5,7 @@ import Data.Text (Text)
 import Data.Yaml
   ( FromJSON (parseJSON),
     Value (Object),
-    decodeThrow,
+    decodeFileThrow,
     (.:),
   )
 import GHC.Generics (Generic)
@@ -50,4 +50,4 @@ data Pattern = MkPattern Text deriving stock (Show, Eq, Generic)
 instance FromJSON Pattern
 
 loadConfig :: IO Config
-loadConfig = readFile testYamlFilePath >>= decodeThrow
+loadConfig = decodeFileThrow testYamlFilePath
