@@ -1,4 +1,4 @@
-module Render (drawApp, selectionStyling, valueStyling) where
+module Render (drawTCM, selectionStyling, valueStyling) where
 
 import Brick
   ( Widget,
@@ -30,15 +30,13 @@ import State
 
 -- The rendering consists of a single layer, each line consists of an items title and current value. The selected line
 -- is rendered boldface, the selected value, additionally, has a separate color.
-drawApp :: AppState -> [Widget ResourceName]
-drawApp (MkAppState items) = [singleLayer]
+drawTCM :: AppState -> [Widget ResourceName]
+drawTCM (MkAppState items) = [singleLayer]
   where
-    singleLayer =
-      (vBox . concat)
-        [ map (drawPath NotHighlighted) (reverse (nonEmptyCursorPrev items)),
-          [(withAttr (attrName "selected") . drawPath Highlighted . nonEmptyCursorCurrent) items],
-          (map (drawPath NotHighlighted) . nonEmptyCursorNext) items
-        ]
+    singleLayer = (vBox . concat) [ itemsAboveSelected, selectedItem, itemsBelowSelected ]
+    itemsAboveSelected = map (drawPath NotHighlighted) (reverse (nonEmptyCursorPrev items))
+    selectedItem = [(withAttr (attrName "selected") . drawPath Highlighted . nonEmptyCursorCurrent) items]
+    itemsBelowSelected = (map (drawPath NotHighlighted) . nonEmptyCursorNext) items
 
 data Highlighting = Highlighted | NotHighlighted deriving stock (Eq)
 
