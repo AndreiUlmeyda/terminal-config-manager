@@ -50,11 +50,11 @@ data Pattern = MkPattern Text deriving stock (Show, Eq, Generic)
 
 instance FromJSON Pattern
 
--- Parse the YAML config file into the types specified above. Throw an error if something is missing.
-
+-- | Parse the YAML config file into the types specified above. Throw an error if something is missing.
 loadConfig :: IO Config
 loadConfig = decodeFileEither testYamlFilePath >>= handleParsingErrors
 
+-- | Indicate that the yaml errors encountered here happened during config file parsing.
 handleParsingErrors :: Either ParseException Config -> IO Config
 handleParsingErrors (Right config) = return config
 handleParsingErrors (Left parseException) = die $ "There was an error while parsing the configuration file. The details are:\n" ++ (show parseException)
