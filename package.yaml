@@ -28,7 +28,6 @@ dependencies:
 - cursor
 - text
 - yaml
-- bytestring
 - strict
 
 library:

@@ -41,7 +41,6 @@ library
   build-depends:
       base >=4.7 && <5
     , brick
-    , bytestring
     , cursor
     , strict
     , text
@@ -61,7 +60,6 @@ executable terminal-config-manager
   build-depends:
       base >=4.7 && <5
     , brick
-    , bytestring
     , cursor
     , strict
     , terminal-config-manager
@@ -85,7 +83,6 @@ test-suite terminal-config-manager-test
       QuickCheck
     , base >=4.7 && <5
     , brick
-    , bytestring
     , cursor
     , hspec
     , strict

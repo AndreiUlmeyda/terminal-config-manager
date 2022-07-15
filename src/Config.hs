@@ -1,14 +1,15 @@
 module Config (Config (MkConfig), ConfigItem (..), loadConfig, TargetValue (MkTargetValue), Pattern (MkPattern)) where
 
-import Data.ByteString (readFile)
 import Data.Text (Text)
 import Data.Yaml
   ( FromJSON (parseJSON),
+    ParseException,
     Value (Object),
-    decodeFileThrow,
+    decodeFileEither,
     (.:),
   )
 import GHC.Generics (Generic)
+import System.Exit (die)
 import Prelude hiding (readFile)
 
 testYamlFilePath :: FilePath
@@ -39,7 +40,7 @@ instance FromJSON ConfigItem where
       <*> v .: "pattern"
       <*> v .: "targetValue"
       <*> v .: "possibleValues"
-  parseJSON _ = fail "Each config entry is expected to contain 4 items. 'title', 'path', 'value and 'possibleValues'"
+  parseJSON _ = fail "Each config entry is expected to contain 4 items. 'title', 'path', 'targetValue' and 'possibleValues'"
 
 data TargetValue = MkTargetValue Text deriving stock (Show, Eq, Generic)
 
@@ -49,5 +50,11 @@ data Pattern = MkPattern Text deriving stock (Show, Eq, Generic)
 
 instance FromJSON Pattern
 
+-- Parse the YAML config file into the types specified above. Throw an error if something is missing.
+
 loadConfig :: IO Config
-loadConfig = decodeFileThrow testYamlFilePath
+loadConfig = decodeFileEither testYamlFilePath >>= handleParsingErrors
+
+handleParsingErrors :: Either ParseException Config -> IO Config
+handleParsingErrors (Right config) = return config
+handleParsingErrors (Left parseException) = die $ "There was an error while parsing the configuration file. The details are:\n" ++ (show parseException)

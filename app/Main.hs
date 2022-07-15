@@ -10,7 +10,7 @@ import System.Exit (exitSuccess)
 
 -- | This is an application to manage selected values scattered over many different files quickly.
 --
---   A common use case will probably be to quickly switch single values inside of a set ofconfig files
+--   A common use case will probably be to quickly switch single values inside of a set of config files
 --   without having to:
 
 --     navigate to the file
