@@ -1,3 +1,7 @@
 .stack-work/
 *~
 bin/
+lastenheft.aux
+lastenheft.log
+lastenheft.synctex.gz
+lastenheft.pdf

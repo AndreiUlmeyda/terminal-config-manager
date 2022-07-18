@@ -27,7 +27,7 @@ import System.Exit (die)
 errorMsgNoConfigEntries :: String
 errorMsgNoConfigEntries = "There are no entries in the config file."
 
--- For this application only event handling, drawing and some attributes need to be implemented. The rest are default
+-- | For this application only event handling, drawing and some attributes need to be implemented. The rest are default
 -- implementations.
 tcmApp :: App AppState e ResourceName
 tcmApp =
@@ -39,7 +39,7 @@ tcmApp =
       appStartEvent = pure
     }
 
--- Wrap the config file entries in a nonempty list.
+-- | Wrap the config file entries in a nonempty list.
 buildInitialState :: Config -> IO AppState
 buildInitialState (MkConfig configItems) =
   case NE.nonEmpty configItems of

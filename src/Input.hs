@@ -76,7 +76,7 @@ select (MkItemSelectionPolicy selectionPolicy) items = case selectionPolicy item
   Nothing -> continue (MkAppState items)
   Just nonEmptyCursor' -> (continue . MkAppState) nonEmptyCursor'
 
--- | Since the item is represented as a non empty colletion the policy for selecting the next one is
+-- | Since the item is represented as a non empty collection the policy for selecting the next one is
 --   just the respective function from the non empty cursor library
 next :: ItemSelectionPolicy
 next = MkItemSelectionPolicy nonEmptyCursorSelectNext
