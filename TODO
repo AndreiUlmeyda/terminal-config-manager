@@ -5,3 +5,4 @@
 -- TODO handle the case where the pattern does not match anything
 -- TODO handle the case where targetValue is not an element of possibleValues
 -- TODO revisit the naming of the functions the 'cycling' functions
+-- TODO add README

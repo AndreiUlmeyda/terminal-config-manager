@@ -6,3 +6,5 @@ lastenheft.log
 lastenheft.synctex.gz
 lastenheft.pdf
 *.toc
+*.fls
+*.fdb_latexmk

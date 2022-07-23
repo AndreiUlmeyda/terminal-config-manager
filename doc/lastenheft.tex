@@ -6,6 +6,7 @@
 \usepackage{ngerman}
 \usepackage{relsize}
 \usepackage{caption}
+\usepackage{tabularx}
 
 \author{Adrian Schurz}
 \title{Lastenheft\\[0.2em]\smaller{}Terminal-Config-Manager (Arbeitstitel)}
@@ -24,20 +25,23 @@ Dieses Dokument dient als Lastenheft im Rahmen der externen Zulassung  zur Absch
 \section{Motivation}
 Bei der Arbeit an Software-Diensten, welche eng mit einer Vielzahl anderer solcher Dienste interagieren, ergab sich für mich der Bedarf, zum Einen, möglichst schnell gezielte Werte in den Konfigurationsdateien einzelner Dienste oder Hilfsprogramme auf meinem lokalen, zur Entwicklung genutzten Computer einsehen zu können. Und zum Anderen ergab sich der Bedarf diese Werte möglichst schnell auf einen neuen Wert innerhalb einer kleinen Menge der häufigsten Werte zu setzen.
 
+\subsection{Bisheriger Arbeitsablauf}
+\subsection{Zielarbeitsablauf}
+
 \begin{center}
-\begin{table}[h]
-	\caption{Nutzungsszenarien und Vergleich der Arbeitsabläufe}
-\begin{tabular}{|c|c|c|}
-	\hline
-	Szenario & alter Arbeitsablauf & neuer Arbeitsablauf \\
-	\hline
-	Akzeptanztests schlagen fehl &  &  \\
-	\hline
-\end{tabular}
-\end{table}
+	\begin{table}[h]
+		\caption{Nutzungsszenarien und Vergleich der Arbeitsabläufe}
+		\begin{tabularx}{0.9\textwidth}{|c|c|c|>{\raggedright\arraybackslash}X|}
+			\hline
+			Szenario & alter Arbeitsablauf & neuer Arbeitsablauf \\
+			\hline
+		\end{tabularx}
+	\end{table}
 \end{center}
 
 \section{Nicht-Ziele}
-Das automatische Ausführen von Folgeaktionen nach Änderung eines Wertes. Begründung: 
+Das automatische Ausführen von Folgeaktionen nach Änderung eines Wertes. Begründung:
 
 \end{document}
+
+% TODO Überlegung: Wert bei jedem switch ändern vs erst nach Enter
