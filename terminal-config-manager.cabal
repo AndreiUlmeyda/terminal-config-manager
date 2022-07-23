@@ -27,9 +27,11 @@ library
   exposed-modules:
       App
       Config
+      FileModification
       Input
       Render
       State
+      StateTransition
       Util
   other-modules:
       Paths_terminal_config_manager
