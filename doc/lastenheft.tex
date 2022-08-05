@@ -3,10 +3,11 @@
 \documentclass[a4paper,11pt]{article}
 
 \usepackage{amsmath}
-\usepackage{ngerman}
+\usepackage[ngerman]{babel}
 \usepackage{relsize}
 \usepackage{caption}
 \usepackage{tabularx}
+\usepackage{minted}
 
 \author{Adrian Schurz}
 \title{Lastenheft\\[0.2em]\smaller{}Terminal-Config-Manager (Arbeitstitel)}
@@ -61,10 +62,18 @@ Das automatische Ausführen von Folgeaktionen nach Änderung eines Wertes. \text
 Die möglichen Arten von Folgeaktionen, bspw. das (Neu-)Starten von Anwendungen,
 das Löschen von Cachedateien, usw., sind so vielfältig, dass zu diesem Zweck vom
 Programm beliebige Shellskripte o.ä. ausgeführt werden müssten. Das erhöht zum Einen
-die Komplexität und zum Anderen wird die Betrachtung der Sicherheitsaspekte
-wesentlich schwieriger. Um Folgeaktionen auszuführen exisiteren eine Vielzahl
-spezialisierter Tools die jeweils einem begrenzten Aufgabenbereich gerecht werden
-und sich miteinander kombinieren lassen.
+die Komplexität des Programms und zum Anderen wird die Betrachtung der
+Sicherheitsaspekte wesentlich schwieriger. Um Folgeaktionen auszuführen exisiteren
+eine Vielzahl spezialisierter Tools die jeweils einem begrenzten Aufgabenbereich
+gerecht werden und sich gut miteinander kombinieren lassen.
+
+\begin{listing}[!ht]
+	\caption{Beispiel zum Ausführen einer Folgeaktion nach Änderung an an einer
+		Konfigurationsdatei (Bash)}
+	\begin{minted}{bash}
+$ ls <Konfigurationsdateipfad> | entr Folgeaktion.sh
+\end{minted}
+\end{listing}
 
 \end{document}
 
