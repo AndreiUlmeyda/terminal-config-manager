@@ -20,27 +20,51 @@
 \tableofcontents
 
 \section{Einführung}
-Dieses Dokument dient als Lastenheft im Rahmen der externen Zulassung  zur Abschlussprüfung einer Ausbildung zum Fachinformatiker für Anwendungsentwicklung bei der IHK Dresden. Es beschreibt das Ergebnis der Anforderungsanalyse des gewählten Softwareprojekts. Dazu gehören u.a. die Motivation des Projekts, die Anforderungen sowie Nicht-Anforderungen an die Software als auch die prüfbaren Kriterien anhand derer die Abnahme des fertigen Produkts zu erfolgen hat.
+\paragraph{}
+Dieses Dokument dient als Lastenheft im Rahmen der externen Zulassung
+zur Abschlussprüfung einer Ausbildung zum Fachinformatiker für
+Anwendungsentwicklung bei der IHK Dresden. Es beschreibt das Ergebnis der
+Anforderungsanalyse des gewählten Softwareprojekts. Dazu gehören u.a. die
+Motivation des Projekts, die Anforderungen sowie Nicht-Anforderungen an
+die Software als auch die prüfbaren Kriterien anhand derer die Abnahme des
+fertigen Produkts zu erfolgen hat.
 
 \section{Motivation}
-Bei der Arbeit an Software-Diensten, welche eng mit einer Vielzahl anderer solcher Dienste interagieren, ergab sich für mich der Bedarf, zum Einen, möglichst schnell gezielte Werte in den Konfigurationsdateien einzelner Dienste oder Hilfsprogramme auf meinem lokalen, zur Entwicklung genutzten Computer einsehen zu können. Und zum Anderen ergab sich der Bedarf diese Werte möglichst schnell auf einen neuen Wert innerhalb einer kleinen Menge der häufigsten Werte zu setzen.
+\paragraph{}
+Bei der Arbeit an Software-Diensten, welche eng mit einer Vielzahl anderer
+solcher Dienste über mehrere Umgebungen hinweg interagieren, ergaben sich
+für mich zwei häufige Anwendungsfälle (\textbf{A} und \textbf{B}) beim Umgang mit
+Konfigurationsdateien.
+\paragraph{A}
+Das Nachschlagen gezielter Werte in den Konfigurationsdateien
+einzelner Dienste oder Hilfsprogramme auf meinem lokalen, zur Entwicklung
+genutzten Computer.
+\paragraph{B}
+Das Umschalten einer kleinen Menge häufig zu ändernder Konfigurationswerte
+zwischen verschiedenen Werten. Die Anzahl verschiedener Zielwerte ist dabei
+meist sehr begrenzt.
+\paragraph{}
+Diese beiden häufigen Arbeitsvorgänge möchte ich so gut wie möglich beschleunigen.
 
-\subsection{Bisheriger Arbeitsablauf}
-\subsection{Zielarbeitsablauf}
+\subsection{IST-Zustand}
+\subsection{SOLL-Zustand}
 
 \begin{center}
 	\begin{table}[h]
 		\caption{Nutzungsszenarien und Vergleich der Arbeitsabläufe}
-		\begin{tabularx}{0.9\textwidth}{|c|c|c|>{\raggedright\arraybackslash}X|}
-			\hline
-			Szenario & alter Arbeitsablauf & neuer Arbeitsablauf \\
-			\hline
-		\end{tabularx}
 	\end{table}
 \end{center}
 
 \section{Nicht-Ziele}
-Das automatische Ausführen von Folgeaktionen nach Änderung eines Wertes. Begründung:
+\paragraph{A}
+Das automatische Ausführen von Folgeaktionen nach Änderung eines Wertes. \textbf{Begründung:}
+Die möglichen Arten von Folgeaktionen, bspw. das (Neu-)Starten von Anwendungen,
+das Löschen von Cachedateien, usw., sind so vielfältig, dass zu diesem Zweck vom
+Programm beliebige Shellskripte o.ä. ausgeführt werden müssten. Das erhöht zum Einen
+die Komplexität und zum Anderen wird die Betrachtung der Sicherheitsaspekte
+wesentlich schwieriger. Um Folgeaktionen auszuführen exisiteren eine Vielzahl
+spezialisierter Tools die jeweils einem begrenzten Aufgabenbereich gerecht werden
+und sich miteinander kombinieren lassen.
 
 \end{document}
 
