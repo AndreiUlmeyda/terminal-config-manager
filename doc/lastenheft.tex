@@ -62,19 +62,33 @@ Das automatische Ausführen von Folgeaktionen nach Änderung eines Wertes. \text
 Die möglichen Arten von Folgeaktionen, bspw. das (Neu-)Starten von Anwendungen,
 das Löschen von Cachedateien, usw., sind so vielfältig, dass zu diesem Zweck vom
 Programm beliebige Shellskripte o.ä. ausgeführt werden müssten. Das erhöht zum Einen
-die Komplexität des Programms und zum Anderen wird die Betrachtung der
-Sicherheitsaspekte wesentlich schwieriger. Um Folgeaktionen auszuführen exisiteren
+unnötigerweise die Komplexität des Programms und zum Anderen wird die Betrachtung von
+Sicherheitsaspekten wesentlich schwieriger. Um Folgeaktionen auszuführen exisiteren
 eine Vielzahl spezialisierter Tools die jeweils einem begrenzten Aufgabenbereich
 gerecht werden und sich gut miteinander kombinieren lassen.
 
-\begin{listing}[!ht]
-	\caption{Beispiel zum Ausführen einer Folgeaktion nach Änderung an an einer
-		Konfigurationsdatei (Bash)}
+\begin{figure}[!ht]
+	\caption[cdba]{Beispiel zum Ausführen einer beliebigen Folgeaktion nach
+		Änderung an einer Konfigurationsdatei in bash\footnotemark mittels entr.\footnotemark}
 	\begin{minted}{bash}
-$ ls <Konfigurationsdateipfad> | entr Folgeaktion.sh
+ls <Konfigurationsdateipfad> | entr Folgeaktion.sh
 \end{minted}
-\end{listing}
+\end{figure}
+\footnotetext[1]{https://www.gnu.org/software/bash/}
+\footnotetext[2]{https://eradman.com/entrproject/}
+
+\paragraph{B}
+Das gleichzeitige Ändern mehrerer Konfigurationswerte in festgelegten Kombinationen
+oder "Profilen". \textbf{Begründung:} Wenn mehrere voneinander abhängige Konfigurationswerte
+existieren, die beim Wechsel hin zu einem anderen Nutzungsszenario immer gleichzeitig
+geändert werden müssen, dann wäre es sinnvoller das Konfigurationsschema der jeweiligen
+Anwendung anzupassen, sodass das Nutzungszenario von einem einzelnen Wert bestimmt wird.
+
+\paragraph{C}
+Ein grafisches Benutzerinterface. Dazu gehören Webinterfaces.
+
 
 \end{document}
 
+% TODO Nichtziel B besser begründen
 % TODO Überlegung: Wert bei jedem switch ändern vs erst nach Enter
