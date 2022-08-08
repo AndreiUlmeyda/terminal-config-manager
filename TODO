@@ -1,5 +1,4 @@
 -- TODO write state back to config file (on program exit or on each value change)
--- TODO move file modification logic from StateTransitions into a separate module
 -- TODO find and handle every operation that can fail
 -- TODO handle the case where the target file value and config value dont match
 -- TODO handle the case where the pattern does not match anything
@@ -7,4 +6,11 @@
 -- TODO revisit the naming of the functions the 'cycling' functions
 -- TODO add module documentation
 -- TODO reduce exports of StateTransition by providing a cleaner interface
--- TODO add README
+-- TODO add README (known issues, termCap)
+
+-- domain concepts  line(?) selection, value selection, old file content, new file content
+-- mode = LineSelection | ValueSelection
+-- LineSelection = NextLine | PreviousLine
+-- ValueSelection = NextValue | PreviousValue
+-- <DomainFunction> :: mode -> OldFile -> NewFile
+-- ModificationCommand

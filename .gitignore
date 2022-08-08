@@ -8,3 +8,5 @@ lastenheft.pdf
 *.toc
 *.fls
 *.fdb_latexmk
+*.pygtex
+*.pygstyle

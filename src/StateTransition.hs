@@ -19,9 +19,6 @@ import Config
     Pattern (..),
     TargetValue (..),
   )
-import Control.Monad.IO.Class
-  ( MonadIO (liftIO),
-  )
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
     makeNonEmptyCursor,
@@ -34,15 +31,14 @@ import Cursor.Simple.List.NonEmpty
   )
 import Data.Text
   ( Text,
-    pack,
     replace,
-    unpack,
+  )
+import FileModification
+  ( Content (..),
+    modifyFile,
   )
 import State
   ( AppState (..),
-  )
-import System.IO.Strict as Strict
-  ( readFile,
   )
 import Util
   ( changeNthElementNonEmpty,
@@ -52,6 +48,8 @@ data ValueSelectionPolicy = MkValueSelectionPolicy (AppState -> AppState)
 
 -- | Depending on the supplied policy, either switch the value to the next or previous possible value.
 --   A switched value is written back to the configured file at the place identified by the pattern.
+--   Caution! Reading the file needs to be strict here in order to not have file handles open for subsequent
+--   modifications.
 selectValueAndModifyTargetFile :: ValueSelectionPolicy -> NonEmptyCursor ConfigItem -> EventM n (Next AppState)
 selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
   let (MkAppState newItems) = selectionPolicy (MkAppState items)
@@ -61,10 +59,9 @@ selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
       currentPattern = pattern currentItem
       previousItem = nonEmptyCursorCurrent items
       previousValue = targetValue previousItem
+      modification = modify previousValue currentValue currentPattern
    in do
-        oldContent <- (liftIO . Strict.readFile) currentPath
-        let (MkContent newContent) = modify previousValue currentValue currentPattern (MkContent (pack oldContent))
-         in (liftIO . writeFile currentPath) (unpack newContent)
+        _ <- modifyFile currentPath modification
         continue (MkAppState newItems)
 
 data ItemSelectionPolicy = MkItemSelectionPolicy (NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem))
@@ -87,8 +84,6 @@ previous = MkItemSelectionPolicy nonEmptyCursorSelectPrev
 
 valueMarker :: Text
 valueMarker = "{{value}}"
-
-data Content = MkContent Text
 
 -- | Substitute the newly selected value into the old content of the target file. Both the previous value
 --   and the pattern are needed to choose the correct substitution.

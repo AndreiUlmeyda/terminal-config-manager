@@ -10,7 +10,6 @@ import Data.Yaml
   )
 import GHC.Generics (Generic)
 import System.Exit (die)
-import Prelude hiding (readFile)
 
 testYamlFilePath :: FilePath
 testYamlFilePath = "test/data/config.yaml"
