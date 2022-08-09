@@ -4,12 +4,6 @@ module FileModification
   )
 where
 
-import Brick
-  ( EventM,
-  )
-import Control.Monad.IO.Class
-  ( MonadIO (liftIO),
-  )
 import Data.Text
   ( Text,
     pack,
@@ -21,8 +15,8 @@ import System.IO.Strict as Strict
 
 data Content = MkContent Text
 
-modifyFile :: FilePath -> (Content -> Content) -> EventM n ()
+modifyFile :: FilePath -> (Content -> Content) -> IO ()
 modifyFile path fn = do
-  oldContent <- (liftIO . Strict.readFile) path
-  (MkContent newContent) <- fmap fn ((liftIO . pure . MkContent) (pack oldContent))
-  (liftIO . writeFile path) (unpack newContent)
+  oldContent <- (Strict.readFile) path
+  (MkContent newContent) <- pure $ fn $ (MkContent) (pack oldContent)
+  (writeFile path) (unpack newContent)

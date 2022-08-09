@@ -19,6 +19,9 @@ import Config
     Pattern (..),
     TargetValue (..),
   )
+import Control.Monad.IO.Class
+  ( MonadIO (liftIO),
+  )
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
     makeNonEmptyCursor,
@@ -61,7 +64,7 @@ selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
       previousValue = targetValue previousItem
       modification = modify previousValue currentValue currentPattern
    in do
-        _ <- modifyFile currentPath modification
+        _ <- liftIO $ modifyFile currentPath modification
         continue (MkAppState newItems)
 
 data ItemSelectionPolicy = MkItemSelectionPolicy (NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem))
