@@ -1,11 +1,8 @@
 module StateTransition
-  ( select,
-    next,
-    previous,
-    selectValueAndModifyTargetFile,
-    cycleValues,
-    ValueSelectionPolicy (..),
-    ValueCyclingPolicy (..),
+  ( selectNextItem,
+    selectNextValue,
+    selectPreviousItem,
+    selectPreviousValue,
   )
 where
 
@@ -45,9 +42,23 @@ import State
   )
 import Util
   ( changeNthElementNonEmpty,
+    elementAfter,
+    elementBefore,
   )
 
 data ValueSelectionPolicy = MkValueSelectionPolicy (AppState -> AppState)
+
+selectNextItem :: NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+selectNextItem = select $ MkItemSelectionPolicy nonEmptyCursorSelectNext
+
+selectPreviousItem :: NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+selectPreviousItem = select $ MkItemSelectionPolicy nonEmptyCursorSelectPrev
+
+selectNextValue :: NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+selectNextValue items = selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleValues (MkValueCyclingPolicy elementAfter))) items
+
+selectPreviousValue :: NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+selectPreviousValue items = selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleValues (MkValueCyclingPolicy elementBefore))) items
 
 -- | Depending on the supplied policy, either switch the value to the next or previous possible value.
 --   A switched value is written back to the configured file at the place identified by the pattern.
@@ -74,16 +85,6 @@ select :: ItemSelectionPolicy -> NonEmptyCursor ConfigItem -> EventM n (Next App
 select (MkItemSelectionPolicy selectionPolicy) items = case selectionPolicy items of
   Nothing -> continue (MkAppState items)
   Just nonEmptyCursor' -> (continue . MkAppState) nonEmptyCursor'
-
--- | Since the item is represented as a non empty collection the policy for selecting the next one is
---   just the respective function from the non empty cursor library
-next :: ItemSelectionPolicy
-next = MkItemSelectionPolicy nonEmptyCursorSelectNext
-
--- | Since the item is represented as a non empty colletion the policy for selecting the previous one is
---   just the respective function from the non empty cursor library
-previous :: ItemSelectionPolicy
-previous = MkItemSelectionPolicy nonEmptyCursorSelectPrev
 
 valueMarker :: Text
 valueMarker = "{{value}}"

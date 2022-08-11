@@ -5,8 +5,9 @@
 -- TODO handle the case where targetValue is not an element of possibleValues
 -- TODO revisit the naming of the functions the 'cycling' functions
 -- TODO add module documentation
--- TODO reduce exports of StateTransition by providing a cleaner interface
 -- TODO add README (known issues, termCap)
+-- TODO consider leaving out the Content data type
+-- TODO add help and version commands
 
 -- domain concepts  line(?) selection, value selection, old file content, new file content
 -- mode = LineSelection | ValueSelection

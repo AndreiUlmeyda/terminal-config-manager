@@ -15,17 +15,10 @@ import State
   ( AppState (MkAppState),
   )
 import StateTransition
-  ( ValueCyclingPolicy (..),
-    ValueSelectionPolicy (..),
-    cycleValues,
-    next,
-    previous,
-    select,
-    selectValueAndModifyTargetFile,
-  )
-import Util
-  ( elementAfter,
-    elementBefore,
+  ( selectNextItem,
+    selectNextValue,
+    selectPreviousItem,
+    selectPreviousValue,
   )
 
 -- | Handle an event emitted by brick by unpacking the underlying vty event and passing it the appropriate handler.
@@ -38,8 +31,8 @@ handleEvent currentState event
 handleVtyEvent :: Event -> AppState -> EventM n (Next AppState)
 handleVtyEvent event (MkAppState items) = case event of
   EvKey (KChar 'q') [] -> halt (MkAppState items)
-  EvKey KDown [] -> select next items
-  EvKey KUp [] -> select previous items
-  EvKey KRight [] -> selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleValues (MkValueCyclingPolicy elementAfter))) items
-  EvKey KLeft [] -> selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleValues (MkValueCyclingPolicy elementBefore))) items
+  EvKey KDown [] -> selectNextItem items
+  EvKey KUp [] -> selectPreviousItem items
+  EvKey KRight [] -> selectNextValue items
+  EvKey KLeft [] -> selectPreviousValue items
   _ -> continue (MkAppState items)
