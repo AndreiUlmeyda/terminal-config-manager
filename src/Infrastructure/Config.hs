@@ -1,4 +1,4 @@
-module Config (Config (MkConfig), ConfigItem (..), loadConfig, TargetValue (MkTargetValue), Pattern (MkPattern)) where
+module Infrastructure.Config (Config (MkConfig), ConfigItem (..), loadConfig, TargetValue (MkTargetValue), Pattern (MkPattern)) where
 
 import Data.Text (Text)
 import Data.Yaml

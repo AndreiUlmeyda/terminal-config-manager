@@ -7,14 +7,7 @@ module StateTransition
 where
 
 import Brick
-  ( EventM,
-    Next,
-    continue,
-  )
-import Config
-  ( ConfigItem (..),
-    Pattern (..),
-    TargetValue (..),
+  ( continue,
   )
 import Control.Monad.IO.Class
   ( MonadIO (liftIO),
@@ -37,6 +30,11 @@ import FileModification
   ( Content (..),
     modifyFile,
   )
+import Infrastructure.Config
+  ( ConfigItem (..),
+    Pattern (..),
+    TargetValue (..),
+  )
 import State
   ( AppState (..),
     NextAppState,
@@ -52,10 +50,10 @@ data ValueSelectionPolicy = MkValueSelectionPolicy (AppState -> AppState)
 data ItemSelectionPolicy = MkItemSelectionPolicy (NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem))
 
 selectNextItem :: NonEmptyCursor ConfigItem -> NextAppState
-selectNextItem = select $ MkItemSelectionPolicy nonEmptyCursorSelectNext
+selectNextItem = selectItem $ MkItemSelectionPolicy nonEmptyCursorSelectNext
 
 selectPreviousItem :: NonEmptyCursor ConfigItem -> NextAppState
-selectPreviousItem = select $ MkItemSelectionPolicy nonEmptyCursorSelectPrev
+selectPreviousItem = selectItem $ MkItemSelectionPolicy nonEmptyCursorSelectPrev
 
 data ValueCyclingPolicy = MkValueCyclingPolicy (TargetValue -> [TargetValue] -> TargetValue)
 
@@ -69,7 +67,7 @@ selectPreviousValue items = selectValueAndModifyTargetFile (MkValueSelectionPoli
 --   A switched value is written back to the configured file at the place identified by the pattern.
 --   Caution! Reading the file needs to be strict here in order to not have file handles open for subsequent
 --   modifications.
-selectValueAndModifyTargetFile :: ValueSelectionPolicy -> NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+selectValueAndModifyTargetFile :: ValueSelectionPolicy -> NonEmptyCursor ConfigItem -> NextAppState
 selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
   let (MkAppState newItems) = selectionPolicy (MkAppState items)
       currentItem = nonEmptyCursorCurrent newItems
@@ -84,8 +82,8 @@ selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
         continue (MkAppState newItems)
 
 -- | Depending on the supplied policy, either select the next or previous item
-select :: ItemSelectionPolicy -> NonEmptyCursor ConfigItem -> EventM n (Next AppState)
-select (MkItemSelectionPolicy selectionPolicy) items = case selectionPolicy items of
+selectItem :: ItemSelectionPolicy -> NonEmptyCursor ConfigItem -> NextAppState
+selectItem (MkItemSelectionPolicy selectionPolicy) items = case selectionPolicy items of
   Nothing -> continue (MkAppState items)
   Just nonEmptyCursor' -> (continue . MkAppState) nonEmptyCursor'
 
@@ -94,7 +92,7 @@ valueMarker = "{{value}}"
 
 -- | Substitute the newly selected value into the old content of the target file. Both the previous value
 --   and the pattern are needed to choose the correct substitution.
-modify :: TargetValue -> TargetValue -> Pattern -> Content -> Content
+modify :: TargetValue -> TargetValue -> Pattern -> (Content -> Content)
 modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern matchingPattern) (MkContent content) =
   MkContent (replace oldSubstring newSubstring content)
   where

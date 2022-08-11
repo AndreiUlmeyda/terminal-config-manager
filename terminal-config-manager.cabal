@@ -26,12 +26,12 @@ source-repository head
 library
   exposed-modules:
       App
-      Config
       FileModification
-      Input
-      Render
+      Infrastructure.Config
       State
       StateTransition
+      UserInterface.Input
+      UserInterface.Render
       Util
   other-modules:
       Paths_terminal_config_manager

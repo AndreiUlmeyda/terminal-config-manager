@@ -6,7 +6,6 @@ import Brick
     attrName,
     showFirstCursor,
   )
-import Config (Config (MkConfig))
 import Cursor.Simple.List.NonEmpty
   ( makeNonEmptyCursor,
   )
@@ -16,13 +15,14 @@ import Data.List.NonEmpty as NE
 import Graphics.Vty.Attributes
   ( currentAttr,
   )
-import Input (handleEvent)
-import Render (drawTCM, selectionStyling, valueStyling)
+import Infrastructure.Config (Config (MkConfig))
 import State
   ( AppState (MkAppState),
     ResourceName,
   )
 import System.Exit (die)
+import UserInterface.Input (handleEvent)
+import UserInterface.Render (drawTCM, selectionStyling, valueStyling)
 
 errorMsgNoConfigEntries :: String
 errorMsgNoConfigEntries = "There are no entries in the config file."

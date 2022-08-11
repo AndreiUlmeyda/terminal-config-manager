@@ -1,4 +1,4 @@
-module Render (drawTCM, selectionStyling, valueStyling) where
+module UserInterface.Render (drawTCM, selectionStyling, valueStyling) where
 
 import Brick
   ( Widget,
@@ -9,7 +9,6 @@ import Brick
     vBox,
     withAttr,
   )
-import Config (ConfigItem (MkConfigItem), TargetValue (MkTargetValue))
 import Cursor.Simple.List.NonEmpty
   ( nonEmptyCursorCurrent,
     nonEmptyCursorNext,
@@ -22,6 +21,7 @@ import Graphics.Vty.Attributes
     cyan,
     withStyle,
   )
+import Infrastructure.Config (ConfigItem (MkConfigItem), TargetValue (MkTargetValue))
 import State
   ( AppState (MkAppState),
     ResourceName,

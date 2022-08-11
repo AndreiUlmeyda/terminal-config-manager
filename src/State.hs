@@ -9,11 +9,11 @@ import Brick
   ( EventM,
     Next,
   )
-import Config
-  ( ConfigItem,
-  )
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
+  )
+import Infrastructure.Config
+  ( ConfigItem,
   )
 
 data ResourceName = MkResourceName deriving stock (Show, Eq, Ord)

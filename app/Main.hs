@@ -5,7 +5,7 @@ import App
     tcmApp,
   )
 import Brick (defaultMain)
-import Config (loadConfig)
+import Infrastructure.Config (loadConfig)
 import System.Exit (exitSuccess)
 
 -- | This is an application to manage selected values scattered over many different files quickly.
