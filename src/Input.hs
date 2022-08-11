@@ -2,8 +2,6 @@ module Input (handleEvent) where
 
 import Brick
   ( BrickEvent (VtyEvent),
-    EventM,
-    Next,
     continue,
     halt,
   )
@@ -13,6 +11,7 @@ import Graphics.Vty.Input.Events
   )
 import State
   ( AppState (MkAppState),
+    NextAppState,
   )
 import StateTransition
   ( selectNextItem,
@@ -22,13 +21,13 @@ import StateTransition
   )
 
 -- | Handle an event emitted by brick by unpacking the underlying vty event and passing it the appropriate handler.
-handleEvent :: AppState -> BrickEvent n e -> EventM n (Next AppState)
+handleEvent :: AppState -> BrickEvent n e -> NextAppState
 handleEvent currentState event
   | VtyEvent vtye <- event = handleVtyEvent vtye currentState
   | otherwise = continue currentState
 
 -- | Handle a keyboard event, up and down keys for selection, left and right for changing the associated value and q to quit.
-handleVtyEvent :: Event -> AppState -> EventM n (Next AppState)
+handleVtyEvent :: Event -> AppState -> NextAppState
 handleVtyEvent event (MkAppState items) = case event of
   EvKey (KChar 'q') [] -> halt (MkAppState items)
   EvKey KDown [] -> selectNextItem items

@@ -39,6 +39,7 @@ import FileModification
   )
 import State
   ( AppState (..),
+    NextAppState,
   )
 import Util
   ( changeNthElementNonEmpty,
@@ -48,16 +49,20 @@ import Util
 
 data ValueSelectionPolicy = MkValueSelectionPolicy (AppState -> AppState)
 
-selectNextItem :: NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+data ItemSelectionPolicy = MkItemSelectionPolicy (NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem))
+
+selectNextItem :: NonEmptyCursor ConfigItem -> NextAppState
 selectNextItem = select $ MkItemSelectionPolicy nonEmptyCursorSelectNext
 
-selectPreviousItem :: NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+selectPreviousItem :: NonEmptyCursor ConfigItem -> NextAppState
 selectPreviousItem = select $ MkItemSelectionPolicy nonEmptyCursorSelectPrev
 
-selectNextValue :: NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+data ValueCyclingPolicy = MkValueCyclingPolicy (TargetValue -> [TargetValue] -> TargetValue)
+
+selectNextValue :: NonEmptyCursor ConfigItem -> NextAppState
 selectNextValue items = selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleValues (MkValueCyclingPolicy elementAfter))) items
 
-selectPreviousValue :: NonEmptyCursor ConfigItem -> EventM n (Next AppState)
+selectPreviousValue :: NonEmptyCursor ConfigItem -> NextAppState
 selectPreviousValue items = selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleValues (MkValueCyclingPolicy elementBefore))) items
 
 -- | Depending on the supplied policy, either switch the value to the next or previous possible value.
@@ -77,8 +82,6 @@ selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
    in do
         _ <- liftIO $ modifyFile currentPath modification
         continue (MkAppState newItems)
-
-data ItemSelectionPolicy = MkItemSelectionPolicy (NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem))
 
 -- | Depending on the supplied policy, either select the next or previous item
 select :: ItemSelectionPolicy -> NonEmptyCursor ConfigItem -> EventM n (Next AppState)
@@ -111,8 +114,6 @@ cycleValues policy (MkAppState items) = (MkAppState . cycleSelected) items
       Nothing -> const cycledSelected
       Just restored -> const restored
     selectionPosition = nonEmptyCursorSelection items
-
-data ValueCyclingPolicy = MkValueCyclingPolicy (TargetValue -> [TargetValue] -> TargetValue)
 
 -- | Switch the active target value to another value contained in possibleValues according to the supplied policy.
 cycleTo :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
