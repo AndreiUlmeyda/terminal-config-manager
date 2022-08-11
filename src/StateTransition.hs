@@ -75,7 +75,7 @@ selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
       currentItem = nonEmptyCursorCurrent newItems
       currentValue = targetValue currentItem
       currentPath = path currentItem
-      currentPattern = pattern currentItem
+      currentPattern = matchingPattern currentItem
       previousItem = nonEmptyCursorCurrent items
       previousValue = targetValue previousItem
       modification = modify previousValue currentValue currentPattern
@@ -95,10 +95,10 @@ valueMarker = "{{value}}"
 -- | Substitute the newly selected value into the old content of the target file. Both the previous value
 --   and the pattern are needed to choose the correct substitution.
 modify :: TargetValue -> TargetValue -> Pattern -> Content -> Content
-modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern pattern) (MkContent content) =
+modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern matchingPattern) (MkContent content) =
   MkContent (replace oldSubstring newSubstring content)
   where
-    oldSubstring = replace valueMarker oldValue pattern
+    oldSubstring = replace valueMarker oldValue matchingPattern
     newSubstring = replace oldValue newValue oldSubstring
 
 -- | Produce a new AppState where the value of the currently selected item is switched to a new one according to the

@@ -19,7 +19,7 @@ data Config = MkConfig [ConfigItem] deriving stock (Eq, Show)
 data ConfigItem = MkConfigItem
   { title :: Text,
     path :: FilePath,
-    pattern :: Pattern,
+    matchingPattern :: Pattern,
     targetValue :: TargetValue,
     possibleValues :: [TargetValue]
   }
