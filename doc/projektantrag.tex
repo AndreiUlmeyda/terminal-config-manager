@@ -58,6 +58,7 @@ Anwendung und für die Ausführung einer anderen Menge an Tests konfiguriert ist
 umkonfiguriert werden.
 
 \section{IST-Zustand}
+\paragraph{}
 Um die Zielanwendung zu untersuchen sind viele Teilaufgaben zu erledigen,
 beispielsweise das Aktivieren detaillierter Lognachrichten, das Ändern der
 auszuführenden Unit-/Integration-/Systemtestssuites, das Ändern von Cache-Verhalten,
@@ -66,28 +67,27 @@ beteiligter Anwendungen, usw.. Jeder dieser Schritte ist wiederum mit mehreren
 Einzelschritten verbunden: Meist muss zu diesem Zweck eine passende IDE gestartet,
 die relevante Konfigurationsdatei ermittelt und zum richtigen Unterordner navigiert
 werden. Danach muss die Datei geöffnet, ihr Inhalt untersucht und der Zielwert
-geprüft und gegebenenfalls angepasst werden. In Summe sind hier sehr viele,
+geprüft und gegebenenfalls angepasst werden. In Summe sind sehr viele,
 repetitive Einzelaufgaben händisch zu erledigen. Hier bietet sich daher Potential
 zur Verbesserung.
 
 \section{SOLL-Zustand}
-\begin{enumerate}
-	\item Starten des Kommandozeilenprogramms
-	\item Auswahl eines Anwendungsfalls aus einer Liste, bspw.\\
-	      per Tastendruck ↑/↓
-	\item Durchschalten des Zielwerts, bspw. per Tastendruck ←/→
-	\item Navigation zu und Ändern aller weiteren Anwendungsfälle mit wenigen
-	      Tastendrücken
-\end{enumerate}
-Ein Anwendungsfall ist hier, jeweils auf einer Zeile dargestellt, eine Kombination
-aus einem kurzen Beschreibungstext und dem aktuellen Wert aus der zugehörigen
-Konfigurationsdatei.
+\paragraph{}
+Es existiert ein Kommandozeilenprogramm das übersichtlich eine Liste von
+Anwendungsfällen anzeigt. Ein Anwendungsfall ist in diesem Fall eine kurze
+Beschreibung des von einem Konfigurationswert kontrollierten Verhaltens zusammen
+mit dessen aktuellem Wert. Das Programm erlaubt es zwischen diesen
+Anwendungsfällen auszuwählen und den zugehörigen Wert aus einer weiteren Liste
+möglicher Werte auszuwählen. Wird ein neuer Wert ausgewählt so wird die
+dazugehörige Konfigurationsdatei entsprechend umgeschrieben. Sowohl die
+Zielkonfigurationsdateien als auch die jeweiligen möglichen Werte sind
+konfigurierbar. Zusätzlich existieren ausführliche Unit- und Akzeptanztests.
 
 \section{Projektumfeld}
 \paragraph{}
 Die CHECK24 Vergleichsportal GmbH und CHECK24 Vergleichsportal Reise GmbH sind
 Betreiber von check24.de, einer Website auf der verschiedene Produkte zum Vergleich
-angeboten werden. Der Auftraggeber Check24 Vergleichsportal Reise GmbH betreibt
+angeboten werden. Der Auftraggeber CHECK24 Vergleichsportal Reise GmbH betreibt
 auf dieser Online-Plattform eine Vergleichsmöglichkeit von Pauschalreisen.
 \paragraph{}
 Die Menge und Komplexität interner Anwendungen, die am Produktionsbetrieb
@@ -161,3 +161,4 @@ Größenordnungen zu vergrößern ist nicht ohne Weiteres gerechtfertigt.
 % TODO Command line documentation / help text
 % TODO evaluieren ob Ändern von ETCD-Werten sinnvoll ist.
 % TODO Hinweis, wenn ggf sensible Daten in der Konfigurationsdatei landen
+% TODO die eigene Konfigurationsdatei als Zieldatei verbieten?
