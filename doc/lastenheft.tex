@@ -45,15 +45,70 @@ Das Umschalten einer kleinen Menge häufig zu ändernder Konfigurationswerte
 zwischen verschiedenen Werten. Die Anzahl verschiedener Zielwerte ist dabei
 meist sehr begrenzt.
 \paragraph{}
-Diese beiden häufigen Arbeitsvorgänge möchte ich so gut wie möglich beschleunigen.
+Diese beiden häufigen Arbeitsvorgänge möchte ich so weit wie möglich beschleunigen.
 
-\subsection{IST-Zustand}
-\subsection{SOLL-Zustand}
+\section{Beispielszenario}
+In der Continuous Integration (CI) - Pipeline einer zentralen Anwendung schlagen
+unvermittelt Akzeptanztests fehl. Um unverzüglich die Ursache festellen zu können
+muss das lokale Setup, das in diesem Moment an die Entwicklung einer anderen
+Anwendung und für die Ausführung einer anderen Menge an Tests konfiguriert ist,
+umkonfiguriert werden.
 
+\section{IST-Zustand}
+Die notwendigen Arbeitsschritte
+\begin{enumerate}
+	\item Starten der IDE der Zielanwendung
+	\item Ermitteln der relevanten Konfigurationsdatei
+	\item Navigation in Unterordner
+	\item Öffnen der Datei
+	\item Suchen des Zielwerts
+	\item Prüfen/Editieren des Zielwerts
+\end{enumerate}
+sind jeweils für mehrere Teilaufgaben zu erledigen wie
+\begin{itemize}
+	\item Das Anschalten detaillierter Logs der Zielanwendung
+	\item Das Ändern der auszuführenden Unit-/Integration/Systemtestsuite
+	\item Das An- bzw. Abschalten von Caches der Zielanwendung
+	\item Das Ändern von Zielhosts- und Umgebungen, usw. von anderen
+	      Anwendungen, die an der Testausführung beteiligt sind
+	\item usw.
+\end{itemize}
+
+\section{SOLL-Zustand}
+\begin{enumerate}
+	\item Starten des Kommandozeilenprogramms
+	\item Auswahl eines Anwendungsfalls aus einer Liste, bspw.\\
+	      per Tastendruck ↑/↓
+	\item Durchschalten des Zielwerts, bspw. per Tastendruck ←/→
+	\item Navigation zu und Ändern aller weiteren Anwendungsfälle mit wenigen
+	      Tastendrücken
+\end{enumerate}
+Ein Anwendungsfall ist hier, jeweils auf einer Zeile dargestellt, eine Kombination
+aus einem kurzen Beschreibungstext und dem aktuellen Wert aus der zugehörigen
+Konfigurationsdatei.
+
+\section{Projektumfeld}
+\paragraph{}
+Die Check24 GmbH ist Betreiber von check24.de, einer Website auf der verschiedene
+Produkte zum Vergleich angeboten werden. Der Auftraggeber Check24 Vergleichsportal
+Reise GmbH betreibt auf dieser Online-Plattform eine Vergleichsmöglichkeit von
+Reisen.
+\paragraph{}
+Die Menge und Komplexität interner Anwendungen, die am Produktionsbetrieb
+und der Qualitätssicherung beteiligt sind, wächst stetig. Damit einher gehen
+komplexere Interaktionen und Konfigurationsmöglichkeiten, die häufige
+Fehlerquellen im Betrieb und während der Entwicklung darstellen. Je einfacher
+diese Konfiguration möglich ist, desto schneller kann während der Fehlersuche
+und der Entwicklung gearbeitet werden.
+
+\section{Projektphasen}
+
+% \caption{Nutzungsszenarien und Vergleich der Arbeitsabläufe}
 \begin{center}
-	\begin{table}[h]
-		\caption{Nutzungsszenarien und Vergleich der Arbeitsabläufe}
-	\end{table}
+	\begin{tabularx}{0.8\textwidth}{| c | c |}
+		\hline
+		Phase & Dauer
+	\end{tabularx}
 \end{center}
 
 \section{Nicht-Ziele}
@@ -71,7 +126,7 @@ gerecht werden und sich gut miteinander kombinieren lassen.
 	\caption[cdba]{Beispiel zum Ausführen einer beliebigen Folgeaktion nach
 		Änderung an einer Konfigurationsdatei in bash\footnotemark mittels entr.\footnotemark}
 	\begin{minted}{bash}
-ls <Konfigurationsdateipfad> | entr Folgeaktion.sh
+    $ ls <Konfigurationsdateipfad> | entr Folgeaktion.sh
 \end{minted}
 \end{figure}
 \footnotetext[1]{https://www.gnu.org/software/bash/}
@@ -81,14 +136,23 @@ ls <Konfigurationsdateipfad> | entr Folgeaktion.sh
 Das gleichzeitige Ändern mehrerer Konfigurationswerte in festgelegten Kombinationen
 oder "Profilen". \textbf{Begründung:} Wenn mehrere voneinander abhängige Konfigurationswerte
 existieren, die beim Wechsel hin zu einem anderen Nutzungsszenario immer gleichzeitig
-geändert werden müssen, dann wäre es sinnvoller das Konfigurationsschema der jeweiligen
-Anwendung anzupassen, sodass das Nutzungszenario von einem einzelnen Wert bestimmt wird.
-
+geändert werden müssen, dann ist dies im SOLL-Zustand ebenfalls mit wenig Arbeit
+verbunden. Zusätzlich exisitert die Option die Konfiguration der Anwendung zu
+verbessern und verschiedene Szenarien mit einzelnen Konfigurationswerten abzubilden.
 \paragraph{C}
-Ein grafisches Benutzerinterface. Dazu gehören Webinterfaces.
+Ein grafisches Benutzerinterface - dazu gehören Webinterfaces. \\
+\textbf{Begründung:} Für die Darstellung und Benutzerinteraktion ist ein
+textbasiertes Terminal völlig ausreichend. Die Komplexität des Programmcodes und
+die Abhängigkeiten des Projekts für eine (Web-)Oberfläche um mehrere
+Größenordnungen zu vergrößern ist nicht ohne Weiteres gerechtfertigt.
 
 
 \end{document}
 
 % TODO Nichtziel B besser begründen
 % TODO Überlegung: Wert bei jedem switch ändern vs erst nach Enter
+% TODO Dialog bei fehlenden Permissions
+% TODO Dialog bei fehlendem Pattern Match
+% TODO Command line documentation / help text
+% TODO evaluieren ob Ändern von ETCD-Werten sinnvoll ist.
+% TODO Hinweis, wenn ggf sensible Daten in der Konfigurationsdatei landen
