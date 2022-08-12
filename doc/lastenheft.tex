@@ -9,6 +9,8 @@
 \usepackage{tabularx}
 \usepackage{minted}
 
+\newcommand{\heading}[1]{\multicolumn{1}{c}{#1}}
+
 \author{Adrian Schurz}
 \title{Lastenheft\\[0.2em]\smaller{}Terminal-Config-Manager (Arbeitstitel)}
 
@@ -104,12 +106,18 @@ und der Entwicklung gearbeitet werden.
 \section{Projektphasen}
 
 % \caption{Nutzungsszenarien und Vergleich der Arbeitsabläufe}
-\begin{center}
-	\begin{tabularx}{0.8\textwidth}{| c | c |}
-		\hline
-		Phase & Dauer
-	\end{tabularx}
-\end{center}
+
+\begin{tabularx}{0.8\textwidth}{ c | c }
+	\textbf{Phase}                    & \textbf{Dauer (h)} \\ \hline
+	Konzeption                        & 10                 \\ \hline
+	Wahl des Techstacks               & 3                  \\ \hline
+	Einrichtung, Entwicklungsumgebung & 2                  \\ \hline
+	Implementierung                   & 35                 \\ \hline
+	Qualitätssicherung                & 15                 \\ \hline
+	Dokumentation                     & 5                  \\ \hline
+	Gesamt                            & 70
+\end{tabularx}
+
 
 \section{Nicht-Ziele}
 \paragraph{A}
@@ -146,6 +154,9 @@ textbasiertes Terminal völlig ausreichend. Die Komplexität des Programmcodes u
 die Abhängigkeiten des Projekts für eine (Web-)Oberfläche um mehrere
 Größenordnungen zu vergrößern ist nicht ohne Weiteres gerechtfertigt.
 
+\section{Dokumentation zur Projektarbeit}
+
+\section{Präsentationsmittel}
 
 \end{document}
 
