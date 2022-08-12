@@ -1,10 +1,10 @@
 .stack-work/
 *~
 bin/
-lastenheft.aux
-lastenheft.log
-lastenheft.synctex.gz
-lastenheft.pdf
+*.aux
+*.log
+*.synctex.gz
+*.pdf
 *.toc
 *.fls
 *.fdb_latexmk
