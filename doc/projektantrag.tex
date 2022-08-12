@@ -47,7 +47,8 @@ Das Umschalten einer kleinen Menge häufig zu ändernder Konfigurationswerte
 zwischen verschiedenen Werten. Die Anzahl verschiedener Zielwerte ist dabei
 meist sehr begrenzt.
 \paragraph{}
-Diese beiden häufigen Arbeitsvorgänge sollen so weit wie möglich beschleunigen.
+Diese beiden häufigen Arbeitsvorgänge sollen so weit wie möglich beschleunigt
+werden.
 
 \section{Beispielszenario}
 In der Continuous Integration (CI) - Pipeline einer zentralen Anwendung schlagen
@@ -57,24 +58,17 @@ Anwendung und für die Ausführung einer anderen Menge an Tests konfiguriert ist
 umkonfiguriert werden.
 
 \section{IST-Zustand}
-Die notwendigen Arbeitsschritte
-\begin{enumerate}
-	\item Starten der IDE der Zielanwendung
-	\item Ermitteln der relevanten Konfigurationsdatei
-	\item Navigation in Unterordner
-	\item Öffnen der Datei
-	\item Suchen des Zielwerts
-	\item Prüfen/Editieren des Zielwerts
-\end{enumerate}
-sind jeweils für mehrere Teilaufgaben zu erledigen wie
-\begin{itemize}
-	\item Das Anschalten detaillierter Logs der Zielanwendung
-	\item Das Ändern der auszuführenden Unit-/Integration/Systemtestsuite
-	\item Das An- bzw. Abschalten von Caches der Zielanwendung
-	\item Das Ändern von Zielhosts- und Umgebungen, usw. von anderen
-	      Anwendungen, die an der Testausführung beteiligt sind
-	\item usw.
-\end{itemize}
+Um die Zielanwendung zu untersuchen sind viele Teilaufgaben zu erledigen,
+beispielsweise das Aktivieren detaillierter Lognachrichten, das Ändern der
+auszuführenden Unit-/Integration-/Systemtestssuites, das Ändern von Cache-Verhalten,
+das anpassen von Zielhosts bzw. -umgebungen anderer, an der Testausführung
+beteiligter Anwendungen, usw.. Jeder dieser Schritte ist wiederum mit mehreren
+Einzelschritten verbunden: Meist muss zu diesem Zweck eine passende IDE gestartet,
+die relevante Konfigurationsdatei ermittelt und zum richtigen Unterordner navigiert
+werden. Danach muss die Datei geöffnet, ihr Inhalt untersucht und der Zielwert
+geprüft und gegebenenfalls angepasst werden. In Summe sind hier sehr viele,
+repetitive Einzelaufgaben händisch zu erledigen. Hier bietet sich daher Potential
+zur Verbesserung.
 
 \section{SOLL-Zustand}
 \begin{enumerate}
