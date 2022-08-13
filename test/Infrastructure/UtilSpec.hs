@@ -1,15 +1,15 @@
-module UtilSpec where
+module Infrastructure.UtilSpec where
 
+import Infrastructure.Util
+  ( changeNthElement,
+    elementAfter,
+    elementBefore,
+  )
 import Test.Hspec
   ( Spec,
     describe,
     it,
     shouldBe,
-  )
-import Util
-  ( changeNthElement,
-    elementAfter,
-    elementBefore,
   )
 
 spec :: Spec

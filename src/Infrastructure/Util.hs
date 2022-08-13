@@ -1,6 +1,16 @@
-module Util (changeNthElement, changeNthElementNonEmpty, elementAfter, elementBefore) where
+module Infrastructure.Util
+  ( changeNthElement,
+    changeNthElementNonEmpty,
+    elementAfter,
+    elementBefore,
+  )
+where
 
-import Data.List.NonEmpty (NonEmpty, fromList, toList)
+import Data.List.NonEmpty
+  ( NonEmpty,
+    fromList,
+    toList,
+  )
 
 data NeighborSelection = SelectSuccessor | SelectPredecessor
 

@@ -1,4 +1,4 @@
-module State
+module Domain.State
   ( AppState (MkAppState),
     NextAppState,
     ResourceName,

@@ -14,6 +14,10 @@ import Cursor.Simple.List.NonEmpty
     nonEmptyCursorNext,
     nonEmptyCursorPrev,
   )
+import Domain.State
+  ( AppState (MkAppState),
+    ResourceName,
+  )
 import Graphics.Vty.Attributes
   ( Attr,
     bold,
@@ -22,10 +26,6 @@ import Graphics.Vty.Attributes
     withStyle,
   )
 import Infrastructure.Config (ConfigItem (MkConfigItem), TargetValue (MkTargetValue))
-import State
-  ( AppState (MkAppState),
-    ResourceName,
-  )
 
 -- | The rendering consists of a single layer, each line consists of an items title and current value. The selected line
 --   is rendered boldface, the selected value, additionally, has a separate color.

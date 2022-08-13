@@ -25,14 +25,14 @@ source-repository head
 
 library
   exposed-modules:
-      App
-      FileModification
+      Application.App
+      Domain.State
+      Domain.StateTransition
       Infrastructure.Config
-      State
-      StateTransition
+      Infrastructure.FileModification
+      Infrastructure.Util
       UserInterface.Input
       UserInterface.Render
-      Util
   other-modules:
       Paths_terminal_config_manager
   hs-source-dirs:
@@ -74,7 +74,7 @@ test-suite terminal-config-manager-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      UtilSpec
+      Infrastructure.UtilSpec
       Paths_terminal_config_manager
   hs-source-dirs:
       test

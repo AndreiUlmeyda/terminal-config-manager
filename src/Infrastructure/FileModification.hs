@@ -1,4 +1,4 @@
-module FileModification
+module Infrastructure.FileModification
   ( modifyFile,
     Content (..),
   )

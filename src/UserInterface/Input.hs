@@ -5,19 +5,19 @@ import Brick
     continue,
     halt,
   )
-import Graphics.Vty.Input.Events
-  ( Event (EvKey),
-    Key (KChar, KDown, KLeft, KRight, KUp),
-  )
-import State
+import Domain.State
   ( AppState (MkAppState),
     NextAppState,
   )
-import StateTransition
+import Domain.StateTransition
   ( selectNextItem,
     selectNextValue,
     selectPreviousItem,
     selectPreviousValue,
+  )
+import Graphics.Vty.Input.Events
+  ( Event (EvKey),
+    Key (KChar, KDown, KLeft, KRight, KUp),
   )
 
 pattern KeyQ :: Event

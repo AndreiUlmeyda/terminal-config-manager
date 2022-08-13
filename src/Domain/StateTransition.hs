@@ -1,4 +1,4 @@
-module StateTransition
+module Domain.StateTransition
   ( selectNextItem,
     selectNextValue,
     selectPreviousItem,
@@ -26,20 +26,20 @@ import Data.Text
   ( Text,
     replace,
   )
-import FileModification
-  ( Content (..),
-    modifyFile,
+import Domain.State
+  ( AppState (..),
+    NextAppState,
   )
 import Infrastructure.Config
   ( ConfigItem (..),
     Pattern (..),
     TargetValue (..),
   )
-import State
-  ( AppState (..),
-    NextAppState,
+import Infrastructure.FileModification
+  ( Content (..),
+    modifyFile,
   )
-import Util
+import Infrastructure.Util
   ( changeNthElementNonEmpty,
     elementAfter,
     elementBefore,
