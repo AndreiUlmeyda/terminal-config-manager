@@ -7,16 +7,18 @@ tool/generate-dependency-graph.sh
 ```
 
 ## TODOs
-- TODO write state back to config file (on program exit or on each value change)
-- TODO find and handle every operation that can fail
-- TODO handle the case where the target file value and config value dont match, for instance on startup
-- TODO handle the case where the pattern does not match anything, for instance when the file was modified some other way during runtime
-- TODO handle the case where targetValue is not an element of possibleValues
-- TODO refactor StateTransitions
-- TODO add module documentation
-- TODO add README (known issues, termCap)
-- TODO consider leaving out the Content data type
-- TODO add help and version commands
+- write state back to config file (on program exit or on each value change)
+- find and handle every operation that can fail
+- handle the case where the target file value and config value dont match, for instance on startup
+- handle the case where the pattern does not match anything, for instance when the file was modified some other way during runtime
+- handle the case where targetValue is not an element of possibleValues
+- refactor StateTransitions
+- add module documentation
+- add README (known issues, termCap)
+- consider leaving out the Content data type
+- add help and version commands
+- invert the dependency between UI and Applicatin
+- unify app/Main.hs and src/Application/App.hs
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new file content
