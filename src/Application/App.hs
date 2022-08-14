@@ -1,11 +1,6 @@
-module Application.App (buildInitialState, tcmApp, AppState) where
+module Application.App (buildInitialState, tcmApp, AppState, runApp) where
 
-import Brick
-  ( App (..),
-    attrMap,
-    attrName,
-    showFirstCursor,
-  )
+import Brick (App (..), attrMap, attrName, defaultMain, showFirstCursor)
 import Cursor.Simple.List.NonEmpty
   ( makeNonEmptyCursor,
   )
@@ -19,14 +14,17 @@ import Domain.State
 import Graphics.Vty.Attributes
   ( currentAttr,
   )
-import Infrastructure.Config (Config (MkConfig))
-import System.Exit (die)
+import Infrastructure.Config (Config (MkConfig), loadConfig)
+import System.Exit (die, exitSuccess)
 import UserInterface.Input (handleEvent)
 import UserInterface.Render
   ( drawTCM,
     selectionStyling,
     valueStyling,
   )
+
+runApp :: IO ()
+runApp = loadConfig >>= buildInitialState >>= defaultMain tcmApp >>= const exitSuccess
 
 errorMsgNoConfigEntries :: String
 errorMsgNoConfigEntries = "There are no entries in the config file."

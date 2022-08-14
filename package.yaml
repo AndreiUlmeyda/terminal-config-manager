@@ -52,7 +52,7 @@ library:
 executables:
   terminal-config-manager:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:         .
     ghc-options:
     - -threaded
     - -rtsopts

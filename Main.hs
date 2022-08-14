@@ -1,12 +1,6 @@
 module Main where
 
-import Application.App
-  ( buildInitialState,
-    tcmApp,
-  )
-import Brick (defaultMain)
-import Infrastructure.Config (loadConfig)
-import System.Exit (exitSuccess)
+import Application.App (runApp)
 
 -- | This is an application to manage selected values scattered over many different files quickly.
 --
@@ -34,4 +28,4 @@ import System.Exit (exitSuccess)
 --  possible value.
 
 main :: IO ()
-main = loadConfig >>= buildInitialState >>= defaultMain tcmApp >>= const exitSuccess
+main = runApp

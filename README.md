@@ -17,8 +17,7 @@ tool/generate-dependency-graph.sh
 - add README (known issues, termCap)
 - consider leaving out the Content data type
 - add help and version commands
-- invert the dependency between UI and Applicatin
-- unify app/Main.hs and src/Application/App.hs
+- invert the dependency between UI and Application
 - break up the Infrastructure/Util, determine which layer it should go (Domain?)
 
 ## Design considerations, unordered
@@ -26,7 +25,7 @@ tool/generate-dependency-graph.sh
 - mode = LineSelection | ValueSelection
 - LineSelection = NextLine | PreviousLine
 - ValueSelection = NextValue | PreviousValue
-- <DomainFunction> :: mode -> OldFile -> NewFile
+- DomainFunction :: mode -> OldFile -> NewFile
 - ModificationCommand
 - Line may be a rendering concept, rather than a domain concept -> item could
     already be better
