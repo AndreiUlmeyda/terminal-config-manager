@@ -93,10 +93,10 @@ valueMarker = "{{value}}"
 -- | Substitute the newly selected value into the old content of the target file. Both the previous value
 --   and the pattern are needed to choose the correct substitution.
 modify :: TargetValue -> TargetValue -> Pattern -> (Content -> Content)
-modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern matchingPattern) (MkContent content) =
+modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern matchPattern) (MkContent content) =
   MkContent (replace oldSubstring newSubstring content)
   where
-    oldSubstring = replace valueMarker oldValue matchingPattern
+    oldSubstring = replace valueMarker oldValue matchPattern
     newSubstring = replace oldValue newValue oldSubstring
 
 -- | Produce a new AppState where the value of the currently selected item is switched to a new one according to the

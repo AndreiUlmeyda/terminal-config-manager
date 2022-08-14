@@ -1,3 +1,10 @@
+-- |
+-- Module      : App
+-- Description : Build and run a Brick app after loading the config file.
+-- Copyright   : (c) Adrian Schurz, 2022
+-- License     : MIT
+-- Maintainer  : adrian.schurz@check24.com
+-- Stability   : experimental
 module Application.App (buildInitialState, tcmApp, AppState, runApp) where
 
 import Brick (App (..), attrMap, attrName, defaultMain, showFirstCursor)
@@ -23,9 +30,15 @@ import UserInterface.Render
     valueStyling,
   )
 
+-- | Run the app by loading items from the config file, turning them into
+--   an initial state and then delegating to Brick. Unless a yaml parsing
+--   exception is printed to facilitate config file debugging, there is no
+--   failure condition and the program can exit successfully. This situation
+--   may change after permission issues are considered.
 runApp :: IO ()
 runApp = loadConfig >>= buildInitialState >>= defaultMain tcmApp >>= const exitSuccess
 
+-- | The error message displayed should there be insufficient items specified in the config file.
 errorMsgNoConfigEntries :: String
 errorMsgNoConfigEntries = "There are no entries in the config file."
 
