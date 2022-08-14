@@ -19,6 +19,7 @@ tool/generate-dependency-graph.sh
 - add help and version commands
 - invert the dependency between UI and Applicatin
 - unify app/Main.hs and src/Application/App.hs
+- break up the Infrastructure/Util, determine which layer it should go (Domain?)
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new file content
