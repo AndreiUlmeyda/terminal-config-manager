@@ -64,7 +64,6 @@ usually only when quickly quitting and restarting the program.
     the file was modified some other way during runtime
 - handle the case where targetValue is not an element of possibleValues
 - refactor StateTransitions
-- add module documentation
 - add help and version commands
 - invert the dependency between UI and Application
 - break up the Infrastructure/Util, determine which layer it should go (Domain?)
