@@ -1,3 +1,11 @@
+-- |
+-- Module      : StateTransition
+-- Description : Expose functions to change the application state. This covers
+--    item and value selection.
+-- Copyright   : (c) Adrian Schurz, 2022
+-- License     : MIT
+-- Maintainer  : adrian.schurz@check24.com
+-- Stability   : experimental
 module Domain.StateTransition
   ( selectNextItem,
     selectNextValue,
@@ -45,21 +53,35 @@ import Infrastructure.Util
     elementBefore,
   )
 
+-- | A function type which, when applied to an application state, changes the
+--   value of the item under the cursor.
 data ValueSelectionPolicy = MkValueSelectionPolicy (AppState -> AppState)
 
+-- | A function type which, when applied to an application state, changes the
+--   cursor position.
 data ItemSelectionPolicy = MkItemSelectionPolicy (NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem))
 
+-- | A function to change the cursor position to point at the next item.
+--   TODO AppState as input type
 selectNextItem :: NonEmptyCursor ConfigItem -> NextAppState
 selectNextItem = selectItem $ MkItemSelectionPolicy nonEmptyCursorSelectNext
 
+-- | A function to change the cursor position to point at the previous item.
 selectPreviousItem :: NonEmptyCursor ConfigItem -> NextAppState
 selectPreviousItem = selectItem $ MkItemSelectionPolicy nonEmptyCursorSelectPrev
 
+-- | A function type which, given a value and a list of possible values,
+--   generates a new value.
 data ValueCyclingPolicy = MkValueCyclingPolicy (TargetValue -> [TargetValue] -> TargetValue)
 
+-- | When applied to an application state, select the next value of the item
+--   under the cursor and modify the corresponding file accordingly.
+--   TODO AppState as input type
 selectNextValue :: NonEmptyCursor ConfigItem -> NextAppState
 selectNextValue items = selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleValues (MkValueCyclingPolicy elementAfter))) items
 
+-- | When applied to an application state, select the previous value of the item
+--   under the cursor and modify the corresponding file accordingly.
 selectPreviousValue :: NonEmptyCursor ConfigItem -> NextAppState
 selectPreviousValue items = selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleValues (MkValueCyclingPolicy elementBefore))) items
 
@@ -87,6 +109,8 @@ selectItem (MkItemSelectionPolicy selectionPolicy) items = case selectionPolicy 
   Nothing -> continue (MkAppState items)
   Just nonEmptyCursor' -> (continue . MkAppState) nonEmptyCursor'
 
+-- | This needs to be a substring of the matching pattern and is needed
+--   to determine the location of the values to replaced.
 valueMarker :: Text
 valueMarker = "{{value}}"
 

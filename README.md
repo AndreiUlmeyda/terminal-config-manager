@@ -68,6 +68,7 @@ usually only when quickly quitting and restarting the program.
 - add help and version commands
 - invert the dependency between UI and Application
 - break up the Infrastructure/Util, determine which layer it should go (Domain?)
+- allow common locations for the config file
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new
@@ -79,3 +80,12 @@ usually only when quickly quitting and restarting the program.
 - ModificationCommand
 - Line may be a rendering concept, rather than a domain concept -> item could
     already be better
+
+## Glossary
+- **item**: An element of the list inside of the config file. It
+    corresponds to one substring inside of one file which you
+    want to manage. This also sometimes refers to a line as it
+    is rendered on the screen, where you are shown the description and the current value.
+- **value**: A part of an item which specifies the current state
+    of the substring you want to manage. It is rendered as the
+    latter, highlighted part of a line.

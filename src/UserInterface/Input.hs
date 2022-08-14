@@ -1,3 +1,10 @@
+-- |
+-- Module      : Input
+-- Description : Handle the keyboard user input.
+-- Copyright   : (c) Adrian Schurz, 2022
+-- License     : MIT
+-- Maintainer  : adrian.schurz@check24.com
+-- Stability   : experimental
 module UserInterface.Input (handleEvent) where
 
 import Brick
@@ -20,18 +27,23 @@ import Graphics.Vty.Input.Events
     Key (KChar, KDown, KLeft, KRight, KUp),
   )
 
+-- | Pattern synonym for the event raised when hitting q
 pattern KeyQ :: Event
 pattern KeyQ <- EvKey (KChar 'q') []
 
+-- | Pattern synonym for the event raised when hitting arrow down
 pattern ArrowDown :: Event
 pattern ArrowDown <- EvKey KDown []
 
+-- | Pattern synonym for the event raised when hitting arrow up
 pattern ArrowUp :: Event
 pattern ArrowUp <- EvKey KUp []
 
+-- | Pattern synonym for the event raised when hitting arrow left
 pattern ArrowLeft :: Event
 pattern ArrowLeft <- EvKey KLeft []
 
+-- | Pattern synonym for the event raised when hitting arrow right
 pattern ArrowRight :: Event
 pattern ArrowRight <- EvKey KRight []
 

@@ -1,3 +1,10 @@
+-- |
+-- Module      : Util
+-- Description : Expose a range of helper functions.
+-- Copyright   : (c) Adrian Schurz, 2022
+-- License     : MIT
+-- Maintainer  : adrian.schurz@check24.com
+-- Stability   : experimental
 module Infrastructure.Util
   ( changeNthElement,
     changeNthElementNonEmpty,
@@ -12,9 +19,11 @@ import Data.List.NonEmpty
     toList,
   )
 
+-- | A mode of selecting a new element from a list relative to another element.
 data NeighborSelection = SelectSuccessor | SelectPredecessor
 
--- | Finds the first element equal to the input element inside of a list and returns an element next to it depending on the supplied selection policy.
+-- | Finds the first element equal to the input element inside of a list and
+--   returns an element next to it depending on the supplied selection policy.
 elementNextTo :: Eq t => NeighborSelection -> t -> [t] -> t
 elementNextTo neighborSelection targetItem list
   | null list = targetItem
@@ -25,19 +34,23 @@ elementNextTo neighborSelection targetItem list
       SelectSuccessor -> cycle
       SelectPredecessor -> tail . cycle . reverse
 
--- |  Finds the first element equal to the input element inside of a list and returns the element after it (one index up).
+-- | Finds the first element equal to the input element inside of a list and
+--   returns the element after it (one index up).
 elementAfter :: Eq t => t -> [t] -> t
 elementAfter = elementNextTo SelectSuccessor
 
--- |  Finds the first element equal to the input element inside of a list and returns the element before it (one index down).
+-- | Finds the first element equal to the input element inside of a list and
+--   returns the element before it (one index down).
 elementBefore :: Eq t => t -> [t] -> t
 elementBefore = elementNextTo SelectPredecessor
 
--- |  Given an index, a function and a NonEmpty list it applies the function to the element at that index.
+-- | Given an index, a function and a NonEmpty list it applies the function to
+--   the element at that index.
 changeNthElementNonEmpty :: Int -> (t -> t) -> NonEmpty t -> NonEmpty t
 changeNthElementNonEmpty n fn = fromList . changeNthElement n fn . toList
 
--- |  Given an index, a function and a list it applies the function to the element at that index.
+-- | Given an index, a function and a list it applies the function to the
+--   element at that index.
 changeNthElement :: Int -> (t -> t) -> [t] -> [t]
 changeNthElement _ _ [] = []
 changeNthElement n fn (x : xs)
