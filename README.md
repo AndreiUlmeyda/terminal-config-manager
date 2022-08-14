@@ -65,8 +65,6 @@ usually only when quickly quitting and restarting the program.
 - handle the case where targetValue is not an element of possibleValues
 - refactor StateTransitions
 - add module documentation
-- add README (known issues, termCap)
-- consider leaving out the Content data type
 - add help and version commands
 - invert the dependency between UI and Application
 - break up the Infrastructure/Util, determine which layer it should go (Domain?)
