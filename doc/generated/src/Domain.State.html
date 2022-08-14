@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-comment">-- |</span><span>
+</span><span id="line-2"></span><span class="hs-comment">-- Module      : Main</span><span>
+</span><span id="line-3"></span><span class="hs-comment">-- Description : Type definitions concerning the application state.</span><span>
+</span><span id="line-4"></span><span class="hs-comment">-- Copyright   : (c) Adrian Schurz, 2022</span><span>
+</span><span id="line-5"></span><span class="hs-comment">-- License     : MIT</span><span>
+</span><span id="line-6"></span><span class="hs-comment">-- Maintainer  : adrian.schurz@check24.com</span><span>
+</span><span id="line-7"></span><span class="hs-comment">-- Stability   : experimental</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Domain.State</span><span>
+</span><span id="line-9"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="Domain.State.html#AppState"><span class="hs-identifier">AppState</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Domain.State.html#MkAppState"><span class="hs-identifier">MkAppState</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-10"></span><span>    </span><span class="annot"><a href="Domain.State.html#NextAppState"><span class="hs-identifier">NextAppState</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-11"></span><span>    </span><span class="annot"><a href="Domain.State.html#ResourceName"><span class="hs-identifier">ResourceName</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-12"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-13"></span><span class="hs-keyword">where</span><span>
+</span><span id="line-14"></span><span>
+</span><span id="line-15"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Brick</span></span><span>
+</span><span id="line-16"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="hs-identifier">EventM</span></span><span class="hs-special">,</span><span>
+</span><span id="line-17"></span><span>    </span><span class="annot"><span class="hs-identifier">Next</span></span><span class="hs-special">,</span><span>
+</span><span id="line-18"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-19"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Cursor.Simple.List.NonEmpty</span></span><span>
+</span><span id="line-20"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="hs-identifier">NonEmptyCursor</span></span><span class="hs-special">,</span><span>
+</span><span id="line-21"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-22"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Infrastructure.Config.html"><span class="hs-identifier">Infrastructure.Config</span></a></span><span>
+</span><span id="line-23"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="Infrastructure.Config.html#ConfigItem"><span class="hs-identifier">ConfigItem</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-24"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-25"></span><span>
+</span><span id="line-26"></span><span class="hs-keyword">data</span><span> </span><span id="ResourceName"><span class="annot"><a href="Domain.State.html#ResourceName"><span class="hs-identifier hs-var">ResourceName</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="MkResourceName"><span class="annot"><a href="Domain.State.html#MkResourceName"><span class="hs-identifier hs-var">MkResourceName</span></a></span></span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">stock</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679092905"><span id="local-6989586621679092907"><span id="local-6989586621679092909"><span class="annot"><span class="annottext">Int -&gt; ResourceName -&gt; ShowS
+[ResourceName] -&gt; ShowS
+ResourceName -&gt; String
+(Int -&gt; ResourceName -&gt; ShowS)
+-&gt; (ResourceName -&gt; String)
+-&gt; ([ResourceName] -&gt; ShowS)
+-&gt; Show ResourceName
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [ResourceName] -&gt; ShowS
+$cshowList :: [ResourceName] -&gt; ShowS
+show :: ResourceName -&gt; String
+$cshow :: ResourceName -&gt; String
+showsPrec :: Int -&gt; ResourceName -&gt; ShowS
+$cshowsPrec :: Int -&gt; ResourceName -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679092900"><span id="local-6989586621679092902"><span class="annot"><span class="annottext">ResourceName -&gt; ResourceName -&gt; Bool
+(ResourceName -&gt; ResourceName -&gt; Bool)
+-&gt; (ResourceName -&gt; ResourceName -&gt; Bool) -&gt; Eq ResourceName
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: ResourceName -&gt; ResourceName -&gt; Bool
+$c/= :: ResourceName -&gt; ResourceName -&gt; Bool
+== :: ResourceName -&gt; ResourceName -&gt; Bool
+$c== :: ResourceName -&gt; ResourceName -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679092880"><span id="local-6989586621679092882"><span id="local-6989586621679092885"><span id="local-6989586621679092888"><span id="local-6989586621679092891"><span id="local-6989586621679092893"><span id="local-6989586621679092895"><span class="annot"><span class="annottext">Eq ResourceName
+Eq ResourceName
+-&gt; (ResourceName -&gt; ResourceName -&gt; Ordering)
+-&gt; (ResourceName -&gt; ResourceName -&gt; Bool)
+-&gt; (ResourceName -&gt; ResourceName -&gt; Bool)
+-&gt; (ResourceName -&gt; ResourceName -&gt; Bool)
+-&gt; (ResourceName -&gt; ResourceName -&gt; Bool)
+-&gt; (ResourceName -&gt; ResourceName -&gt; ResourceName)
+-&gt; (ResourceName -&gt; ResourceName -&gt; ResourceName)
+-&gt; Ord ResourceName
+ResourceName -&gt; ResourceName -&gt; Bool
+ResourceName -&gt; ResourceName -&gt; Ordering
+ResourceName -&gt; ResourceName -&gt; ResourceName
+forall a.
+Eq a
+-&gt; (a -&gt; a -&gt; Ordering)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; Ord a
+min :: ResourceName -&gt; ResourceName -&gt; ResourceName
+$cmin :: ResourceName -&gt; ResourceName -&gt; ResourceName
+max :: ResourceName -&gt; ResourceName -&gt; ResourceName
+$cmax :: ResourceName -&gt; ResourceName -&gt; ResourceName
+&gt;= :: ResourceName -&gt; ResourceName -&gt; Bool
+$c&gt;= :: ResourceName -&gt; ResourceName -&gt; Bool
+&gt; :: ResourceName -&gt; ResourceName -&gt; Bool
+$c&gt; :: ResourceName -&gt; ResourceName -&gt; Bool
+&lt;= :: ResourceName -&gt; ResourceName -&gt; Bool
+$c&lt;= :: ResourceName -&gt; ResourceName -&gt; Bool
+&lt; :: ResourceName -&gt; ResourceName -&gt; Bool
+$c&lt; :: ResourceName -&gt; ResourceName -&gt; Bool
+compare :: ResourceName -&gt; ResourceName -&gt; Ordering
+$ccompare :: ResourceName -&gt; ResourceName -&gt; Ordering
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span><span>
+</span><span id="line-28"></span><span class="hs-keyword">data</span><span> </span><span id="AppState"><span class="annot"><a href="Domain.State.html#AppState"><span class="hs-identifier hs-var">AppState</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="MkAppState"><span class="annot"><a href="Domain.State.html#MkAppState"><span class="hs-identifier hs-var">MkAppState</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">NonEmptyCursor</span></span><span> </span><span class="annot"><a href="Infrastructure.Config.html#ConfigItem"><span class="hs-identifier hs-type">ConfigItem</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">stock</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679092867"><span id="local-6989586621679092869"><span id="local-6989586621679092877"><span class="annot"><span class="annottext">Int -&gt; AppState -&gt; ShowS
+[AppState] -&gt; ShowS
+AppState -&gt; String
+(Int -&gt; AppState -&gt; ShowS)
+-&gt; (AppState -&gt; String) -&gt; ([AppState] -&gt; ShowS) -&gt; Show AppState
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [AppState] -&gt; ShowS
+$cshowList :: [AppState] -&gt; ShowS
+show :: AppState -&gt; String
+$cshow :: AppState -&gt; String
+showsPrec :: Int -&gt; AppState -&gt; ShowS
+$cshowsPrec :: Int -&gt; AppState -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679092858"><span id="local-6989586621679092864"><span class="annot"><span class="annottext">AppState -&gt; AppState -&gt; Bool
+(AppState -&gt; AppState -&gt; Bool)
+-&gt; (AppState -&gt; AppState -&gt; Bool) -&gt; Eq AppState
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: AppState -&gt; AppState -&gt; Bool
+$c/= :: AppState -&gt; AppState -&gt; Bool
+== :: AppState -&gt; AppState -&gt; Bool
+$c== :: AppState -&gt; AppState -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span>
+</span><span id="line-30"></span><span class="hs-keyword">type</span><span> </span><span id="NextAppState"><span class="annot"><a href="Domain.State.html#NextAppState"><span class="hs-identifier hs-var">NextAppState</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">EventM</span></span><span> </span><span class="annot"><a href="Domain.State.html#ResourceName"><span class="hs-identifier hs-type">ResourceName</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Next</span></span><span> </span><span class="annot"><a href="Domain.State.html#AppState"><span class="hs-identifier hs-type">AppState</span></a></span><span class="hs-special">)</span></pre></body></html>

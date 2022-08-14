@@ -1,3 +1,10 @@
+-- |
+-- Module      : Main
+-- Description : Type definitions concerning the application state.
+-- Copyright   : (c) Adrian Schurz, 2022
+-- License     : MIT
+-- Maintainer  : adrian.schurz@check24.com
+-- Stability   : experimental
 module Domain.State
   ( AppState (MkAppState),
     NextAppState,

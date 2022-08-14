@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">UserInterface.Render</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="UserInterface.Render.html#drawTCM"><span class="hs-identifier">drawTCM</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="UserInterface.Render.html#selectionStyling"><span class="hs-identifier">selectionStyling</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="UserInterface.Render.html#valueStyling"><span class="hs-identifier">valueStyling</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-2"></span><span>
+</span><span id="line-3"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Brick</span></span><span>
+</span><span id="line-4"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="hs-identifier">Widget</span></span><span class="hs-special">,</span><span>
+</span><span id="line-5"></span><span>    </span><span class="annot"><span class="hs-identifier">attrName</span></span><span class="hs-special">,</span><span>
+</span><span id="line-6"></span><span>    </span><span class="annot"><span class="hs-identifier">fg</span></span><span class="hs-special">,</span><span>
+</span><span id="line-7"></span><span>    </span><span class="annot"><span class="hs-identifier">hBox</span></span><span class="hs-special">,</span><span>
+</span><span id="line-8"></span><span>    </span><span class="annot"><span class="hs-identifier">txt</span></span><span class="hs-special">,</span><span>
+</span><span id="line-9"></span><span>    </span><span class="annot"><span class="hs-identifier">vBox</span></span><span class="hs-special">,</span><span>
+</span><span id="line-10"></span><span>    </span><span class="annot"><span class="hs-identifier">withAttr</span></span><span class="hs-special">,</span><span>
+</span><span id="line-11"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Cursor.Simple.List.NonEmpty</span></span><span>
+</span><span id="line-13"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="hs-identifier">nonEmptyCursorCurrent</span></span><span class="hs-special">,</span><span>
+</span><span id="line-14"></span><span>    </span><span class="annot"><span class="hs-identifier">nonEmptyCursorNext</span></span><span class="hs-special">,</span><span>
+</span><span id="line-15"></span><span>    </span><span class="annot"><span class="hs-identifier">nonEmptyCursorPrev</span></span><span class="hs-special">,</span><span>
+</span><span id="line-16"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-17"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Domain.State.html"><span class="hs-identifier">Domain.State</span></a></span><span>
+</span><span id="line-18"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="Domain.State.html#AppState"><span class="hs-identifier">AppState</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Domain.State.html#MkAppState"><span class="hs-identifier">MkAppState</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-19"></span><span>    </span><span class="annot"><a href="Domain.State.html#ResourceName"><span class="hs-identifier">ResourceName</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-20"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-21"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Graphics.Vty.Attributes</span></span><span>
+</span><span id="line-22"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="hs-identifier">Attr</span></span><span class="hs-special">,</span><span>
+</span><span id="line-23"></span><span>    </span><span class="annot"><span class="hs-identifier">bold</span></span><span class="hs-special">,</span><span>
+</span><span id="line-24"></span><span>    </span><span class="annot"><span class="hs-identifier">currentAttr</span></span><span class="hs-special">,</span><span>
+</span><span id="line-25"></span><span>    </span><span class="annot"><span class="hs-identifier">cyan</span></span><span class="hs-special">,</span><span>
+</span><span id="line-26"></span><span>    </span><span class="annot"><span class="hs-identifier">withStyle</span></span><span class="hs-special">,</span><span>
+</span><span id="line-27"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-28"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Infrastructure.Config.html"><span class="hs-identifier">Infrastructure.Config</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Infrastructure.Config.html#ConfigItem"><span class="hs-identifier">ConfigItem</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Infrastructure.Config.html#MkConfigItem"><span class="hs-identifier">MkConfigItem</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Infrastructure.Config.html#TargetValue"><span class="hs-identifier">TargetValue</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Infrastructure.Config.html#MkTargetValue"><span class="hs-identifier">MkTargetValue</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span>
+</span><span id="line-30"></span><span class="hs-comment">-- | The rendering consists of a single layer, each line consists of an items title and current value. The selected line</span><span>
+</span><span id="line-31"></span><span class="hs-comment">--   is rendered boldface, the selected value, additionally, has a separate color.</span><span>
+</span><span id="line-32"></span><span class="annot"><a href="UserInterface.Render.html#drawTCM"><span class="hs-identifier hs-type">drawTCM</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Domain.State.html#AppState"><span class="hs-identifier hs-type">AppState</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Widget</span></span><span> </span><span class="annot"><a href="Domain.State.html#ResourceName"><span class="hs-identifier hs-type">ResourceName</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-33"></span><span id="drawTCM"><span class="annot"><span class="annottext">drawTCM :: AppState -&gt; [Widget ResourceName]
+</span><a href="UserInterface.Render.html#drawTCM"><span class="hs-identifier hs-var hs-var">drawTCM</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Domain.State.html#MkAppState"><span class="hs-identifier hs-type">MkAppState</span></a></span><span> </span><span id="local-6989586621679093297"><span class="annot"><span class="annottext">NonEmptyCursor ConfigItem
+</span><a href="#local-6989586621679093297"><span class="hs-identifier hs-var">items</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Widget ResourceName
+</span><a href="#local-6989586621679093296"><span class="hs-identifier hs-var">singleLayer</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-34"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-35"></span><span>    </span><span id="local-6989586621679093296"><span class="annot"><span class="annottext">singleLayer :: Widget ResourceName
+</span><a href="#local-6989586621679093296"><span class="hs-identifier hs-var hs-var">singleLayer</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[Widget ResourceName] -&gt; Widget ResourceName
+forall n. [Widget n] -&gt; Widget n
+</span><span class="hs-identifier hs-var">vBox</span></span><span> </span><span class="annot"><span class="annottext">([Widget ResourceName] -&gt; Widget ResourceName)
+-&gt; ([[Widget ResourceName]] -&gt; [Widget ResourceName])
+-&gt; [[Widget ResourceName]]
+-&gt; Widget ResourceName
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">[[Widget ResourceName]] -&gt; [Widget ResourceName]
+forall (t :: * -&gt; *) a. Foldable t =&gt; t [a] -&gt; [a]
+</span><span class="hs-identifier hs-var">concat</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">[Widget ResourceName]
+</span><a href="#local-6989586621679093291"><span class="hs-identifier hs-var">itemsAboveSelected</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[Widget ResourceName]
+</span><a href="#local-6989586621679093290"><span class="hs-identifier hs-var">selectedItem</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[Widget ResourceName]
+</span><a href="#local-6989586621679093289"><span class="hs-identifier hs-var">itemsBelowSelected</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-36"></span><span>    </span><span id="local-6989586621679093291"><span class="annot"><span class="annottext">itemsAboveSelected :: [Widget ResourceName]
+</span><a href="#local-6989586621679093291"><span class="hs-identifier hs-var hs-var">itemsAboveSelected</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ConfigItem -&gt; Widget ResourceName)
+-&gt; [ConfigItem] -&gt; [Widget ResourceName]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Highlighting -&gt; ConfigItem -&gt; Widget ResourceName
+</span><a href="UserInterface.Render.html#drawItem"><span class="hs-identifier hs-var">drawItem</span></a></span><span> </span><span class="annot"><span class="annottext">Highlighting
+</span><a href="UserInterface.Render.html#NotHighlighted"><span class="hs-identifier hs-var">NotHighlighted</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[ConfigItem] -&gt; [ConfigItem]
+forall a. [a] -&gt; [a]
+</span><span class="hs-identifier hs-var">reverse</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">NonEmptyCursor ConfigItem -&gt; [ConfigItem]
+forall a b. NonEmptyCursor a b -&gt; [b]
+</span><span class="hs-identifier hs-var">nonEmptyCursorPrev</span></span><span> </span><span class="annot"><span class="annottext">NonEmptyCursor ConfigItem
+</span><a href="#local-6989586621679093297"><span class="hs-identifier hs-var">items</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-37"></span><span>    </span><span id="local-6989586621679093290"><span class="annot"><span class="annottext">selectedItem :: [Widget ResourceName]
+</span><a href="#local-6989586621679093290"><span class="hs-identifier hs-var hs-var">selectedItem</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">AttrName -&gt; Widget ResourceName -&gt; Widget ResourceName
+forall n. AttrName -&gt; Widget n -&gt; Widget n
+</span><span class="hs-identifier hs-var">withAttr</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; AttrName
+</span><span class="hs-identifier hs-var">attrName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;selected&quot;</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(Widget ResourceName -&gt; Widget ResourceName)
+-&gt; (NonEmptyCursor ConfigItem -&gt; Widget ResourceName)
+-&gt; NonEmptyCursor ConfigItem
+-&gt; Widget ResourceName
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Highlighting -&gt; ConfigItem -&gt; Widget ResourceName
+</span><a href="UserInterface.Render.html#drawItem"><span class="hs-identifier hs-var">drawItem</span></a></span><span> </span><span class="annot"><span class="annottext">Highlighting
+</span><a href="UserInterface.Render.html#Highlighted"><span class="hs-identifier hs-var">Highlighted</span></a></span><span> </span><span class="annot"><span class="annottext">(ConfigItem -&gt; Widget ResourceName)
+-&gt; (NonEmptyCursor ConfigItem -&gt; ConfigItem)
+-&gt; NonEmptyCursor ConfigItem
+-&gt; Widget ResourceName
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">NonEmptyCursor ConfigItem -&gt; ConfigItem
+forall a b. NonEmptyCursor a b -&gt; a
+</span><span class="hs-identifier hs-var">nonEmptyCursorCurrent</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">NonEmptyCursor ConfigItem
+</span><a href="#local-6989586621679093297"><span class="hs-identifier hs-var">items</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-38"></span><span>    </span><span id="local-6989586621679093289"><span class="annot"><span class="annottext">itemsBelowSelected :: [Widget ResourceName]
+</span><a href="#local-6989586621679093289"><span class="hs-identifier hs-var hs-var">itemsBelowSelected</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(ConfigItem -&gt; Widget ResourceName)
+-&gt; [ConfigItem] -&gt; [Widget ResourceName]
+forall a b. (a -&gt; b) -&gt; [a] -&gt; [b]
+</span><span class="hs-identifier hs-var">map</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Highlighting -&gt; ConfigItem -&gt; Widget ResourceName
+</span><a href="UserInterface.Render.html#drawItem"><span class="hs-identifier hs-var">drawItem</span></a></span><span> </span><span class="annot"><span class="annottext">Highlighting
+</span><a href="UserInterface.Render.html#NotHighlighted"><span class="hs-identifier hs-var">NotHighlighted</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">([ConfigItem] -&gt; [Widget ResourceName])
+-&gt; (NonEmptyCursor ConfigItem -&gt; [ConfigItem])
+-&gt; NonEmptyCursor ConfigItem
+-&gt; [Widget ResourceName]
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">NonEmptyCursor ConfigItem -&gt; [ConfigItem]
+forall a b. NonEmptyCursor a b -&gt; [b]
+</span><span class="hs-identifier hs-var">nonEmptyCursorNext</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">NonEmptyCursor ConfigItem
+</span><a href="#local-6989586621679093297"><span class="hs-identifier hs-var">items</span></a></span><span>
+</span><span id="line-39"></span><span>
+</span><span id="line-40"></span><span class="hs-keyword">data</span><span> </span><span id="Highlighting"><span class="annot"><a href="UserInterface.Render.html#Highlighting"><span class="hs-identifier hs-var">Highlighting</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Highlighted"><span class="annot"><a href="UserInterface.Render.html#Highlighted"><span class="hs-identifier hs-var">Highlighted</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="NotHighlighted"><span class="annot"><a href="UserInterface.Render.html#NotHighlighted"><span class="hs-identifier hs-var">NotHighlighted</span></a></span></span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">stock</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679093281"><span id="local-6989586621679093283"><span class="annot"><span class="annottext">Highlighting -&gt; Highlighting -&gt; Bool
+(Highlighting -&gt; Highlighting -&gt; Bool)
+-&gt; (Highlighting -&gt; Highlighting -&gt; Bool) -&gt; Eq Highlighting
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Highlighting -&gt; Highlighting -&gt; Bool
+$c/= :: Highlighting -&gt; Highlighting -&gt; Bool
+== :: Highlighting -&gt; Highlighting -&gt; Bool
+$c== :: Highlighting -&gt; Highlighting -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-41"></span><span>
+</span><span id="line-42"></span><span class="hs-comment">-- | Transform a config item into a simple widget and, optionally, add an attribute to it which is later used to</span><span>
+</span><span id="line-43"></span><span class="hs-comment">--   apply different styling to highlighted lines.</span><span>
+</span><span id="line-44"></span><span class="annot"><a href="UserInterface.Render.html#drawItem"><span class="hs-identifier hs-type">drawItem</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="UserInterface.Render.html#Highlighting"><span class="hs-identifier hs-type">Highlighting</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Infrastructure.Config.html#ConfigItem"><span class="hs-identifier hs-type">ConfigItem</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Widget</span></span><span> </span><span class="annot"><a href="Domain.State.html#ResourceName"><span class="hs-identifier hs-type">ResourceName</span></a></span><span>
+</span><span id="line-45"></span><span id="drawItem"><span class="annot"><span class="annottext">drawItem :: Highlighting -&gt; ConfigItem -&gt; Widget ResourceName
+</span><a href="UserInterface.Render.html#drawItem"><span class="hs-identifier hs-var hs-var">drawItem</span></a></span></span><span> </span><span id="local-6989586621679093279"><span class="annot"><span class="annottext">Highlighting
+</span><a href="#local-6989586621679093279"><span class="hs-identifier hs-var">highlighting</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Infrastructure.Config.html#MkConfigItem"><span class="hs-identifier hs-type">MkConfigItem</span></a></span><span> </span><span id="local-6989586621679093278"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679093278"><span class="hs-identifier hs-var">title</span></a></span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><span class="annottext">Pattern
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Infrastructure.Config.html#MkTargetValue"><span class="hs-identifier hs-type">MkTargetValue</span></a></span><span> </span><span id="local-6989586621679093277"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679093277"><span class="hs-identifier hs-var">currentValue</span></a></span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[TargetValue]
+</span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-46"></span><span>  </span><span class="annot"><span class="annottext">[Widget ResourceName] -&gt; Widget ResourceName
+forall n. [Widget n] -&gt; Widget n
+</span><span class="hs-identifier hs-var">hBox</span></span><span>
+</span><span id="line-47"></span><span>    </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Widget ResourceName
+forall n. Text -&gt; Widget n
+</span><span class="hs-identifier hs-var">txt</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679093278"><span class="hs-identifier hs-var">title</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-48"></span><span>      </span><span class="annot"><span class="annottext">Text -&gt; Widget ResourceName
+forall n. Text -&gt; Widget n
+</span><span class="hs-identifier hs-var">txt</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot; &#8594; &quot;</span></span><span class="hs-special">,</span><span>
+</span><span id="line-49"></span><span>      </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Highlighting -&gt; Widget ResourceName -&gt; Widget ResourceName
+forall n. Highlighting -&gt; Widget n -&gt; Widget n
+</span><a href="UserInterface.Render.html#attachAttrWhenHighlighted"><span class="hs-identifier hs-var">attachAttrWhenHighlighted</span></a></span><span> </span><span class="annot"><span class="annottext">Highlighting
+</span><a href="#local-6989586621679093279"><span class="hs-identifier hs-var">highlighting</span></a></span><span> </span><span class="annot"><span class="annottext">(Widget ResourceName -&gt; Widget ResourceName)
+-&gt; (Text -&gt; Widget ResourceName) -&gt; Text -&gt; Widget ResourceName
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Widget ResourceName
+forall n. Text -&gt; Widget n
+</span><span class="hs-identifier hs-var">txt</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679093277"><span class="hs-identifier hs-var">currentValue</span></a></span><span>
+</span><span id="line-50"></span><span>    </span><span class="hs-special">]</span><span>
+</span><span id="line-51"></span><span>
+</span><span id="line-52"></span><span class="hs-comment">-- | Conditionally attach an attribute which is later used to apply different styling to highlighted widgets.</span><span>
+</span><span id="line-53"></span><span id="local-6989586621679093326"><span class="annot"><a href="UserInterface.Render.html#attachAttrWhenHighlighted"><span class="hs-identifier hs-type">attachAttrWhenHighlighted</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="UserInterface.Render.html#Highlighting"><span class="hs-identifier hs-type">Highlighting</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Widget</span></span><span> </span><span class="annot"><a href="#local-6989586621679093326"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Widget</span></span><span> </span><span class="annot"><a href="#local-6989586621679093326"><span class="hs-identifier hs-type">n</span></a></span></span><span>
+</span><span id="line-54"></span><span id="attachAttrWhenHighlighted"><span class="annot"><span class="annottext">attachAttrWhenHighlighted :: forall n. Highlighting -&gt; Widget n -&gt; Widget n
+</span><a href="UserInterface.Render.html#attachAttrWhenHighlighted"><span class="hs-identifier hs-var hs-var">attachAttrWhenHighlighted</span></a></span></span><span> </span><span class="annot"><span class="annottext">Highlighting
+</span><a href="UserInterface.Render.html#Highlighted"><span class="hs-identifier hs-var">Highlighted</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">AttrName -&gt; Widget n -&gt; Widget n
+forall n. AttrName -&gt; Widget n -&gt; Widget n
+</span><span class="hs-identifier hs-var">withAttr</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; AttrName
+</span><span class="hs-identifier hs-var">attrName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;value&quot;</span></span><span class="hs-special">)</span><span>
+</span><span id="line-55"></span><span class="annot"><a href="UserInterface.Render.html#attachAttrWhenHighlighted"><span class="hs-identifier hs-var">attachAttrWhenHighlighted</span></a></span><span> </span><span class="annot"><span class="annottext">Highlighting
+</span><a href="UserInterface.Render.html#NotHighlighted"><span class="hs-identifier hs-var">NotHighlighted</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Widget n -&gt; Widget n
+forall a. a -&gt; a
+</span><span class="hs-identifier hs-var">id</span></span><span>
+</span><span id="line-56"></span><span>
+</span><span id="line-57"></span><span class="hs-comment">-- | Define the styling to be applied to selected items.</span><span>
+</span><span id="line-58"></span><span class="annot"><a href="UserInterface.Render.html#selectionStyling"><span class="hs-identifier hs-type">selectionStyling</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Attr</span></span><span>
+</span><span id="line-59"></span><span id="selectionStyling"><span class="annot"><span class="annottext">selectionStyling :: Attr
+</span><a href="UserInterface.Render.html#selectionStyling"><span class="hs-identifier hs-var hs-var">selectionStyling</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Attr -&gt; Style -&gt; Attr
+</span><span class="hs-identifier hs-var">withStyle</span></span><span> </span><span class="annot"><span class="annottext">Attr
+</span><span class="hs-identifier hs-var">currentAttr</span></span><span> </span><span class="annot"><span class="annottext">Style
+</span><span class="hs-identifier hs-var">bold</span></span><span>
+</span><span id="line-60"></span><span>
+</span><span id="line-61"></span><span class="hs-comment">-- | Define the styling to be applied to the value of a selected line.</span><span>
+</span><span id="line-62"></span><span class="annot"><a href="UserInterface.Render.html#valueStyling"><span class="hs-identifier hs-type">valueStyling</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Attr</span></span><span>
+</span><span id="line-63"></span><span id="valueStyling"><span class="annot"><span class="annottext">valueStyling :: Attr
+</span><a href="UserInterface.Render.html#valueStyling"><span class="hs-identifier hs-var hs-var">valueStyling</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Attr -&gt; Style -&gt; Attr
+</span><span class="hs-identifier hs-var">withStyle</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Color -&gt; Attr
+</span><span class="hs-identifier hs-var">fg</span></span><span> </span><span class="annot"><span class="annottext">Color
+</span><span class="hs-identifier hs-var">cyan</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Style
+</span><span class="hs-identifier hs-var">bold</span></span></pre></body></html>

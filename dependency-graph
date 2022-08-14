@@ -1,0 +1,23 @@
+digraph G {
+size="6,4";
+ratio="fill";
+u8[fillcolor="#bbffbb",style="filled",label="..Main"];
+u0[fillcolor="#ffffbb",style="filled",label="Application.App"];
+u4[fillcolor="#bbbbff",style="filled",label="Domain.StateTransition"];
+u1[fillcolor="#bbbbff",style="filled",label="Domain.State"];
+u6[fillcolor="#ffbbbb",style="filled",label="Infrastructure.Util"];
+u5[fillcolor="#ffbbbb",style="filled",label="Infrastructure.FileModification"];
+u2[fillcolor="#ffbbbb",style="filled",label="Infrastructure.Config"];
+u7[fillcolor="#bbffff",style="filled",label="UserInterface.Render"];
+u3[fillcolor="#bbffff",style="filled",label="UserInterface.Input"];
+u0 -> u3;
+u0 -> u7;
+u1 -> u2;
+u3 -> u4;
+u4 -> u1;
+u4 -> u5;
+u4 -> u6;
+u7 -> u1;
+u8 -> u0;
+
+}

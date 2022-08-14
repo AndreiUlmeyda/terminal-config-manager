@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-comment">-- |</span><span>
+</span><span id="line-2"></span><span class="hs-comment">-- Module      : App</span><span>
+</span><span id="line-3"></span><span class="hs-comment">-- Description : Build and run a Brick app after loading the config file.</span><span>
+</span><span id="line-4"></span><span class="hs-comment">-- Copyright   : (c) Adrian Schurz, 2022</span><span>
+</span><span id="line-5"></span><span class="hs-comment">-- License     : MIT</span><span>
+</span><span id="line-6"></span><span class="hs-comment">-- Maintainer  : adrian.schurz@check24.com</span><span>
+</span><span id="line-7"></span><span class="hs-comment">-- Stability   : experimental</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Application.App</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Application.App.html#buildInitialState"><span class="hs-identifier">buildInitialState</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Application.App.html#tcmApp"><span class="hs-identifier">tcmApp</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Domain.State.html#AppState"><span class="hs-identifier">AppState</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Application.App.html#runApp"><span class="hs-identifier">runApp</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-9"></span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Brick</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">App</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">attrMap</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">attrName</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">defaultMain</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">showFirstCursor</span></span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Cursor.Simple.List.NonEmpty</span></span><span>
+</span><span id="line-12"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="hs-identifier">makeNonEmptyCursor</span></span><span class="hs-special">,</span><span>
+</span><span id="line-13"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.List.NonEmpty</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">NE</span></span><span>
+</span><span id="line-15"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="hs-identifier">nonEmpty</span></span><span class="hs-special">,</span><span>
+</span><span id="line-16"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-17"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Domain.State.html"><span class="hs-identifier">Domain.State</span></a></span><span>
+</span><span id="line-18"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="Domain.State.html#AppState"><span class="hs-identifier">AppState</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Domain.State.html#MkAppState"><span class="hs-identifier">MkAppState</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-19"></span><span>    </span><span class="annot"><a href="Domain.State.html#ResourceName"><span class="hs-identifier">ResourceName</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-20"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-21"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Graphics.Vty.Attributes</span></span><span>
+</span><span id="line-22"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><span class="hs-identifier">currentAttr</span></span><span class="hs-special">,</span><span>
+</span><span id="line-23"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-24"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Infrastructure.Config.html"><span class="hs-identifier">Infrastructure.Config</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Infrastructure.Config.html#Config"><span class="hs-identifier">Config</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Infrastructure.Config.html#MkConfig"><span class="hs-identifier">MkConfig</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Infrastructure.Config.html#loadConfig"><span class="hs-identifier">loadConfig</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-25"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">System.Exit</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">die</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">exitSuccess</span></span><span class="hs-special">)</span><span>
+</span><span id="line-26"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="UserInterface.Input.html"><span class="hs-identifier">UserInterface.Input</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="UserInterface.Input.html#handleEvent"><span class="hs-identifier">handleEvent</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="UserInterface.Render.html"><span class="hs-identifier">UserInterface.Render</span></a></span><span>
+</span><span id="line-28"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="UserInterface.Render.html#drawTCM"><span class="hs-identifier">drawTCM</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-29"></span><span>    </span><span class="annot"><a href="UserInterface.Render.html#selectionStyling"><span class="hs-identifier">selectionStyling</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-30"></span><span>    </span><span class="annot"><a href="UserInterface.Render.html#valueStyling"><span class="hs-identifier">valueStyling</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-31"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-32"></span><span>
+</span><span id="line-33"></span><span class="hs-comment">-- | Run the app by loading items from the config file, turning them into</span><span>
+</span><span id="line-34"></span><span class="hs-comment">--   an initial state and then delegating to Brick. Unless a yaml parsing</span><span>
+</span><span id="line-35"></span><span class="hs-comment">--   exception is printed to facilitate config file debugging, there is no</span><span>
+</span><span id="line-36"></span><span class="hs-comment">--   failure condition and the program can exit successfully. This situation</span><span>
+</span><span id="line-37"></span><span class="hs-comment">--   may change after permission issues are considered.</span><span>
+</span><span id="line-38"></span><span class="annot"><a href="Application.App.html#runApp"><span class="hs-identifier hs-type">runApp</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span>
+</span><span id="line-39"></span><span id="runApp"><span class="annot"><span class="annottext">runApp :: IO ()
+</span><a href="Application.App.html#runApp"><span class="hs-identifier hs-var hs-var">runApp</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">IO Config
+</span><a href="Infrastructure.Config.html#loadConfig"><span class="hs-identifier hs-var">loadConfig</span></a></span><span> </span><span class="annot"><span class="annottext">IO Config -&gt; (Config -&gt; IO AppState) -&gt; IO AppState
+forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="annot"><span class="annottext">Config -&gt; IO AppState
+</span><a href="Application.App.html#buildInitialState"><span class="hs-identifier hs-var">buildInitialState</span></a></span><span> </span><span class="annot"><span class="annottext">IO AppState -&gt; (AppState -&gt; IO AppState) -&gt; IO AppState
+forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="annot"><span class="annottext">App AppState Any ResourceName -&gt; AppState -&gt; IO AppState
+forall n s e. Ord n =&gt; App s e n -&gt; s -&gt; IO s
+</span><span class="hs-identifier hs-var">defaultMain</span></span><span> </span><span class="annot"><span class="annottext">App AppState Any ResourceName
+forall e. App AppState e ResourceName
+</span><a href="Application.App.html#tcmApp"><span class="hs-identifier hs-var">tcmApp</span></a></span><span> </span><span class="annot"><span class="annottext">IO AppState -&gt; (AppState -&gt; IO ()) -&gt; IO ()
+forall (m :: * -&gt; *) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="annot"><span class="annottext">IO () -&gt; AppState -&gt; IO ()
+forall a b. a -&gt; b -&gt; a
+</span><span class="hs-identifier hs-var">const</span></span><span> </span><span class="annot"><span class="annottext">IO ()
+forall a. IO a
+</span><span class="hs-identifier hs-var">exitSuccess</span></span><span>
+</span><span id="line-40"></span><span>
+</span><span id="line-41"></span><span class="hs-comment">-- | The error message displayed should there be insufficient items specified in the config file.</span><span>
+</span><span id="line-42"></span><span class="annot"><a href="Application.App.html#errorMsgNoConfigEntries"><span class="hs-identifier hs-type">errorMsgNoConfigEntries</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-43"></span><span id="errorMsgNoConfigEntries"><span class="annot"><span class="annottext">errorMsgNoConfigEntries :: String
+</span><a href="Application.App.html#errorMsgNoConfigEntries"><span class="hs-identifier hs-var hs-var">errorMsgNoConfigEntries</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;There are no entries in the config file.&quot;</span></span><span>
+</span><span id="line-44"></span><span>
+</span><span id="line-45"></span><span class="hs-comment">-- | For this application only event handling, drawing and some attributes need to be implemented. The rest are default</span><span>
+</span><span id="line-46"></span><span class="hs-comment">-- implementations.</span><span>
+</span><span id="line-47"></span><span id="local-6989586621679093421"><span class="annot"><a href="Application.App.html#tcmApp"><span class="hs-identifier hs-type">tcmApp</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">App</span></span><span> </span><span class="annot"><a href="Domain.State.html#AppState"><span class="hs-identifier hs-type">AppState</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679093421"><span class="hs-identifier hs-type">e</span></a></span><span> </span><span class="annot"><a href="Domain.State.html#ResourceName"><span class="hs-identifier hs-type">ResourceName</span></a></span></span><span>
+</span><span id="line-48"></span><span id="tcmApp"><span class="annot"><span class="annottext">tcmApp :: forall e. App AppState e ResourceName
+</span><a href="Application.App.html#tcmApp"><span class="hs-identifier hs-var hs-var">tcmApp</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-49"></span><span>  </span><span class="annot"><span class="hs-identifier hs-type">App</span></span><span>
+</span><span id="line-50"></span><span>    </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">appHandleEvent :: AppState
+-&gt; BrickEvent ResourceName e -&gt; EventM ResourceName (Next AppState)
+</span><span class="hs-identifier hs-var">appHandleEvent</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">AppState
+-&gt; BrickEvent ResourceName e -&gt; EventM ResourceName (Next AppState)
+forall n e.
+AppState -&gt; BrickEvent n e -&gt; EventM ResourceName (Next AppState)
+</span><a href="UserInterface.Input.html#handleEvent"><span class="hs-identifier hs-var">handleEvent</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-51"></span><span>      </span><span class="annot"><span class="annottext">appDraw :: AppState -&gt; [Widget ResourceName]
+</span><span class="hs-identifier hs-var">appDraw</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">AppState -&gt; [Widget ResourceName]
+</span><a href="UserInterface.Render.html#drawTCM"><span class="hs-identifier hs-var">drawTCM</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-52"></span><span>      </span><span class="annot"><span class="annottext">appAttrMap :: AppState -&gt; AttrMap
+</span><span class="hs-identifier hs-var">appAttrMap</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">AttrMap -&gt; AppState -&gt; AttrMap
+forall a b. a -&gt; b -&gt; a
+</span><span class="hs-identifier hs-var">const</span></span><span> </span><span class="annot"><span class="annottext">(AttrMap -&gt; AppState -&gt; AttrMap)
+-&gt; ([(AttrName, Attr)] -&gt; AttrMap)
+-&gt; [(AttrName, Attr)]
+-&gt; AppState
+-&gt; AttrMap
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">Attr -&gt; [(AttrName, Attr)] -&gt; AttrMap
+</span><span class="hs-identifier hs-var">attrMap</span></span><span> </span><span class="annot"><span class="annottext">Attr
+</span><span class="hs-identifier hs-var">currentAttr</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; AttrName
+</span><span class="hs-identifier hs-var">attrName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;selected&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Attr
+</span><a href="UserInterface.Render.html#selectionStyling"><span class="hs-identifier hs-var">selectionStyling</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; AttrName
+</span><span class="hs-identifier hs-var">attrName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;value&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Attr
+</span><a href="UserInterface.Render.html#valueStyling"><span class="hs-identifier hs-var">valueStyling</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span class="hs-special">,</span><span>
+</span><span id="line-53"></span><span>      </span><span class="annot"><span class="annottext">appChooseCursor :: AppState
+-&gt; [CursorLocation ResourceName]
+-&gt; Maybe (CursorLocation ResourceName)
+</span><span class="hs-identifier hs-var">appChooseCursor</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">AppState
+-&gt; [CursorLocation ResourceName]
+-&gt; Maybe (CursorLocation ResourceName)
+forall s n. s -&gt; [CursorLocation n] -&gt; Maybe (CursorLocation n)
+</span><span class="hs-identifier hs-var">showFirstCursor</span></span><span class="hs-special">,</span><span>
+</span><span id="line-54"></span><span>      </span><span class="annot"><span class="annottext">appStartEvent :: AppState -&gt; EventM ResourceName AppState
+</span><span class="hs-identifier hs-var">appStartEvent</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">AppState -&gt; EventM ResourceName AppState
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span>
+</span><span id="line-55"></span><span>    </span><span class="hs-special">}</span><span>
+</span><span id="line-56"></span><span>
+</span><span id="line-57"></span><span class="hs-comment">-- | Wrap the config file entries in a nonempty list.</span><span>
+</span><span id="line-58"></span><span class="annot"><a href="Application.App.html#buildInitialState"><span class="hs-identifier hs-type">buildInitialState</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Infrastructure.Config.html#Config"><span class="hs-identifier hs-type">Config</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="annot"><a href="Domain.State.html#AppState"><span class="hs-identifier hs-type">AppState</span></a></span><span>
+</span><span id="line-59"></span><span id="buildInitialState"><span class="annot"><span class="annottext">buildInitialState :: Config -&gt; IO AppState
+</span><a href="Application.App.html#buildInitialState"><span class="hs-identifier hs-var hs-var">buildInitialState</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Infrastructure.Config.html#MkConfig"><span class="hs-identifier hs-type">MkConfig</span></a></span><span> </span><span id="local-6989586621679093355"><span class="annot"><span class="annottext">[ConfigItem]
+</span><a href="#local-6989586621679093355"><span class="hs-identifier hs-var">configItems</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-60"></span><span>  </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">[ConfigItem] -&gt; Maybe (NonEmpty ConfigItem)
+forall a. [a] -&gt; Maybe (NonEmpty a)
+</span><span class="hs-identifier hs-var">NE.nonEmpty</span></span><span> </span><span class="annot"><span class="annottext">[ConfigItem]
+</span><a href="#local-6989586621679093355"><span class="hs-identifier hs-var">configItems</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-61"></span><span>    </span><span class="annot"><span class="annottext">Maybe (NonEmpty ConfigItem)
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; IO AppState
+forall a. String -&gt; IO a
+</span><span class="hs-identifier hs-var">die</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="Application.App.html#errorMsgNoConfigEntries"><span class="hs-identifier hs-var">errorMsgNoConfigEntries</span></a></span><span>
+</span><span id="line-62"></span><span>    </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679093354"><span class="annot"><span class="annottext">NonEmpty ConfigItem
+</span><a href="#local-6989586621679093354"><span class="hs-identifier hs-var">ne</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">AppState -&gt; IO AppState
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(AppState -&gt; IO AppState)
+-&gt; (NonEmpty ConfigItem -&gt; AppState)
+-&gt; NonEmpty ConfigItem
+-&gt; IO AppState
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">NonEmptyCursor ConfigItem -&gt; AppState
+</span><a href="Domain.State.html#MkAppState"><span class="hs-identifier hs-var">MkAppState</span></a></span><span> </span><span class="annot"><span class="annottext">(NonEmptyCursor ConfigItem -&gt; AppState)
+-&gt; (NonEmpty ConfigItem -&gt; NonEmptyCursor ConfigItem)
+-&gt; NonEmpty ConfigItem
+-&gt; AppState
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</span><span class="hs-operator hs-var">.</span></span><span> </span><span class="annot"><span class="annottext">NonEmpty ConfigItem -&gt; NonEmptyCursor ConfigItem
+forall a. NonEmpty a -&gt; NonEmptyCursor a
+</span><span class="hs-identifier hs-var">makeNonEmptyCursor</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">NonEmpty ConfigItem
+</span><a href="#local-6989586621679093354"><span class="hs-identifier hs-var">ne</span></a></span><span>
+</span><span id="line-63"></span></pre></body></html>
