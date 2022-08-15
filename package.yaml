@@ -29,6 +29,7 @@ dependencies:
 - text
 - yaml
 - strict
+- optparse-applicative
 
 library:
   source-dirs: src

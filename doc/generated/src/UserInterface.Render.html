@@ -153,31 +153,32 @@ forall n. Text -&gt; Widget n
 </span><a href="#local-6989586621679093277"><span class="hs-identifier hs-var">currentValue</span></a></span><span>
 </span><span id="line-61"></span><span>    </span><span class="hs-special">]</span><span>
 </span><span id="line-62"></span><span>
-</span><span id="line-63"></span><span class="hs-comment">-- | Conditionally attach an attribute which is later used to apply different styling to highlighted widgets.</span><span>
-</span><span id="line-64"></span><span id="local-6989586621679093326"><span class="annot"><a href="UserInterface.Render.html#attachAttrWhenHighlighted"><span class="hs-identifier hs-type">attachAttrWhenHighlighted</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="UserInterface.Render.html#Highlighting"><span class="hs-identifier hs-type">Highlighting</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Widget</span></span><span> </span><span class="annot"><a href="#local-6989586621679093326"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Widget</span></span><span> </span><span class="annot"><a href="#local-6989586621679093326"><span class="hs-identifier hs-type">n</span></a></span></span><span>
-</span><span id="line-65"></span><span id="attachAttrWhenHighlighted"><span class="annot"><span class="annottext">attachAttrWhenHighlighted :: forall n. Highlighting -&gt; Widget n -&gt; Widget n
+</span><span id="line-63"></span><span class="hs-comment">-- | Conditionally attach an attribute which is later used to apply different</span><span>
+</span><span id="line-64"></span><span class="hs-comment">--   styling to highlighted widgets.</span><span>
+</span><span id="line-65"></span><span id="local-6989586621679093326"><span class="annot"><a href="UserInterface.Render.html#attachAttrWhenHighlighted"><span class="hs-identifier hs-type">attachAttrWhenHighlighted</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="UserInterface.Render.html#Highlighting"><span class="hs-identifier hs-type">Highlighting</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Widget</span></span><span> </span><span class="annot"><a href="#local-6989586621679093326"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Widget</span></span><span> </span><span class="annot"><a href="#local-6989586621679093326"><span class="hs-identifier hs-type">n</span></a></span></span><span>
+</span><span id="line-66"></span><span id="attachAttrWhenHighlighted"><span class="annot"><span class="annottext">attachAttrWhenHighlighted :: forall n. Highlighting -&gt; Widget n -&gt; Widget n
 </span><a href="UserInterface.Render.html#attachAttrWhenHighlighted"><span class="hs-identifier hs-var hs-var">attachAttrWhenHighlighted</span></a></span></span><span> </span><span class="annot"><span class="annottext">Highlighting
 </span><a href="UserInterface.Render.html#Highlighted"><span class="hs-identifier hs-var">Highlighted</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">AttrName -&gt; Widget n -&gt; Widget n
 forall n. AttrName -&gt; Widget n -&gt; Widget n
 </span><span class="hs-identifier hs-var">withAttr</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; AttrName
 </span><span class="hs-identifier hs-var">attrName</span></span><span> </span><span class="annot"><span class="annottext">String
 </span><span class="hs-string">&quot;value&quot;</span></span><span class="hs-special">)</span><span>
-</span><span id="line-66"></span><span class="annot"><a href="UserInterface.Render.html#attachAttrWhenHighlighted"><span class="hs-identifier hs-var">attachAttrWhenHighlighted</span></a></span><span> </span><span class="annot"><span class="annottext">Highlighting
+</span><span id="line-67"></span><span class="annot"><a href="UserInterface.Render.html#attachAttrWhenHighlighted"><span class="hs-identifier hs-var">attachAttrWhenHighlighted</span></a></span><span> </span><span class="annot"><span class="annottext">Highlighting
 </span><a href="UserInterface.Render.html#NotHighlighted"><span class="hs-identifier hs-var">NotHighlighted</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Widget n -&gt; Widget n
 forall a. a -&gt; a
 </span><span class="hs-identifier hs-var">id</span></span><span>
-</span><span id="line-67"></span><span>
-</span><span id="line-68"></span><span class="hs-comment">-- | Define the styling to be applied to selected items.</span><span>
-</span><span id="line-69"></span><span class="annot"><a href="UserInterface.Render.html#selectionStyling"><span class="hs-identifier hs-type">selectionStyling</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Attr</span></span><span>
-</span><span id="line-70"></span><span id="selectionStyling"><span class="annot"><span class="annottext">selectionStyling :: Attr
+</span><span id="line-68"></span><span>
+</span><span id="line-69"></span><span class="hs-comment">-- | Define the styling to be applied to selected items.</span><span>
+</span><span id="line-70"></span><span class="annot"><a href="UserInterface.Render.html#selectionStyling"><span class="hs-identifier hs-type">selectionStyling</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Attr</span></span><span>
+</span><span id="line-71"></span><span id="selectionStyling"><span class="annot"><span class="annottext">selectionStyling :: Attr
 </span><a href="UserInterface.Render.html#selectionStyling"><span class="hs-identifier hs-var hs-var">selectionStyling</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Attr -&gt; Style -&gt; Attr
 </span><span class="hs-identifier hs-var">withStyle</span></span><span> </span><span class="annot"><span class="annottext">Attr
 </span><span class="hs-identifier hs-var">currentAttr</span></span><span> </span><span class="annot"><span class="annottext">Style
 </span><span class="hs-identifier hs-var">bold</span></span><span>
-</span><span id="line-71"></span><span>
-</span><span id="line-72"></span><span class="hs-comment">-- | Define the styling to be applied to the value of a selected line.</span><span>
-</span><span id="line-73"></span><span class="annot"><a href="UserInterface.Render.html#valueStyling"><span class="hs-identifier hs-type">valueStyling</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Attr</span></span><span>
-</span><span id="line-74"></span><span id="valueStyling"><span class="annot"><span class="annottext">valueStyling :: Attr
+</span><span id="line-72"></span><span>
+</span><span id="line-73"></span><span class="hs-comment">-- | Define the styling to be applied to the value of a selected line.</span><span>
+</span><span id="line-74"></span><span class="annot"><a href="UserInterface.Render.html#valueStyling"><span class="hs-identifier hs-type">valueStyling</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Attr</span></span><span>
+</span><span id="line-75"></span><span id="valueStyling"><span class="annot"><span class="annottext">valueStyling :: Attr
 </span><a href="UserInterface.Render.html#valueStyling"><span class="hs-identifier hs-var hs-var">valueStyling</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Attr -&gt; Style -&gt; Attr
 </span><span class="hs-identifier hs-var">withStyle</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Color -&gt; Attr
 </span><span class="hs-identifier hs-var">fg</span></span><span> </span><span class="annot"><span class="annottext">Color
