@@ -25,7 +25,7 @@ import Graphics.Vty.Attributes
   )
 import Infrastructure.Config (Config (MkConfig), loadConfig)
 import System.Exit (die, exitSuccess)
-import UserInterface.CLI (provideHelpText)
+import UserInterface.Cli (provideHelpText)
 import UserInterface.Input (handleEvent)
 import UserInterface.Render
   ( drawTCM,

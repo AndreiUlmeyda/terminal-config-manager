@@ -70,3 +70,5 @@ build:
   haddock-arguments:
     haddock-args:
     - "--odir=./doc/generated"
+    - "--hyperlinked-source"
+    - "--use-unicode"

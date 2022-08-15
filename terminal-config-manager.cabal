@@ -31,7 +31,7 @@ library
       Infrastructure.Config
       Infrastructure.FileModification
       Infrastructure.Util
-      UserInterface.CLI
+      UserInterface.Cli
       UserInterface.Input
       UserInterface.Render
   other-modules:

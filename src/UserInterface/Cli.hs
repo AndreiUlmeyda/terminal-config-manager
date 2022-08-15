@@ -1,4 +1,4 @@
-module UserInterface.CLI
+module UserInterface.Cli
   ( provideHelpText,
   )
 where
