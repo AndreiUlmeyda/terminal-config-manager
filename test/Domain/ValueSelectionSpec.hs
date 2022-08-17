@@ -1,6 +1,6 @@
-module Infrastructure.UtilSpec where
+module Domain.ValueSelectionSpec where
 
-import Infrastructure.Util
+import Domain.ValueSelection
   ( changeNthElement,
     elementAfter,
     elementBefore,

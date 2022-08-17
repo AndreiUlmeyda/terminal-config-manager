@@ -26,11 +26,11 @@ source-repository head
 library
   exposed-modules:
       Application.App
+      Domain.ItemSelection
       Domain.State
-      Domain.StateTransition
+      Domain.ValueSelection
       Infrastructure.Config
       Infrastructure.FileModification
-      Infrastructure.Util
       UserInterface.Cli
       UserInterface.Input
       UserInterface.Render
@@ -77,7 +77,7 @@ test-suite terminal-config-manager-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Infrastructure.UtilSpec
+      Domain.ValueSelectionSpec
       Paths_terminal_config_manager
   hs-source-dirs:
       test

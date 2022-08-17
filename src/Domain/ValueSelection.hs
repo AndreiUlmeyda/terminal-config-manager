@@ -1,16 +1,17 @@
 -- |
--- Module      : StateTransition
--- Description : Expose functions to change the application state. This covers
---    item and value selection.
+-- Module      : ValueSelection
+-- Description : Expose functions to change the application state during value
+--   selection.
 -- Copyright   : (c) Adrian Schurz, 2022
 -- License     : MIT
 -- Maintainer  : adrian.schurz@check24.com
 -- Stability   : experimental
-module Domain.StateTransition
-  ( selectNextItem,
-    selectNextValue,
-    selectPreviousItem,
+module Domain.ValueSelection
+  ( selectNextValue,
     selectPreviousValue,
+    elementAfter,
+    elementBefore,
+    changeNthElement,
   )
 where
 
@@ -25,10 +26,13 @@ import Cursor.Simple.List.NonEmpty
     makeNonEmptyCursor,
     nonEmptyCursorCurrent,
     nonEmptyCursorSelectIndex,
-    nonEmptyCursorSelectNext,
-    nonEmptyCursorSelectPrev,
     nonEmptyCursorSelection,
     rebuildNonEmptyCursor,
+  )
+import Data.List.NonEmpty
+  ( NonEmpty,
+    fromList,
+    toList,
   )
 import Data.Text
   ( Text,
@@ -47,28 +51,10 @@ import Infrastructure.FileModification
   ( Content (..),
     modifyFile,
   )
-import Infrastructure.Util
-  ( changeNthElementNonEmpty,
-    elementAfter,
-    elementBefore,
-  )
 
 -- | A function type which, when applied to an application state, changes the
 --   value of the item under the cursor.
 data ValueSelectionPolicy = MkValueSelectionPolicy (AppState -> AppState)
-
--- | A function type which, when applied to an application state, changes the
---   cursor position.
-data ItemSelectionPolicy = MkItemSelectionPolicy (NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem))
-
--- | A function to change the cursor position to point at the next item.
---   TODO AppState as input type
-selectNextItem :: NonEmptyCursor ConfigItem -> NextAppState
-selectNextItem = selectItem $ MkItemSelectionPolicy nonEmptyCursorSelectNext
-
--- | A function to change the cursor position to point at the previous item.
-selectPreviousItem :: NonEmptyCursor ConfigItem -> NextAppState
-selectPreviousItem = selectItem $ MkItemSelectionPolicy nonEmptyCursorSelectPrev
 
 -- | A function type which, given a value and a list of possible values,
 --   generates a new value.
@@ -103,12 +89,6 @@ selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
         _ <- liftIO $ modifyFile currentPath modification
         continue (MkAppState newItems)
 
--- | Depending on the supplied policy, either select the next or previous item
-selectItem :: ItemSelectionPolicy -> NonEmptyCursor ConfigItem -> NextAppState
-selectItem (MkItemSelectionPolicy selectionPolicy) items = case selectionPolicy items of
-  Nothing -> continue (MkAppState items)
-  Just nonEmptyCursor' -> (continue . MkAppState) nonEmptyCursor'
-
 -- | This needs to be a substring of the matching pattern and is needed
 --   to determine the location of the values to replaced.
 valueMarker :: Text
@@ -140,3 +120,42 @@ cycleValues policy (MkAppState items) = (MkAppState . cycleSelected) items
 -- | Switch the active target value to another value contained in possibleValues according to the supplied policy.
 cycleTo :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
 cycleTo (MkValueCyclingPolicy policy) item = item {targetValue = policy (targetValue item) (possibleValues item)}
+
+-- | A mode of selecting a new element from a list relative to another element.
+data NeighborSelection = SelectSuccessor | SelectPredecessor
+
+-- | Finds the first element equal to the input element inside of a list and
+--   returns an element next to it depending on the supplied selection policy.
+elementNextTo :: Eq t => NeighborSelection -> t -> [t] -> t
+elementNextTo neighborSelection targetItem list
+  | null list = targetItem
+  | otherwise = (head . tail . dropWhile (/= targetItem) . cycledList) list
+  where
+    cycledList :: [t] -> [t]
+    cycledList = case neighborSelection of
+      SelectSuccessor -> cycle
+      SelectPredecessor -> tail . cycle . reverse
+
+-- | Finds the first element equal to the input element inside of a list and
+--   returns the element after it (one index up).
+elementAfter :: Eq t => t -> [t] -> t
+elementAfter = elementNextTo SelectSuccessor
+
+-- | Finds the first element equal to the input element inside of a list and
+--   returns the element before it (one index down).
+elementBefore :: Eq t => t -> [t] -> t
+elementBefore = elementNextTo SelectPredecessor
+
+-- | Given an index, a function and a NonEmpty list it applies the function to
+--   the element at that index.
+changeNthElementNonEmpty :: Int -> (t -> t) -> NonEmpty t -> NonEmpty t
+changeNthElementNonEmpty n fn = fromList . changeNthElement n fn . toList
+
+-- | Given an index, a function and a list it applies the function to the
+--   element at that index.
+changeNthElement :: Int -> (t -> t) -> [t] -> [t]
+changeNthElement _ _ [] = []
+changeNthElement n fn (x : xs)
+  | (n < 0) = x : xs
+  | (n == 0) = (fn x) : xs
+  | otherwise = x : (changeNthElement (n - 1) fn xs)

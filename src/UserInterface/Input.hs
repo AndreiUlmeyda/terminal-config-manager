@@ -12,14 +12,16 @@ import Brick
     continue,
     halt,
   )
+import Domain.ItemSelection
+  ( selectNextItem,
+    selectPreviousItem,
+  )
 import Domain.State
   ( AppState (MkAppState),
     NextAppState,
   )
-import Domain.StateTransition
-  ( selectNextItem,
-    selectNextValue,
-    selectPreviousItem,
+import Domain.ValueSelection
+  ( selectNextValue,
     selectPreviousValue,
   )
 import Graphics.Vty.Input.Events
