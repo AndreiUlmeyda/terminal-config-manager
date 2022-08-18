@@ -12,6 +12,7 @@ module Domain.ValueSelection
     elementAfter,
     elementBefore,
     changeNthElement,
+    valueMarker,
   )
 where
 

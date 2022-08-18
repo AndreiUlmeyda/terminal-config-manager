@@ -26,9 +26,9 @@ data Content = MkContent Text
 
 -- | Given a filepath and a function which takes old content to
 --   new content, will apply the function to the file content and,
---   consequently modify the file on disk.
+--   consequently, modify the file on disk.
 modifyFile :: FilePath -> (Content -> Content) -> IO ()
 modifyFile path fn = do
   oldContent <- (Strict.readFile) path
-  (MkContent newContent) <- pure $ fn $ (MkContent) (pack oldContent)
+  (MkContent newContent) <- (pure . fn . MkContent . pack) oldContent
   (writeFile path) (unpack newContent)

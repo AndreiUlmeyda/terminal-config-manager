@@ -68,6 +68,8 @@ usually only when quickly quitting and restarting the program.
 - break up the Infrastructure/Util, determine which layer it should go (Domain?)
 - allow common locations for the config file
 - add bats acceptance tests
+- throw away the current value config entry after synchronizing on startup
+- reenable and fix help texts
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new

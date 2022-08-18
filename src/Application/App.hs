@@ -20,6 +20,9 @@ import Domain.State
   ( AppState (MkAppState),
     ResourceName,
   )
+import Domain.TargetFileSynchronization
+  ( synchronizeWithTargetFiles,
+  )
 import Graphics.Vty.Attributes
   ( currentAttr,
   )
@@ -40,7 +43,7 @@ import UserInterface.Render
 --   may change after permission issues are considered. Provide a program
 --   description and help text as well.
 runApp :: IO ()
-runApp = provideHelpText >> loadConfig >>= buildInitialState >>= defaultMain tcmApp >>= const exitSuccess
+runApp = loadConfig >>= synchronizeWithTargetFiles >>= buildInitialState >>= defaultMain tcmApp >>= const exitSuccess
 
 -- | The error message displayed should there be insufficient items specified in the config file.
 errorMsgNoConfigEntries :: String
