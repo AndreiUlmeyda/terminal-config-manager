@@ -1,4 +1,4 @@
-module Domain.TargetFileSynchronization
+module Domain.FileSynchronization
   ( synchronizeWithTargetFiles,
     extractValue,
   )
@@ -6,8 +6,11 @@ where
 
 import Data.Text
   ( Text,
+    breakOn,
     null,
     pack,
+    splitOn,
+    stripPrefix,
   )
 import Domain.ValueSelection
   ( valueMarker,
@@ -64,5 +67,20 @@ type ValueMarker = Text
 
 extractValue :: Pattern -> ValueMarker -> Content -> Maybe TargetValue
 extractValue (MkPattern matchingPattern) marker (MkContent content)
-  | all (not . null) [matchingPattern, marker, content] = Just $ MkTargetValue content
-  | otherwise = Nothing
+  | any null [matchingPattern, marker, content] = Nothing
+  | otherwise = (Just . MkTargetValue) targetValue
+  where
+    targetValue = case stripPrefix beforeMarker withoutPrefixExceptMarker of
+      Nothing -> withoutPrefixExceptMarker
+      Just withoutPrefix -> fst $ breakOn' "\n" $ fst $ breakOn' afterMarker withoutPrefix
+    beforeAndAfterMarker = splitOn marker matchingPattern
+    beforeMarker = beforeAndAfterMarker !! 0
+    afterMarker = beforeAndAfterMarker !! 1
+    withoutPrefixExceptMarker = snd $ breakOn' beforeMarker content
+
+-- | A version of breakOn which tolerates an empty 'needle' and, in such a case,
+--   just returns a tuple of containing two times the 'haystack'.
+breakOn' :: Text -> Text -> (Text, Text)
+breakOn' needle haystack
+  | null needle = (haystack, haystack)
+  | otherwise = breakOn needle haystack

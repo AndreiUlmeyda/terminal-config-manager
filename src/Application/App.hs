@@ -16,12 +16,12 @@ import Cursor.Simple.List.NonEmpty
 import Data.List.NonEmpty as NE
   ( nonEmpty,
   )
+import Domain.FileSynchronization
+  ( synchronizeWithTargetFiles,
+  )
 import Domain.State
   ( AppState (MkAppState),
     ResourceName,
-  )
-import Domain.TargetFileSynchronization
-  ( synchronizeWithTargetFiles,
   )
 import Graphics.Vty.Attributes
   ( currentAttr,

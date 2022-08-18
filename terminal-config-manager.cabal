@@ -26,9 +26,9 @@ source-repository head
 library
   exposed-modules:
       Application.App
+      Domain.FileSynchronization
       Domain.ItemSelection
       Domain.State
-      Domain.TargetFileSynchronization
       Domain.ValueSelection
       Infrastructure.Config
       Infrastructure.FileModification
@@ -78,7 +78,7 @@ test-suite terminal-config-manager-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Domain.TargetFileSynchronizationSpec
+      Domain.FileSynchronizationSpec
       Domain.ValueSelectionSpec
       Paths_terminal_config_manager
   hs-source-dirs:
