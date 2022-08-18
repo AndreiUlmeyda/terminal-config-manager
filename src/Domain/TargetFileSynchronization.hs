@@ -6,6 +6,7 @@ where
 
 import Data.Text
   ( Text,
+    null,
     pack,
   )
 import Domain.ValueSelection
@@ -20,8 +21,14 @@ import Infrastructure.Config
 import Infrastructure.FileModification
   ( Content (..),
   )
+import System.Exit
+  ( die,
+  )
 import System.IO.Strict as Strict
   ( readFile,
+  )
+import Prelude hiding
+  ( null,
   )
 
 synchronizeWithTargetFiles :: Config -> IO Config
@@ -41,13 +48,12 @@ currentValuesFromFile (MkConfig items) = do
 currentValueFromFile :: ConfigItem -> IO ConfigItem
 currentValueFromFile item = do
   currentFileContent <- Strict.readFile (path item)
-  currentValue <- pure $ extractValue (matchingPattern item) valueMarker (MkContent (pack currentFileContent))
+  currentValue <- case extractValue (matchingPattern item) valueMarker (MkContent (pack currentFileContent)) of
+    (Just v) -> pure v
+    Nothing -> die ""
   return $ item {targetValue = currentValue}
 
 type ValueMarker = Text
-
-extractValue :: Pattern -> ValueMarker -> Content -> TargetValue
-extractValue = const $ const $ const $ MkTargetValue "fail"
 
 -- from pattern and valueMarker and content to value
 -- 'BOOKANCY_ENV={{value}}' and '{{value}}' and '...tert werden\nBOOKANCY_ENV=local\n# Host (...' to 'local'
@@ -55,3 +61,8 @@ extractValue = const $ const $ const $ MkTargetValue "fail"
 -- 2 drop until and including the first result of step 1 from the content
 -- 3 prune the end at newline
 -- 4 prune again at the second result of step 1
+
+extractValue :: Pattern -> ValueMarker -> Content -> Maybe TargetValue
+extractValue (MkPattern matchingPattern) marker (MkContent content)
+  | all (not . null) [matchingPattern, marker, content] = Just $ MkTargetValue content
+  | otherwise = Nothing
