@@ -59,7 +59,6 @@ usually only when quickly quitting and restarting the program.
 - find and handle every operation that can fail
 - handle the case where the pattern does not match anything, for instance when
     the file was modified some other way during runtime
-- handle the case where targetValue is not an element of possibleValues. atm it just loops
 - refactor StateTransitions
 - invert the dependency between UI and Application
 - break up the Infrastructure/Util, determine which layer it should go (Domain?)
@@ -68,6 +67,10 @@ usually only when quickly quitting and restarting the program.
 - throw away the current value config entry after synchronizing on startup (!)
 - reenable and fix help texts
 - add current value extraction testcase for the newline special case
+- refactor elementNextTo
+- refactor extractValue
+- handle an empty possible list
+- test case for element not in possible lists
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new

@@ -130,7 +130,8 @@ data NeighborSelection = SelectSuccessor | SelectPredecessor
 elementNextTo :: Eq t => NeighborSelection -> t -> [t] -> t
 elementNextTo neighborSelection targetItem list
   | null list = targetItem
-  | otherwise = (head . tail . dropWhile (/= targetItem) . cycledList) list
+  | not (elem targetItem list) = head list
+  | otherwise = (head . tail . dropWhile (/= targetItem) . take ((length list) + 1) . cycledList) list
   where
     cycledList :: [t] -> [t]
     cycledList = case neighborSelection of
