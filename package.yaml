@@ -30,6 +30,7 @@ dependencies:
 - yaml
 - strict
 - optparse-applicative
+- aeson
 
 library:
   source-dirs: src

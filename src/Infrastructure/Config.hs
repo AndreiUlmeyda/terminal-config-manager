@@ -6,8 +6,18 @@
 -- License     : MIT
 -- Maintainer  : adrian.schurz@check24.com
 -- Stability   : experimental
-module Infrastructure.Config (Config (MkConfig), ConfigItem (..), loadConfig, TargetValue (MkTargetValue), Pattern (MkPattern)) where
+module Infrastructure.Config
+  ( Config (MkConfig),
+    ConfigItem (..),
+    loadConfig,
+    TargetValue (MkTargetValue),
+    Pattern (MkPattern, unPattern),
+  )
+where
 
+import Data.Aeson
+  ( Key,
+  )
 import Data.Text (Text)
 import Data.Yaml
   ( FromJSON (parseJSON),
@@ -17,6 +27,11 @@ import Data.Yaml
     (.:),
   )
 import GHC.Generics (Generic)
+import Infrastructure.Errors
+  ( errorMsgFailedConfigParsing,
+    errorMsgInvalidConfigElements,
+    errorMsgInvalidConfigTopLevel,
+  )
 import System.Exit (die)
 
 -- | The file path of the configuration file used during development.
@@ -37,21 +52,39 @@ data ConfigItem = MkConfigItem
   }
   deriving stock (Eq, Show)
 
+topLevelConfigElement :: Key
+topLevelConfigElement = "config_lines_to_manage"
+
+configElementTitle :: Key
+configElementTitle = "title"
+
+configElementPath :: Key
+configElementPath = "path"
+
+configElementPattern :: Key
+configElementPattern = "pattern"
+
+configElementValue :: Key
+configElementValue = "targetValue"
+
+configElementPossibleValues :: Key
+configElementPossibleValues = "possibleValues"
+
 instance FromJSON Config where
   parseJSON (Object v) =
     MkConfig
-      <$> v .: "config_lines_to_manage"
-  parseJSON _ = fail "The top level of the config file should be an object named 'config_lines_to_manage'"
+      <$> v .: topLevelConfigElement
+  parseJSON _ = fail errorMsgInvalidConfigTopLevel
 
 instance FromJSON ConfigItem where
   parseJSON (Object v) =
     MkConfigItem
-      <$> v .: "title"
-      <*> v .: "path"
-      <*> v .: "pattern"
-      <*> v .: "targetValue"
-      <*> v .: "possibleValues"
-  parseJSON _ = fail "Each config entry is expected to contain 4 items. 'title', 'path', 'targetValue' and 'possibleValues'"
+      <$> v .: configElementTitle
+      <*> v .: configElementPath
+      <*> v .: configElementPattern
+      <*> v .: configElementValue
+      <*> v .: configElementPossibleValues
+  parseJSON _ = fail errorMsgInvalidConfigElements
 
 -- | A substring inside of the file you want to manage. Its occurence inside of
 --   that file will be substituted when changing the corresponding item.
@@ -64,7 +97,7 @@ instance FromJSON TargetValue
 --   and surrounding text. The amount of surrounding text needs to be carefully
 --   considered. It should be long enough so that only the one intended line
 --   of the target file will match it.
-data Pattern = MkPattern Text deriving stock (Show, Eq, Generic)
+data Pattern = MkPattern {unPattern :: Text} deriving stock (Show, Eq, Generic)
 
 instance FromJSON Pattern
 
@@ -77,4 +110,4 @@ loadConfig = decodeFileEither testYamlFilePath >>= handleParsingErrors
 --   parsing.
 handleParsingErrors :: Either ParseException Config -> IO Config
 handleParsingErrors (Right config) = return config
-handleParsingErrors (Left parseException) = die $ "There was an error while parsing the configuration file. The details are:\n" ++ (show parseException)
+handleParsingErrors (Left parseException) = die $ errorMsgFailedConfigParsing ++ (show parseException)

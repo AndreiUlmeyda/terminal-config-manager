@@ -64,13 +64,15 @@ usually only when quickly quitting and restarting the program.
 - break up the Infrastructure/Util, determine which layer it should go (Domain?)
 - allow common locations for the config file
 - add bats acceptance tests
-- throw away the current value config entry after synchronizing on startup (!)
+- throw away the current value config entry
 - reenable and fix help texts
 - add current value extraction testcase for the newline special case
 - refactor elementNextTo
 - refactor extractValue
 - handle an empty possible list
 - test case for element not in possible lists
+- clean up currentValueFromFile
+- remove magic strings
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new

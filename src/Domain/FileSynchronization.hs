@@ -21,6 +21,9 @@ import Infrastructure.Config
     Pattern (..),
     TargetValue (..),
   )
+import Infrastructure.Errors
+  ( generateCurrentValueErrorMessage,
+  )
 import Infrastructure.FileModification
   ( Content (..),
   )
@@ -39,10 +42,11 @@ synchronizeWithTargetFiles config = do
   currentValues <- currentValuesFromFile config
   return currentValues
 
--- | Substituting 'sequence' for 'parallel' may lead to issues with open file desciptors
---   when there are multiple items pointing to the same file. If the optimization
---   is needed it could work if the work items are grouped by path first, but even
---   then, they could point to the same file through symbolic links.
+-- | Substituting 'sequence' for 'parallel' may lead to issues with open file
+--   desciptors when there are multiple items pointing to the same file. If the
+--   optimization is needed it could work if the items are grouped by path
+--   first, but even then they could be pointing to the same file through
+--   symbolic links.
 currentValuesFromFile :: Config -> IO Config
 currentValuesFromFile (MkConfig items) = do
   newItems <- (sequence . map currentValueFromFile) items
@@ -53,7 +57,7 @@ currentValueFromFile item = do
   currentFileContent <- Strict.readFile (path item)
   currentValue <- case extractValue (matchingPattern item) valueMarker (MkContent (pack currentFileContent)) of
     (Just v) -> pure v
-    Nothing -> die ""
+    Nothing -> die $ generateCurrentValueErrorMessage (path item) (unPattern (matchingPattern item))
   return $ item {targetValue = currentValue}
 
 type ValueMarker = Text

@@ -7,9 +7,22 @@
 -- License     : MIT
 -- Maintainer  : adrian.schurz@check24.com
 -- Stability   : experimental
-module Application.App (buildInitialState, tcmApp, AppState, runApp) where
+module Application.App
+  ( buildInitialState,
+    tcmApp,
+    AppState,
+    runApp,
+  )
+where
 
-import Brick (App (..), attrMap, attrName, defaultMain, showFirstCursor)
+import Brick
+  ( App (..),
+    AttrName,
+    attrMap,
+    attrName,
+    defaultMain,
+    showFirstCursor,
+  )
 import Cursor.Simple.List.NonEmpty
   ( makeNonEmptyCursor,
   )
@@ -24,14 +37,23 @@ import Domain.State
     ResourceName,
   )
 import Graphics.Vty.Attributes
-  ( currentAttr,
+  ( Attr,
+    currentAttr,
   )
-import Infrastructure.Config (Config (MkConfig), loadConfig)
+import Infrastructure.Config
+  ( Config (MkConfig),
+    loadConfig,
+  )
+import Infrastructure.Errors
+  ( errorMsgNoConfigEntries,
+  )
 import System.Exit (die, exitSuccess)
 import UserInterface.Cli (provideHelpText)
 import UserInterface.Input (handleEvent)
 import UserInterface.Render
-  ( drawTCM,
+  ( attributeNameSelected,
+    attributeNameValue,
+    drawTCM,
     selectionStyling,
     valueStyling,
   )
@@ -43,23 +65,30 @@ import UserInterface.Render
 --   may change after permission issues are considered. Provide a program
 --   description and help text as well.
 runApp :: IO ()
-runApp = loadConfig >>= synchronizeWithTargetFiles >>= buildInitialState >>= defaultMain tcmApp >>= const exitSuccess
+runApp =
+  loadConfig
+    >>= synchronizeWithTargetFiles
+    >>= buildInitialState
+    >>= defaultMain tcmApp
+    >>= const exitSuccess
 
--- | The error message displayed should there be insufficient items specified in the config file.
-errorMsgNoConfigEntries :: String
-errorMsgNoConfigEntries = "There are no entries in the config file."
-
--- | For this application only event handling, drawing and some attributes need to be implemented. The rest are default
--- implementations.
+-- | For this application only event handling, drawing and some attributes need
+--   to be implemented. The rest are default implementations.
 tcmApp :: App AppState e ResourceName
 tcmApp =
   App
     { appHandleEvent = handleEvent,
       appDraw = drawTCM,
-      appAttrMap = (const . attrMap currentAttr) [(attrName "selected", selectionStyling), (attrName "value", valueStyling)],
+      appAttrMap = (const . attrMap currentAttr) attributeMap,
       appChooseCursor = showFirstCursor,
       appStartEvent = pure
     }
+
+attributeMap :: [(AttrName, Attr)]
+attributeMap =
+  [ (attrName attributeNameSelected, selectionStyling),
+    (attrName attributeNameValue, valueStyling)
+  ]
 
 -- | Wrap the config file entries in a nonempty list.
 buildInitialState :: Config -> IO AppState

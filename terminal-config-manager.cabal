@@ -31,6 +31,7 @@ library
       Domain.State
       Domain.ValueSelection
       Infrastructure.Config
+      Infrastructure.Errors
       Infrastructure.FileModification
       UserInterface.Cli
       UserInterface.Input
@@ -43,7 +44,8 @@ library
       DerivingStrategies OverloadedStrings DeriveGeneric PatternSynonyms
   ghc-options: -O2 -Wall -Wincomplete-uni-patterns -Wmonomorphism-restriction -Wmissing-local-signatures -Wmissing-export-lists -Wmissing-home-modules -Widentities -Wredundant-constraints -Wpartial-fields -Wcpp-undef -Wmissing-deriving-strategies -Wunused-packages -Wunused-type-patterns -Wcompat
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
     , brick
     , cursor
     , optparse-applicative
@@ -63,7 +65,8 @@ executable terminal-config-manager
       DerivingStrategies OverloadedStrings DeriveGeneric PatternSynonyms
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
     , brick
     , cursor
     , optparse-applicative
@@ -88,6 +91,7 @@ test-suite terminal-config-manager-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck
+    , aeson
     , base >=4.7 && <5
     , brick
     , cursor
