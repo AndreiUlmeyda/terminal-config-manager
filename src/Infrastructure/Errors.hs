@@ -46,4 +46,4 @@ generateCurrentValueErrorMessage path pat =
   errorMsgUnableToDetermineCurrentValue
     ++ path
     ++ " using the pattern "
-    ++ (unpack pat)
+    ++ unpack pat

@@ -29,6 +29,9 @@ import Cursor.Simple.List.NonEmpty
 import Data.List.NonEmpty as NE
   ( nonEmpty,
   )
+import Data.Text
+  ( unpack,
+  )
 import Domain.FileSynchronization
   ( synchronizeWithTargetFiles,
   )
@@ -47,9 +50,16 @@ import Infrastructure.Config
 import Infrastructure.Errors
   ( errorMsgNoConfigEntries,
   )
-import System.Exit (die, exitSuccess)
-import UserInterface.Cli (provideHelpText)
-import UserInterface.Input (handleEvent)
+import System.Exit
+  ( die,
+    exitSuccess,
+  )
+import UserInterface.Cli
+  ( provideHelpText,
+  )
+import UserInterface.Input
+  ( handleEvent,
+  )
 import UserInterface.Render
   ( attributeNameSelected,
     attributeNameValue,
@@ -86,8 +96,8 @@ tcmApp =
 
 attributeMap :: [(AttrName, Attr)]
 attributeMap =
-  [ (attrName attributeNameSelected, selectionStyling),
-    (attrName attributeNameValue, valueStyling)
+  [ ((attrName . unpack) attributeNameSelected, selectionStyling),
+    ((attrName . unpack) attributeNameValue, valueStyling)
   ]
 
 -- | Wrap the config file entries in a nonempty list.

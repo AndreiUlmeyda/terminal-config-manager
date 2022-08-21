@@ -11,14 +11,17 @@ module Infrastructure.Config
     ConfigItem (..),
     loadConfig,
     TargetValue (MkTargetValue),
-    Pattern (MkPattern, unPattern),
+    Pattern (MkPattern),
+    unwrapPattern,
   )
 where
 
 import Data.Aeson
   ( Key,
   )
-import Data.Text (Text)
+import Data.Text
+  ( Text,
+  )
 import Data.Yaml
   ( FromJSON (parseJSON),
     ParseException,
@@ -90,6 +93,13 @@ instance FromJSON ConfigItem where
 --   that file will be substituted when changing the corresponding item.
 data TargetValue = MkTargetValue Text deriving stock (Show, Eq, Generic)
 
+-- | In order to avoid a cyclic dependency during error message generation, a
+--   way to get the value out of a pattern needs to be provided. Providing one
+--   by making Pattern a record type created issues with parsing so will need
+--   to suffice for the moment.
+unwrapPattern :: Pattern -> Text
+unwrapPattern (MkPattern pat) = pat
+
 instance FromJSON TargetValue
 
 -- | In order to identify which part of a target file to modify, a pattern
@@ -97,7 +107,7 @@ instance FromJSON TargetValue
 --   and surrounding text. The amount of surrounding text needs to be carefully
 --   considered. It should be long enough so that only the one intended line
 --   of the target file will match it.
-data Pattern = MkPattern {unPattern :: Text} deriving stock (Show, Eq, Generic)
+data Pattern = MkPattern Text deriving stock (Show, Eq, Generic)
 
 instance FromJSON Pattern
 

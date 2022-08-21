@@ -20,6 +20,7 @@ import Infrastructure.Config
     ConfigItem (..),
     Pattern (..),
     TargetValue (..),
+    unwrapPattern,
   )
 import Infrastructure.Errors
   ( generateCurrentValueErrorMessage,
@@ -57,7 +58,7 @@ currentValueFromFile item = do
   currentFileContent <- Strict.readFile (path item)
   currentValue <- case extractValue (matchingPattern item) valueMarker (MkContent (pack currentFileContent)) of
     (Just v) -> pure v
-    Nothing -> die $ generateCurrentValueErrorMessage (path item) (unPattern (matchingPattern item))
+    Nothing -> die $ generateCurrentValueErrorMessage (path item) (unwrapPattern (matchingPattern item))
   return $ item {targetValue = currentValue}
 
 type ValueMarker = Text
@@ -70,14 +71,14 @@ type ValueMarker = Text
 -- 4 prune again at the second result of step 1
 
 extractValue :: Pattern -> ValueMarker -> Content -> Maybe TargetValue
-extractValue (MkPattern matchingPattern) marker (MkContent content)
-  | any null [matchingPattern, marker, content] = Nothing
-  | otherwise = (Just . MkTargetValue) targetValue
+extractValue (MkPattern pat) marker (MkContent content)
+  | any null [pat, marker, content] = Nothing
+  | otherwise = (Just . MkTargetValue) targetVal
   where
-    targetValue = case stripPrefix beforeMarker withoutPrefixExceptMarker of
+    targetVal = case stripPrefix beforeMarker withoutPrefixExceptMarker of
       Nothing -> withoutPrefixExceptMarker
       Just withoutPrefix -> fst $ breakOn' "\n" $ fst $ breakOn' afterMarker withoutPrefix
-    beforeAndAfterMarker = splitOn marker matchingPattern
+    beforeAndAfterMarker = splitOn marker pat
     beforeMarker = beforeAndAfterMarker !! 0
     afterMarker = beforeAndAfterMarker !! 1
     withoutPrefixExceptMarker = snd $ breakOn' beforeMarker content

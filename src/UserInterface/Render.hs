@@ -29,6 +29,10 @@ import Cursor.Simple.List.NonEmpty
     nonEmptyCursorNext,
     nonEmptyCursorPrev,
   )
+import Data.Text
+  ( Text,
+    unpack,
+  )
 import Domain.State
   ( AppState (MkAppState),
     ResourceName,
@@ -42,11 +46,14 @@ import Graphics.Vty.Attributes
   )
 import Infrastructure.Config (ConfigItem (MkConfigItem), TargetValue (MkTargetValue))
 
-attributeNameSelected :: String
+attributeNameSelected :: Text
 attributeNameSelected = "selected"
 
-attributeNameValue :: String
+attributeNameValue :: Text
 attributeNameValue = "value"
+
+titleValueSeparator :: Text
+titleValueSeparator = " → "
 
 -- | The rendering consists of a single layer, each line consists of an items
 --   title and current value. The selected line is rendered boldface, the
@@ -56,7 +63,7 @@ drawTCM (MkAppState items) = [singleLayer]
   where
     singleLayer = (vBox . concat) [itemsAboveSelected, selectedItem, itemsBelowSelected]
     itemsAboveSelected = map (drawItem NotHighlighted) (reverse (nonEmptyCursorPrev items))
-    selectedItem = [(withAttr (attrName attributeNameSelected) . drawItem Highlighted . nonEmptyCursorCurrent) items]
+    selectedItem = [(withAttr ((attrName . unpack) attributeNameSelected) . drawItem Highlighted . nonEmptyCursorCurrent) items]
     itemsBelowSelected = (map (drawItem NotHighlighted) . nonEmptyCursorNext) items
 
 -- | A type representing whether an item should be rendered highlighted or not.
@@ -69,14 +76,14 @@ drawItem :: Highlighting -> ConfigItem -> Widget ResourceName
 drawItem highlighting (MkConfigItem title _ _ (MkTargetValue currentValue) _) =
   hBox
     [ txt title,
-      txt " → ",
+      txt titleValueSeparator,
       (attachAttrWhenHighlighted highlighting . txt) currentValue
     ]
 
 -- | Conditionally attach an attribute which is later used to apply different
 --   styling to highlighted widgets.
 attachAttrWhenHighlighted :: Highlighting -> Widget n -> Widget n
-attachAttrWhenHighlighted Highlighted = withAttr (attrName attributeNameValue)
+attachAttrWhenHighlighted Highlighted = withAttr ((attrName . unpack) attributeNameValue)
 attachAttrWhenHighlighted NotHighlighted = id
 
 -- | Define the styling to be applied to selected items.

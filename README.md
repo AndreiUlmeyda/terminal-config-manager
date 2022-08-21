@@ -72,7 +72,6 @@ usually only when quickly quitting and restarting the program.
 - handle an empty possible list
 - test case for element not in possible lists
 - clean up currentValueFromFile
-- remove magic strings
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new
