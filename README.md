@@ -70,7 +70,6 @@ usually only when quickly quitting and restarting the program.
 - refactor elementNextTo
 - refactor extractValue
 - handle an empty possible list
-- test case for element not in possible lists
 - clean up currentValueFromFile
 
 ## Design considerations, unordered

@@ -25,6 +25,8 @@ spec = do
       elementAfter True [False, True, False] `shouldBe` False
     it "given the target value as the last element should wrap around to the first one" $ do
       elementAfter '3' "123" `shouldBe` '1'
+    it "with the target value missing in the list should return the first element of the list" $ do
+      elementAfter '3' "124" `shouldBe` '1'
 
   describe "selecting the element before a given value" $ do
     it "given an empty list should default to the target value" $ do
