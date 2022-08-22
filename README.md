@@ -72,10 +72,13 @@ usually only when quickly quitting and restarting the program.
 - add bats acceptance tests
 - throw away the current value config entry
 - reenable and fix help texts
-- add current value extraction testcase for the newline special case
 - refactor elementNextTo
 - refactor extractValue
 - clean up currentValueFromFile
+- fix pattern "{{value}" crashing with "Data.Text.replace: empty input"
+- provide a yaml schema for the config file
+- handle the case where the value marker is not contained in the pattern
+- find and prevent the case where the target file is emptied completely
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new

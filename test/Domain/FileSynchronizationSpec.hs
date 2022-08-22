@@ -61,3 +61,11 @@ spec = do
             content = "irrelevant" `append` "o" `append` "content" `append` "irrelevant"
             matchingPattern = "o" `append` valueMarker `append` "irrelevant"
          in extractValue (MkPattern matchingPattern) valueMarker (MkContent content) `shouldBe` Just (MkTargetValue "content")
+    it
+      "given a pattern with nothing after the value marker, should result\
+      \ in a match only up to and not including the next newline"
+      $ do
+        let valueMarker = "{{value}}"
+            content = "content" `append` "\n after newline"
+            matchingPattern = valueMarker
+         in extractValue (MkPattern matchingPattern) valueMarker (MkContent content) `shouldBe` Just (MkTargetValue "content")
