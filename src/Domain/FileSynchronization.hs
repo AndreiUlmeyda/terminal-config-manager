@@ -75,16 +75,29 @@ extractValue (MkPattern pat) marker (MkContent content)
   | any null [pat, marker, content] = Nothing
   | otherwise = (Just . MkTargetValue) targetVal
   where
-    targetVal = case stripPrefix beforeMarker withoutPrefixExceptMarker of
-      Nothing -> withoutPrefixExceptMarker
-      Just withoutPrefix -> fst $ breakOn' "\n" $ fst $ breakOn' afterMarker withoutPrefix
-    beforeAndAfterMarker = splitOn marker pat
-    beforeMarker = beforeAndAfterMarker !! 0
-    afterMarker = beforeAndAfterMarker !! 1
-    withoutPrefixExceptMarker = snd $ breakOn' beforeMarker content
+    targetVal = case stripPrefix beforeMarker (textAfter beforeMarker content) of
+      Nothing -> (textAfter beforeMarker content)
+      Just withoutPrefix -> textBeforeUntilNewLine afterMarker withoutPrefix
+    beforeMarker = (splitOn marker pat) !! 0
+    afterMarker = (splitOn marker pat) !! 1
+
+newLine :: Text
+newLine = "\n"
+
+textBeforeUntilNewLine :: Text -> Text -> Text
+textBeforeUntilNewLine needle = untilNewLine . textBefore needle
+
+untilNewLine :: Text -> Text
+untilNewLine = textBefore newLine
+
+textBefore :: Text -> Text -> Text
+textBefore needle = fst . breakOn' needle
+
+textAfter :: Text -> Text -> Text
+textAfter needle = snd . breakOn' needle
 
 -- | A version of breakOn which tolerates an empty 'needle' and, in such a case,
---   just returns a tuple of containing two times the 'haystack'.
+--   just returns a tuple of containings two times the 'haystack'.
 breakOn' :: Text -> Text -> (Text, Text)
 breakOn' needle haystack
   | null needle = (haystack, haystack)
