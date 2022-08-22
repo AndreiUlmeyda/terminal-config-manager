@@ -58,10 +58,11 @@ usually only when quickly quitting and restarting the program.
 ## TODOs
 - find and handle every operation that can fail
 - handle the case where the pattern does not match anything, for instance when
-    the file was modified some other way during runtime
-- refactor StateTransitions
+    (currently, no value is displayed on startup and on value change an error
+    Data.Text.replace: empty input occurs) the file was modified some other way
+    during runtime
+- refactor ValueSelection
 - invert the dependency between UI and Application
-- break up the Infrastructure/Util, determine which layer it should go (Domain?)
 - allow common locations for the config file
 - add bats acceptance tests
 - throw away the current value config entry
@@ -69,7 +70,6 @@ usually only when quickly quitting and restarting the program.
 - add current value extraction testcase for the newline special case
 - refactor elementNextTo
 - refactor extractValue
-- handle an empty possible list
 - clean up currentValueFromFile
 
 ## Design considerations, unordered
