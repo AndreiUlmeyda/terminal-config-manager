@@ -79,6 +79,9 @@ usually only when quickly quitting and restarting the program.
 - provide a yaml schema for the config file
 - handle the case where the value marker is not contained in the pattern
 - find and prevent the case where the target file is emptied completely
+- warn if there are obvious signs of sensitive data inside of the config file
+- evaluate disallowing using the config file as a target file
+- handle missing target file permissions
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new

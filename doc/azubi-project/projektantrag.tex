@@ -36,7 +36,7 @@ fertigen Produkts zu erfolgen hat.
 \paragraph{}
 Bei der Arbeit an Software-Anwendungen, welche eng mit einer Vielzahl anderer
 solcher Anwendungen über mehrere Umgebungen hinweg interagieren, ergaben sich
-für zwei häufige Anwendungsfälle (\textbf{A} und \textbf{B}) beim Umgang mit
+zwei häufige Anwendungsfälle (\textbf{A} und \textbf{B}) beim Umgang mit
 Konfigurationsdateien.
 \paragraph{A}
 Das Nachschlagen gezielter Werte in den Konfigurationsdateien
@@ -52,16 +52,16 @@ werden.
 
 \section{Beispielszenario}
 In der Continuous Integration (CI) - Pipeline einer zentralen Anwendung schlagen
-unvermittelt Akzeptanztests fehl. Um unverzüglich die Ursache festellen zu können
-muss das lokale Setup, das in diesem Moment an die Entwicklung einer anderen
-Anwendung und für die Ausführung einer anderen Menge an Tests konfiguriert ist,
-umkonfiguriert werden.
+unvermittelt Akzeptanztests fehl. Um unverzüglich die Ursache feststellen zu
+können muss das lokale Setup, das in diesem Moment an die Entwicklung einer
+anderen Anwendung und für die Ausführung einer anderen Menge an Tests
+konfiguriert ist, umkonfiguriert werden.
 
 \section{IST-Zustand}
 \paragraph{}
 Um die Zielanwendung zu untersuchen sind viele Teilaufgaben zu erledigen,
 beispielsweise das Aktivieren detaillierter Lognachrichten, das Ändern der
-auszuführenden Unit-/Integration-/Systemtestssuites, das Ändern von Cache-Verhalten,
+auszuführenden Unit-/Integration-/Systemtestsuites, das Ändern von Cache-Verhalten,
 das anpassen von Zielhosts bzw. -umgebungen anderer, an der Testausführung
 beteiligter Anwendungen, usw.. Jeder dieser Schritte ist wiederum mit mehreren
 Einzelschritten verbunden: Meist muss zu diesem Zweck eine passende IDE gestartet,
@@ -77,9 +77,9 @@ Es existiert ein Kommandozeilenprogramm das übersichtlich eine Liste von
 Anwendungsfällen anzeigt. Ein Anwendungsfall ist in diesem Fall eine kurze
 Beschreibung des von einem Konfigurationswert kontrollierten Verhaltens zusammen
 mit dessen aktuellem Wert. Das Programm erlaubt es zwischen diesen
-Anwendungsfällen auszuwählen und den zugehörigen Wert aus einer weiteren Liste
-möglicher Werte auszuwählen. Wird ein neuer Wert ausgewählt so wird die
-dazugehörige Konfigurationsdatei entsprechend umgeschrieben. Sowohl die
+Anwendungsfällen per Tastendruck auszuwählen und den zugehörigen Wert aus einer
+weiteren Liste möglicher Werte auszuwählen. Wird ein neuer Wert ausgewählt so
+wird die dazugehörige Konfigurationsdatei entsprechend umgeschrieben. Sowohl die
 Zielkonfigurationsdateien als auch die jeweiligen möglichen Werte sind
 konfigurierbar. Zusätzlich existieren ausführliche Unit- und Akzeptanztests.
 
@@ -167,9 +167,4 @@ Das Projekt wird ausführlich dokumentiert werden. Dazu gehören
 
 % TODO Nichtziel B besser begründen
 % TODO Überlegung: Wert bei jedem switch ändern vs erst nach Enter
-% TODO Dialog bei fehlenden Permissions
-% TODO Dialog bei fehlendem Pattern Match
-% TODO Command line documentation / help text
-% TODO evaluieren ob Ändern von ETCD-Werten sinnvoll ist.
-% TODO Hinweis, wenn ggf sensible Daten in der Konfigurationsdatei landen
-% TODO die eigene Konfigurationsdatei als Zieldatei verbieten?
+% TODO evaluieren ob Ändern von ETCD-Werten sinnvoll ist. -> ist es nicht wegen Latenz
