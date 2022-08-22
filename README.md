@@ -19,8 +19,13 @@ beforehand inside of a config file for  each value we want to manage:
 config entry in question
 - a list of possible values for the config entry in question
 
-The application displays one line per managed value, its title and the current
-value.
+The application displays one line per managed value, its title/a brief
+description of the use case and the current value inside of the associated file.
+```
+use case description one → value
+use case description two → anotherValue
+use case description three → yetAnotherValue
+```
 
 The up/down arrow keys select the value to change, left/right arrows change the
 value to the next or previous
