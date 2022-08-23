@@ -73,7 +73,6 @@ usually only when quickly quitting and restarting the program.
 - throw away the current value config entry
 - reenable and fix help texts
 - refactor elementNextTo
-- refactor extractValue
 - clean up currentValueFromFile
 - fix pattern "{{value}" crashing with "Data.Text.replace: empty input"
 - provide a yaml schema for the config file

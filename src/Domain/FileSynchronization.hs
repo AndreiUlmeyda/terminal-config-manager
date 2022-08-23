@@ -1,16 +1,19 @@
 module Domain.FileSynchronization
   ( synchronizeWithTargetFiles,
     extractValue,
+    removeBeforeAndIncluding,
+    removeAfterAndIncluding,
   )
 where
 
 import Data.Text
   ( Text,
     breakOn,
+    drop,
+    length,
     null,
     pack,
     splitOn,
-    stripPrefix,
   )
 import Domain.ValueSelection
   ( valueMarker,
@@ -35,7 +38,9 @@ import System.IO.Strict as Strict
   ( readFile,
   )
 import Prelude hiding
-  ( null,
+  ( drop,
+    length,
+    null,
   )
 
 synchronizeWithTargetFiles :: Config -> IO Config
@@ -73,32 +78,25 @@ type ValueMarker = Text
 extractValue :: Pattern -> ValueMarker -> Content -> Maybe TargetValue
 extractValue (MkPattern pat) marker (MkContent content)
   | any null [pat, marker, content] = Nothing
-  | otherwise = (Just . MkTargetValue) targetVal
+  | otherwise =
+      ( Just
+          . MkTargetValue
+          . removeAfterAndIncluding newLine
+          . removeAfterAndIncluding afterMarker
+          . removeBeforeAndIncluding beforeMarker
+      )
+        content
   where
-    targetVal = case stripPrefix beforeMarker (textAfter beforeMarker content) of
-      Nothing -> (textAfter beforeMarker content)
-      Just withoutPrefix -> textBeforeUntilNewLine afterMarker withoutPrefix
     beforeMarker = (splitOn marker pat) !! 0
     afterMarker = (splitOn marker pat) !! 1
 
 newLine :: Text
 newLine = "\n"
 
-textBeforeUntilNewLine :: Text -> Text -> Text
-textBeforeUntilNewLine needle = untilNewLine . textBefore needle
+removeBeforeAndIncluding :: Text -> Text -> Text
+removeBeforeAndIncluding "" content = content
+removeBeforeAndIncluding needle content = (drop (length needle) . snd . breakOn needle) content
 
-untilNewLine :: Text -> Text
-untilNewLine = textBefore newLine
-
-textBefore :: Text -> Text -> Text
-textBefore needle = fst . breakOn' needle
-
-textAfter :: Text -> Text -> Text
-textAfter needle = snd . breakOn' needle
-
--- | A version of breakOn which tolerates an empty 'needle' and, in such a case,
---   just returns a tuple of containings two times the 'haystack'.
-breakOn' :: Text -> Text -> (Text, Text)
-breakOn' needle haystack
-  | null needle = (haystack, haystack)
-  | otherwise = breakOn needle haystack
+removeAfterAndIncluding :: Text -> Text -> Text
+removeAfterAndIncluding "" content = content
+removeAfterAndIncluding needle content = (fst . breakOn needle) content
