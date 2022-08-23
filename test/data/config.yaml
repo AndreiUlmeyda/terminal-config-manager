@@ -8,7 +8,7 @@
 config_lines_to_manage:
   - title: local bookany dumps stats to file
     path: /home/adrian/workspace/terminal-config-manager/test/data/target.conf
-    pattern: "{{value}}"
+    pattern: "'statspush_enabled' => {{value}},"
     targetValue: "true"
     possibleValues:
       - "true"
