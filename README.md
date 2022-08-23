@@ -81,6 +81,7 @@ usually only when quickly quitting and restarting the program.
 - warn if there are obvious signs of sensitive data inside of the config file
 - evaluate disallowing using the config file as a target file
 - handle missing target file permissions
+- warn if pattern is too generic?
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new
