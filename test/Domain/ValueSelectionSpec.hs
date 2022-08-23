@@ -33,6 +33,8 @@ spec = do
       elementBefore 'a' "" `shouldBe` 'a'
     it "given a list containing only the target value should return it" $ do
       elementBefore 'a' "a" `shouldBe` 'a'
+    it "given a list containing the target somewhere in the middle, should return the element before it" $ do
+      elementBefore 'a' "bac" `shouldBe` 'b'
     it "given the target value as the first element should wrap around to the last one" $ do
       elementBefore '1' "123" `shouldBe` '3'
 

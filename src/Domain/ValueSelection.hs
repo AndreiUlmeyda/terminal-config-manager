@@ -131,12 +131,11 @@ elementNextTo :: Eq t => NeighborSelection -> t -> [t] -> t
 elementNextTo neighborSelection targetItem list
   | null list = targetItem
   | not (elem targetItem list) = head list
-  | otherwise = (head . tail . dropWhile (/= targetItem) . take ((length list) + 1) . cycledList) list
-  where
-    cycledList :: [t] -> [t]
-    cycledList = case neighborSelection of
-      SelectSuccessor -> cycle
-      SelectPredecessor -> tail . cycle . reverse
+  | SelectSuccessor <- neighborSelection = chooseNextWrapping targetItem list
+  | SelectPredecessor <- neighborSelection = chooseNextWrapping targetItem (reverse list)
+
+chooseNextWrapping :: Eq c => c -> [c] -> c
+chooseNextWrapping targetItem = (!! 1) . dropWhile (/= targetItem) . concat . replicate 2
 
 -- | Finds the first element equal to the input element inside of a list and
 --   returns the element after it (one index up).
