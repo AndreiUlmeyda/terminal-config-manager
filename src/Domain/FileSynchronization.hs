@@ -60,20 +60,13 @@ currentValuesFromFile (MkConfig items) = do
 
 currentValueFromFile :: ConfigItem -> IO ConfigItem
 currentValueFromFile item = do
-  currentFileContent <- Strict.readFile (path item)
-  currentValue <- case extractValue (matchingPattern item) valueMarker (MkContent (pack currentFileContent)) of
+  currentFileContent <- (fmap pack . Strict.readFile . path) item
+  currentValue <- case extractValue (matchingPattern item) valueMarker (MkContent currentFileContent) of
     (Just v) -> pure v
     Nothing -> die $ generateCurrentValueErrorMessage (path item) (unwrapPattern (matchingPattern item))
   return $ item {targetValue = currentValue}
 
 type ValueMarker = Text
-
--- from pattern and valueMarker and content to value
--- 'BOOKANCY_ENV={{value}}' and '{{value}}' and '...tert werden\nBOOKANCY_ENV=local\n# Host (...' to 'local'
--- 1 split pattern at valueMarker -> ('BOOKANCY_ENV=','')
--- 2 drop until and including the first result of step 1 from the content
--- 3 prune the end at newline
--- 4 prune again at the second result of step 1
 
 extractValue :: Pattern -> ValueMarker -> Content -> Maybe TargetValue
 extractValue (MkPattern pat) marker (MkContent content)
@@ -94,9 +87,9 @@ newLine :: Text
 newLine = "\n"
 
 removeBeforeAndIncluding :: Text -> Text -> Text
-removeBeforeAndIncluding "" content = content
-removeBeforeAndIncluding needle content = (drop (length needle) . snd . breakOn needle) content
+removeBeforeAndIncluding "" = id
+removeBeforeAndIncluding needle = drop (length needle) . snd . breakOn needle
 
 removeAfterAndIncluding :: Text -> Text -> Text
-removeAfterAndIncluding "" content = content
-removeAfterAndIncluding needle content = (fst . breakOn needle) content
+removeAfterAndIncluding "" = id
+removeAfterAndIncluding needle = fst . breakOn needle
