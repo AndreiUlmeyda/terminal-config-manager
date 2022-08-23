@@ -6,7 +6,7 @@ module Domain.FileSynchronization
   )
 where
 
-import Data.Text
+import Data.Text as T
   ( Text,
     breakOn,
     drop,
@@ -14,6 +14,7 @@ import Data.Text
     null,
     pack,
     splitOn,
+    unpack,
   )
 import Domain.ValueSelection
   ( valueMarker,
@@ -26,7 +27,8 @@ import Infrastructure.Config
     unwrapPattern,
   )
 import Infrastructure.Errors
-  ( generateCurrentValueErrorMessage,
+  ( errorInvalidPattern,
+    generateCurrentValueErrorMessage,
   )
 import Infrastructure.FileModification
   ( Content (..),
@@ -37,11 +39,7 @@ import System.Exit
 import System.IO.Strict as Strict
   ( readFile,
   )
-import Prelude hiding
-  ( drop,
-    length,
-    null,
-  )
+import Prelude as P
 
 -- | For a given item there is no guarantee that the target value as it is
 --   configured is identical to the corresponding value in the target file at
@@ -70,13 +68,14 @@ currentValueFromFile item = do
 valueFromContent :: ConfigItem -> Text -> IO TargetValue
 valueFromContent item currentFileContent
   | Just v <- extractValue (matchingPattern item) valueMarker (MkContent currentFileContent) = pure v
-  | otherwise = die $ generateCurrentValueErrorMessage (path item) (unwrapPattern (matchingPattern item))
+  | otherwise = die $ unpack $ generateCurrentValueErrorMessage (path item) (unwrapPattern (matchingPattern item))
 
 type ValueMarker = Text
 
 extractValue :: Pattern -> ValueMarker -> Content -> Maybe TargetValue
 extractValue (MkPattern pat) marker (MkContent content)
-  | any null [pat, marker, content] = Nothing
+  | any T.null [pat, marker, content] = Nothing
+  | P.length splitAtValueMarker /= 2 = (error . unpack) errorInvalidPattern
   | otherwise =
       ( Just
           . MkTargetValue
@@ -86,15 +85,16 @@ extractValue (MkPattern pat) marker (MkContent content)
       )
         content
   where
-    beforeMarker = (splitOn marker pat) !! 0
-    afterMarker = (splitOn marker pat) !! 1
+    splitAtValueMarker = splitOn marker pat
+    beforeMarker = splitAtValueMarker !! 0
+    afterMarker = splitAtValueMarker !! 1
 
 newLine :: Text
 newLine = "\n"
 
 removeBeforeAndIncluding :: Text -> Text -> Text
 removeBeforeAndIncluding "" = id
-removeBeforeAndIncluding needle = drop (length needle) . snd . breakOn needle
+removeBeforeAndIncluding needle = T.drop (T.length needle) . snd . breakOn needle
 
 removeAfterAndIncluding :: Text -> Text -> Text
 removeAfterAndIncluding "" = id

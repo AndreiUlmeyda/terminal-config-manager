@@ -12,15 +12,17 @@ module Infrastructure.Errors
     errorMsgNoConfigEntries,
     errorMsgUnableToDetermineCurrentValue,
     generateCurrentValueErrorMessage,
+    errorInvalidPattern,
   )
 where
 
 import Data.Text
   ( Text,
-    unpack,
+    append,
+    pack,
   )
 
-type ErrorMessage = String
+type ErrorMessage = Text
 
 errorMsgInvalidConfigTopLevel :: ErrorMessage
 errorMsgInvalidConfigTopLevel = "The top level of the config file should be an object named 'config_lines_to_manage'"
@@ -39,14 +41,17 @@ errorMsgNoConfigEntries = "There are no entries in the config file."
 errorMsgUnableToDetermineCurrentValue :: ErrorMessage
 errorMsgUnableToDetermineCurrentValue = "An error occured while trying to determine the current value inside of "
 
+errorInvalidPattern :: ErrorMessage
+errorInvalidPattern = "An error occured because a pattern is malformed. Each pattern needs to contain the value marker exactly once."
+
 type MatchingPattern = Text
 
 generateCurrentValueErrorMessage :: FilePath -> MatchingPattern -> ErrorMessage
 generateCurrentValueErrorMessage path pat =
   errorMsgUnableToDetermineCurrentValue
-    ++ path
-    ++ " using the pattern "
-    ++ "\""
-    ++ unpack pat
-    ++ "\". "
-    ++ "The pattern did not match anything."
+    `append` pack path
+    `append` " using the pattern "
+    `append` "\""
+    `append` pat
+    `append` "\". "
+    `append` "The pattern did not match anything."

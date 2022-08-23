@@ -21,6 +21,9 @@ import Data.Aeson
   )
 import Data.Text
   ( Text,
+    append,
+    pack,
+    unpack,
   )
 import Data.Yaml
   ( FromJSON (parseJSON),
@@ -77,7 +80,7 @@ instance FromJSON Config where
   parseJSON (Object v) =
     MkConfig
       <$> v .: topLevelConfigElement
-  parseJSON _ = fail errorMsgInvalidConfigTopLevel
+  parseJSON _ = fail (unpack errorMsgInvalidConfigTopLevel)
 
 instance FromJSON ConfigItem where
   parseJSON (Object v) =
@@ -87,7 +90,7 @@ instance FromJSON ConfigItem where
       <*> v .: configElementPattern
       <*> v .: configElementValue
       <*> v .: configElementPossibleValues
-  parseJSON _ = fail errorMsgInvalidConfigElements
+  parseJSON _ = fail (unpack errorMsgInvalidConfigElements)
 
 -- | A substring inside of the file you want to manage. Its occurence inside of
 --   that file will be substituted when changing the corresponding item.
@@ -120,4 +123,4 @@ loadConfig = decodeFileEither testYamlFilePath >>= handleParsingErrors
 --   parsing.
 handleParsingErrors :: Either ParseException Config -> IO Config
 handleParsingErrors (Right config) = return config
-handleParsingErrors (Left parseException) = die $ errorMsgFailedConfigParsing ++ (show parseException)
+handleParsingErrors (Left parseException) = (die . unpack . append errorMsgFailedConfigParsing . pack . show) parseException

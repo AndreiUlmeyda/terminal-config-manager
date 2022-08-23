@@ -104,5 +104,5 @@ attributeMap =
 buildInitialState :: Config -> IO AppState
 buildInitialState (MkConfig configItems) =
   case NE.nonEmpty configItems of
-    Nothing -> die errorMsgNoConfigEntries
+    Nothing -> (die . unpack) errorMsgNoConfigEntries
     Just ne -> (pure . MkAppState . makeNonEmptyCursor) ne

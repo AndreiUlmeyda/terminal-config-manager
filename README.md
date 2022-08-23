@@ -73,8 +73,6 @@ usually only when quickly quitting and restarting the program.
 - throw away the current value config entry
 - reenable and fix help texts
 - refactor elementNextTo
-- clean up currentValueFromFile
-- fix pattern "{{value}" crashing with "Data.Text.replace: empty input"
 - provide a yaml schema for the config file
 - handle the case where the value marker is not contained in the pattern
 - find and prevent the case where the target file is emptied completely
@@ -82,6 +80,8 @@ usually only when quickly quitting and restarting the program.
 - evaluate disallowing using the config file as a target file
 - handle missing target file permissions
 - warn if pattern is too generic?
+- add information to errorInvalidPattern, resolve the cyclic dependency when
+    referring to valueMarker
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new
