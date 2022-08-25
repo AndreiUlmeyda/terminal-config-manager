@@ -66,13 +66,11 @@ usually only when quickly quitting and restarting the program.
     (currently, no value is displayed on startup and on value change an error
     Data.Text.replace: empty input occurs) the file was modified some other way
     during runtime
-- refactor ValueSelection
 - invert the dependency between UI and Application
 - allow common locations for the config file
 - add bats acceptance tests
 - throw away the current value config entry
 - reenable and fix help texts
-- refactor cycleValues
 - provide a yaml schema for the config file
 - handle the case where the value marker is not contained in the pattern
 - find and prevent the case where the target file is emptied completely
@@ -82,6 +80,12 @@ usually only when quickly quitting and restarting the program.
 - warn if pattern is too generic?
 - add information to errorInvalidPattern, resolve the cyclic dependency when
     referring to valueMarker
+- remove the need to check if the target value changed while the program was
+    running by extracting the current value on substitution as well, that way
+    the substitution is guaranteed to work while the displayed value may not be
+    accurate, also, explore System.FSNotify.Streaming
+- implement changeElementUnderCursor
+- implement changeElementUnderCursor using functions of the library itself
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new
