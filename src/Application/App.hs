@@ -76,7 +76,8 @@ import UserInterface.Render
 --   description and help text as well.
 runApp :: IO ()
 runApp =
-  loadConfig
+  provideHelpText
+    >>= loadConfig
     >>= synchronizeWithTargetFiles
     >>= buildInitialState
     >>= defaultMain tcmApp

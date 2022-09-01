@@ -116,8 +116,8 @@ instance FromJSON Pattern
 
 -- | Parse the YAML config file into the types specified above. Throw an error
 --   if something is missing.
-loadConfig :: IO Config
-loadConfig = decodeFileEither testYamlFilePath >>= handleParsingErrors
+loadConfig :: () -> IO Config
+loadConfig = const $ decodeFileEither testYamlFilePath >>= handleParsingErrors
 
 -- | Indicate that the yaml errors encountered here happened during config file
 --   parsing.
