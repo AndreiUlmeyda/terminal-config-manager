@@ -81,8 +81,8 @@ test-suite terminal-config-manager-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Domain.FileSynchronizationSpec
-      Domain.ValueSelectionSpec
+      Unit.Domain.FileSynchronizationSpec
+      Unit.Domain.ValueSelectionSpec
       Paths_terminal_config_manager
   hs-source-dirs:
       test

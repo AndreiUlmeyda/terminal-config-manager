@@ -86,6 +86,7 @@ usually only when quickly quitting and restarting the program.
     accurate, also, explore System.FSNotify.Streaming
 - implement changeElementUnderCursor
 - implement changeElementUnderCursor using functions of the library itself
+- unify ValueCyclingPolicy and ValueSelectionPolicy
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new

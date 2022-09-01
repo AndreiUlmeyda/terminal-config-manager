@@ -1,4 +1,4 @@
-module Domain.ValueSelectionSpec where
+module Unit.Domain.ValueSelectionSpec where
 
 import Domain.ValueSelection
   ( changeNthElement,

@@ -1,4 +1,4 @@
-module Domain.FileSynchronizationSpec where
+module Unit.Domain.FileSynchronizationSpec where
 
 import Data.Maybe ()
 import Data.Text

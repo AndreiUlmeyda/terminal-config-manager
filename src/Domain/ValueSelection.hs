@@ -35,6 +35,9 @@ import Data.List.NonEmpty
     fromList,
     toList,
   )
+import Data.Maybe
+  ( fromMaybe,
+  )
 import Data.Text
   ( Text,
     replace,
@@ -53,31 +56,23 @@ import Infrastructure.FileModification
     modifyFile,
   )
 
--- | A function type which, when applied to an application state, changes the
---   value of the item under the cursor.
-data ValueSelectionPolicy = MkValueSelectionPolicy (AppState -> AppState)
-
--- | A function type which, given a value and a list of possible values,
---   generates a new value.
-data ValueCyclingPolicy = MkValueCyclingPolicy (TargetValue -> [TargetValue] -> TargetValue)
-
 -- | When applied to an application state, select the next value of the item
 --   under the cursor and modify the corresponding file accordingly.
 --   TODO AppState as input type
 selectNextValue :: NonEmptyCursor ConfigItem -> NextAppState
-selectNextValue = selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleCurrentValue (MkValueCyclingPolicy elementAfter)))
+selectNextValue = selectValueAndModifyTargetFile (cycleCurrentValue (elementAfter))
 
 -- | When applied to an application state, select the previous value of the item
 --   under the cursor and modify the corresponding file accordingly.
 selectPreviousValue :: NonEmptyCursor ConfigItem -> NextAppState
-selectPreviousValue = selectValueAndModifyTargetFile (MkValueSelectionPolicy (cycleCurrentValue (MkValueCyclingPolicy elementBefore)))
+selectPreviousValue = selectValueAndModifyTargetFile (cycleCurrentValue (elementBefore))
 
 -- | Depending on the supplied policy, either switch the value to the next or previous possible value.
 --   A switched value is written back to the configured file at the place identified by the pattern.
 --   Caution! Reading the file needs to be strict here in order to not have file handles open for subsequent
 --   modifications.
-selectValueAndModifyTargetFile :: ValueSelectionPolicy -> NonEmptyCursor ConfigItem -> NextAppState
-selectValueAndModifyTargetFile (MkValueSelectionPolicy selectionPolicy) items =
+selectValueAndModifyTargetFile :: (AppState -> AppState) -> NonEmptyCursor ConfigItem -> NextAppState
+selectValueAndModifyTargetFile selectionPolicy items =
   let (MkAppState newItems) = selectionPolicy (MkAppState items)
       currentItem = nonEmptyCursorCurrent newItems
       currentValue = targetValue currentItem
@@ -104,19 +99,22 @@ modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern matchPattern
     oldSubstring = replace valueMarker oldValue matchPattern
     newSubstring = replace oldValue newValue oldSubstring
 
+type ValueCyclingPolicy = TargetValue -> [TargetValue] -> TargetValue
+
 -- | Produce a new AppState where the value of the currently selected item is switched to a new one according to the
 --   supplied policy
 cycleCurrentValue :: ValueCyclingPolicy -> AppState -> AppState
 cycleCurrentValue policy (MkAppState items) = (MkAppState . changeElementUnderCursor (cycleItemValue policy)) items
 
-restoreCursor :: Int -> NonEmptyCursor a -> NonEmptyCursor a
-restoreCursor selectionPosition nec
-  | Just restored <- nonEmptyCursorSelectIndex selectionPosition nec = restored
-  | otherwise = nec
+type CursorPosition = Int
+
+-- | Sets the cursor to a given position.
+restoreCursor :: CursorPosition -> NonEmptyCursor a -> NonEmptyCursor a
+restoreCursor cursorPosition nec = fromMaybe nec (nonEmptyCursorSelectIndex cursorPosition nec)
 
 -- | Switch the active target value to another value contained in possibleValues according to the supplied policy.
 cycleItemValue :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
-cycleItemValue (MkValueCyclingPolicy policy) item = item {targetValue = policy (targetValue item) (possibleValues item)}
+cycleItemValue policy item = item {targetValue = policy (targetValue item) (possibleValues item)}
 
 -- | A mode of selecting a new element from a list relative to another element.
 data NeighborSelection = SelectSuccessor | SelectPredecessor
@@ -146,14 +144,14 @@ elementBefore = elementNextTo SelectPredecessor
 -- | Apply a function to the element under the cursor.
 changeElementUnderCursor :: (a -> a) -> NonEmptyCursor a -> NonEmptyCursor a
 changeElementUnderCursor fn nec =
-  ( restoreCursor selectionPosition
+  ( restoreCursor cursorPosition
       . makeNonEmptyCursor
-      . changeNthElementNonEmpty selectionPosition fn
+      . changeNthElementNonEmpty cursorPosition fn
       . rebuildNonEmptyCursor
   )
     nec
   where
-    selectionPosition = nonEmptyCursorSelection nec
+    cursorPosition = nonEmptyCursorSelection nec
 
 -- | Given an index, a function and a NonEmpty list it applies the function to
 --   the element at that index.
