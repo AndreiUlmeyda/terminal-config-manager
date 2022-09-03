@@ -85,6 +85,7 @@ usually only when quickly quitting and restarting the program.
 - implement changeElementUnderCursor
 - implement changeElementUnderCursor using functions of the library itself
 - unify ValueCyclingPolicy and ValueSelectionPolicy
+- check rendering of long lists / scrolling
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new
