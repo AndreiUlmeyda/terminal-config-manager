@@ -3,42 +3,28 @@ module UserInterface.Cli
   )
 where
 
--- cmd line description and help text
-
 import Data.Text
   ( Text,
     unpack,
   )
-import Options.Applicative
-  ( InfoMod,
-    ParserInfo,
-    execParser,
-    fullDesc,
-    header,
-    helper,
-    hsubparser,
-    info,
-    progDesc,
-    (<**>),
+import System.Environment
+  ( getArgs,
+  )
+import System.Exit
+  ( die,
   )
 import Prelude
 
-description :: Text
-description =
-  "Manage selected values scattered over many different files quickly. Arrow up/\
-  \down switches between items. Arrow left/right changes the value. Hit q to quit."
-
-title :: Text
-title = "terminal-config-manager"
-
 provideHelpText :: IO ()
-provideHelpText = execParser argumentParser
+provideHelpText = do
+  args <- getArgs
+  if not (null args)
+    then (die . unpack) helpText
+    else pure ()
 
-argumentParser :: ParserInfo a
-argumentParser = info (hsubparser mempty <**> helper) programDescription
-
-programDescription :: InfoMod a
-programDescription =
-  fullDesc
-    <> (progDesc . unpack) description
-    <> (header . unpack) title
+helpText :: Text
+helpText =
+  "terminal config manager\n  Manage selected values scattered over many \
+  \different files quickly\n\nUsage\n  Invoke without any arguments/parameters\n  \
+  \Arrow ↑/↓ in order to switch between items\n  Arrow ←/→ to the value\n  \
+  \Hit q to quit"

@@ -48,7 +48,6 @@ library
     , base >=4.7 && <5
     , brick
     , cursor
-    , optparse-applicative
     , strict
     , text
     , vty
@@ -69,7 +68,6 @@ executable terminal-config-manager
     , base >=4.7 && <5
     , brick
     , cursor
-    , optparse-applicative
     , strict
     , terminal-config-manager
     , text
@@ -96,7 +94,6 @@ test-suite terminal-config-manager-test
     , brick
     , cursor
     , hspec
-    , optparse-applicative
     , strict
     , terminal-config-manager
     , text

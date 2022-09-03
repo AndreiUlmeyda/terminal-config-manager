@@ -68,9 +68,7 @@ usually only when quickly quitting and restarting the program.
     during runtime
 - invert the dependency between UI and Application
 - allow common locations for the config file
-- add bats acceptance tests
 - throw away the current value config entry
-- fix help texts
 - provide a yaml schema for the config file
 - handle the case where the value marker is not contained in the pattern
 - find and prevent the case where the target file is emptied completely

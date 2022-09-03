@@ -29,7 +29,6 @@ dependencies:
   - text
   - yaml
   - strict
-  - optparse-applicative
   - aeson
 
 library:
