@@ -61,9 +61,11 @@ import UserInterface.Input
   ( handleEvent,
   )
 import UserInterface.Render
-  ( attributeNameSelected,
+  ( attributeNameFaded,
+    attributeNameSelected,
     attributeNameValue,
     drawTCM,
+    fadedStyling,
     selectionStyling,
     valueStyling,
   )
@@ -98,7 +100,8 @@ tcmApp =
 attributeMap :: [(AttrName, Attr)]
 attributeMap =
   [ ((attrName . unpack) attributeNameSelected, selectionStyling),
-    ((attrName . unpack) attributeNameValue, valueStyling)
+    ((attrName . unpack) attributeNameValue, valueStyling),
+    ((attrName . unpack) attributeNameFaded, fadedStyling)
   ]
 
 -- | Wrap the config file entries in a nonempty list.

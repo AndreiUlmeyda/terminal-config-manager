@@ -10,8 +10,10 @@ module UserInterface.Render
   ( drawTCM,
     selectionStyling,
     valueStyling,
+    fadedStyling,
     attributeNameSelected,
     attributeNameValue,
+    attributeNameFaded,
   )
 where
 
@@ -20,9 +22,13 @@ import Brick
     attrName,
     fg,
     hBox,
+    padTop,
     txt,
     vBox,
     withAttr,
+  )
+import Brick.Types
+  ( Padding (Max),
   )
 import Cursor.Simple.List.NonEmpty
   ( nonEmptyCursorCurrent,
@@ -42,6 +48,7 @@ import Graphics.Vty.Attributes
     bold,
     currentAttr,
     cyan,
+    dim,
     withStyle,
   )
 import Infrastructure.Config (ConfigItem (MkConfigItem), TargetValue (MkTargetValue))
@@ -52,6 +59,9 @@ attributeNameSelected = "selected"
 attributeNameValue :: Text
 attributeNameValue = "value"
 
+attributeNameFaded :: Text
+attributeNameFaded = "faded"
+
 titleValueSeparator :: Text
 titleValueSeparator = " → "
 
@@ -61,10 +71,15 @@ titleValueSeparator = " → "
 drawTCM :: AppState -> [Widget ResourceName]
 drawTCM (MkAppState items) = [singleLayer]
   where
-    singleLayer = (vBox . concat) [itemsAboveSelected, selectedItem, itemsBelowSelected]
+    singleLayer = (vBox . concat) [itemsAboveSelected, selectedItem, itemsBelowSelected, helpText]
     itemsAboveSelected = map (drawItem NotHighlighted) (reverse (nonEmptyCursorPrev items))
     selectedItem = [(withAttr ((attrName . unpack) attributeNameSelected) . drawItem Highlighted . nonEmptyCursorCurrent) items]
     itemsBelowSelected = (map (drawItem NotHighlighted) . nonEmptyCursorNext) items
+    helpText :: [Widget n]
+    helpText = [padTop Max $ (withAttr ((attrName . unpack) attributeNameFaded)) helpTextWidget]
+
+helpTextWidget :: Widget n
+helpTextWidget = txt "↑/↓: navigate ←/→: modify q: quit"
 
 -- | A type representing whether an item should be rendered highlighted or not.
 data Highlighting = Highlighted | NotHighlighted deriving stock (Eq)
@@ -93,3 +108,6 @@ selectionStyling = withStyle currentAttr bold
 -- | Define the styling to be applied to the value of a selected line.
 valueStyling :: Attr
 valueStyling = withStyle (fg cyan) bold
+
+fadedStyling :: Attr
+fadedStyling = withStyle currentAttr dim
