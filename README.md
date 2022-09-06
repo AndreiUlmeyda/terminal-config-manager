@@ -85,8 +85,11 @@ usually only when quickly quitting and restarting the program.
 - implement changeElementUnderCursor
 - implement changeElementUnderCursor using functions of the library itself
 - unify ValueCyclingPolicy and ValueSelectionPolicy
-- check rendering of long lists / scrolling
 - fix patterns like '{{value}}abc' matching backwards across line breaks
+- check rendering of long lists / scrolling
+    (scrolling applies to the terminal, it is possible to navigate to places outside of the viewport)
+    try the brick list widget, which might supply srolling
+- evaluate Acceptance testing via docker container (wtype or xdotool)
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new
