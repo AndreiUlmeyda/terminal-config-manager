@@ -34,3 +34,11 @@ config_lines_to_manage:
       - Integration
       - System
       - Development
+
+  - title: backwards matching across newline
+    path: /home/adrian/workspace/terminal-config-manager/test/data/target.conf
+    pattern: "{{value}}ExecUpPost"
+    targetValue: "#"
+    possibleValues:
+      - "#"
+      - " "

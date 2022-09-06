@@ -86,6 +86,7 @@ usually only when quickly quitting and restarting the program.
 - implement changeElementUnderCursor using functions of the library itself
 - unify ValueCyclingPolicy and ValueSelectionPolicy
 - check rendering of long lists / scrolling
+- fix patterns like '{{value}}abc' matching backwards across line breaks
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new
