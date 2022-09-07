@@ -10,7 +10,9 @@ import Data.Text as T
   ( Text,
     breakOn,
     drop,
+    isInfixOf,
     length,
+    lines,
     null,
     pack,
     splitOn,
@@ -80,22 +82,20 @@ type ValueMarker = Text
 extractValue :: Pattern -> ValueMarker -> Content -> Maybe TargetValue
 extractValue (MkPattern pat) marker (MkContent content)
   | any T.null [pat, marker, content] = Nothing
-  | P.length splitAtValueMarker /= 2 = (error . unpack) errorInvalidPattern
+  | pat == marker = (Just . MkTargetValue . head . T.lines) content
+  | P.length linesContainingMarker /= 1 = (error . unpack) errorInvalidPattern
   | otherwise =
       ( Just
           . MkTargetValue
-          . removeAfterAndIncluding newLine
           . removeAfterAndIncluding afterMarker
           . removeBeforeAndIncluding beforeMarker
       )
-        content
+        (head linesContainingMarker)
   where
     splitAtValueMarker = splitOn marker pat
     beforeMarker = splitAtValueMarker !! 0
     afterMarker = splitAtValueMarker !! 1
-
-newLine :: Text
-newLine = "\n"
+    linesContainingMarker = filter (\a -> T.isInfixOf beforeMarker a && T.isInfixOf afterMarker a) (T.lines content)
 
 -- | Given a string and another string which may or may not be a substring of
 --   the first one, remove the substring and every part of the string before it.

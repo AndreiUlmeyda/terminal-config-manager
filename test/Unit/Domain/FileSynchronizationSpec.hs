@@ -71,6 +71,15 @@ spec = do
             content = "content" `append` "\n after newline"
             matchingPattern = valueMarker
          in extractValue (MkPattern matchingPattern) valueMarker (MkContent content) `shouldBe` Just (MkTargetValue "content")
+    it
+      "given a pattern with nothing before the value marker, should result\
+      \ in a backward match only up to and not including the nearest newline"
+      $ do
+        let valueMarker = "{{value}}"
+            content = "before newline\n" `append` "content" `append` "irrelevant"
+            matchingPattern = valueMarker `append` "irrelevant"
+         in extractValue (MkPattern matchingPattern) valueMarker (MkContent content) `shouldBe` Just (MkTargetValue "content")
+
   describe "Remove a substring from a given string and everything before it" $ do
     it "given completely empty input, should result in the empty string" $ do
       removeBeforeAndIncluding "" "" `shouldBe` ""
