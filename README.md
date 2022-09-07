@@ -90,6 +90,7 @@ usually only when quickly quitting and restarting the program.
     (scrolling applies to the terminal, it is possible to navigate to places outside of the viewport)
     try the brick list widget, which might supply srolling
 - evaluate Acceptance testing via docker container (wtype or xdotool)
+- possible values cannot contain an empty string
 
 ## Design considerations, unordered
 - domain concepts  line(?) selection, value selection, old file content, new
