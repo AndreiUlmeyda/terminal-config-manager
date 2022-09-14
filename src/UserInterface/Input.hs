@@ -61,6 +61,6 @@ handleVtyEvent event (MkAppState items) = case event of
   KeyQ -> halt (MkAppState items)
   ArrowDown -> selectNextItem items
   ArrowUp -> selectPreviousItem items
-  ArrowRight -> selectNextValue items -- >>= writeChangesToFile
-  ArrowLeft -> selectPreviousValue items -- >>= writeChangesToFile
+  ArrowRight -> selectNextValue items
+  ArrowLeft -> selectPreviousValue items
   _ -> continue (MkAppState items)
