@@ -74,7 +74,8 @@ usually only when quickly quitting and restarting the program.
 - find and prevent the case where the target file is emptied completely
 - warn if there are obvious signs of sensitive data inside of the config file
 - evaluate disallowing using the config file as a target file
-- handle missing target file permissions
+- handle missing target file permissions, asking for the password seems out of
+    reach for the moment -> check if everything is writable on startup
 - warn if pattern is too generic?
 - add information to errorInvalidPattern, resolve the cyclic dependency when
     referring to valueMarker
