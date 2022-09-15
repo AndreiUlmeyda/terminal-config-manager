@@ -16,12 +16,6 @@ module Domain.ValueSelection
   )
 where
 
-import Brick
-  ( continue,
-  )
-import Control.Monad.IO.Class
-  ( MonadIO (liftIO),
-  )
 import Cursor.Simple.List.NonEmpty
   ( NonEmptyCursor,
     makeNonEmptyCursor,
@@ -44,7 +38,6 @@ import Data.Text
   )
 import Domain.State
   ( AppState (..),
-    NextAppState,
   )
 import Infrastructure.Config
   ( ConfigItem (..),
@@ -59,20 +52,20 @@ import Infrastructure.FileModification
 -- | When applied to an application state, select the next value of the item
 --   under the cursor and modify the corresponding file accordingly.
 --   TODO AppState as input type
-selectNextValue :: NonEmptyCursor ConfigItem -> NextAppState
-selectNextValue = selectValueAndModifyTargetFile (cycleCurrentValue (elementAfter))
+selectNextValue :: AppState -> IO AppState
+selectNextValue state = selectValueAndModifyTargetFile (cycleCurrentValue elementAfter) state
 
 -- | When applied to an application state, select the previous value of the item
 --   under the cursor and modify the corresponding file accordingly.
-selectPreviousValue :: NonEmptyCursor ConfigItem -> NextAppState
-selectPreviousValue = selectValueAndModifyTargetFile (cycleCurrentValue (elementBefore))
+selectPreviousValue :: AppState -> IO AppState
+selectPreviousValue state = selectValueAndModifyTargetFile (cycleCurrentValue elementBefore) state
 
 -- | Depending on the supplied policy, either switch the value to the next or previous possible value.
 --   A switched value is written back to the configured file at the place identified by the pattern.
 --   Caution! Reading the file needs to be strict here in order to not have file handles open for subsequent
 --   modifications.
-selectValueAndModifyTargetFile :: (AppState -> AppState) -> NonEmptyCursor ConfigItem -> NextAppState
-selectValueAndModifyTargetFile selectionPolicy items =
+selectValueAndModifyTargetFile :: (AppState -> AppState) -> AppState -> IO AppState
+selectValueAndModifyTargetFile selectionPolicy (MkAppState items) =
   let (MkAppState newItems) = selectionPolicy (MkAppState items)
       currentItem = nonEmptyCursorCurrent newItems
       currentValue = targetValue currentItem
@@ -81,9 +74,7 @@ selectValueAndModifyTargetFile selectionPolicy items =
       previousItem = nonEmptyCursorCurrent items
       previousValue = targetValue previousItem
       modification = modify previousValue currentValue currentPattern
-   in do
-        _ <- liftIO $ modifyFile currentPath modification
-        continue (MkAppState newItems)
+   in modifyFile currentPath modification >> return (MkAppState newItems)
 
 -- | This needs to be a substring of the matching pattern and is needed
 --   to determine the location of the values to replaced.

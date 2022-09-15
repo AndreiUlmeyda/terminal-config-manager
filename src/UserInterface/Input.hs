@@ -12,12 +12,15 @@ import Brick
     continue,
     halt,
   )
+import Control.Monad.IO.Class
+  ( MonadIO (liftIO),
+  )
 import Domain.ItemSelection
   ( selectNextItem,
     selectPreviousItem,
   )
 import Domain.State
-  ( AppState (MkAppState),
+  ( AppState,
     NextAppState,
   )
 import Domain.ValueSelection
@@ -31,23 +34,23 @@ import Graphics.Vty.Input.Events
 
 -- | Pattern synonym for the event raised when hitting q
 pattern KeyQ :: Event
-pattern KeyQ <- EvKey (KChar 'q') []
+pattern KeyQ = EvKey (KChar 'q') []
 
 -- | Pattern synonym for the event raised when hitting arrow down
 pattern ArrowDown :: Event
-pattern ArrowDown <- EvKey KDown []
+pattern ArrowDown = EvKey KDown []
 
 -- | Pattern synonym for the event raised when hitting arrow up
 pattern ArrowUp :: Event
-pattern ArrowUp <- EvKey KUp []
+pattern ArrowUp = EvKey KUp []
 
 -- | Pattern synonym for the event raised when hitting arrow left
 pattern ArrowLeft :: Event
-pattern ArrowLeft <- EvKey KLeft []
+pattern ArrowLeft = EvKey KLeft []
 
 -- | Pattern synonym for the event raised when hitting arrow right
 pattern ArrowRight :: Event
-pattern ArrowRight <- EvKey KRight []
+pattern ArrowRight = EvKey KRight []
 
 -- | Handle an event emitted by brick by unpacking the underlying vty event and passing it the appropriate handler.
 handleEvent :: AppState -> BrickEvent n e -> NextAppState
@@ -57,10 +60,9 @@ handleEvent currentState event
 
 -- | Handle a keyboard event, up and down keys for selection, left and right for changing the associated value and q to quit.
 handleVtyEvent :: Event -> AppState -> NextAppState
-handleVtyEvent event (MkAppState items) = case event of
-  KeyQ -> halt (MkAppState items)
-  ArrowDown -> selectNextItem items
-  ArrowUp -> selectPreviousItem items
-  ArrowRight -> selectNextValue items
-  ArrowLeft -> selectPreviousValue items
-  _ -> continue (MkAppState items)
+handleVtyEvent KeyQ state = halt state
+handleVtyEvent ArrowDown state = (continue . selectNextItem) state
+handleVtyEvent ArrowUp state = (continue . selectPreviousItem) state
+handleVtyEvent ArrowRight state = continue =<< (liftIO . selectNextValue) state
+handleVtyEvent ArrowLeft state = continue =<< (liftIO . selectPreviousValue) state
+handleVtyEvent _ state = continue state
