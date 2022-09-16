@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Build
 
 on:
   push:
@@ -12,7 +12,10 @@ permissions:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, macos-10.15, windows-2019]
 
     steps:
     - name: Chechout repo
