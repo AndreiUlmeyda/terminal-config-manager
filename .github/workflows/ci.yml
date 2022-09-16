@@ -1,0 +1,23 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Chechout repo
+      uses: actions/checkout@v3
+    - name: Build
+      run: stack build
+    - name: Run tests
+      run: stack test
