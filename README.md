@@ -1,3 +1,5 @@
+![example workflow](https://github.com/AndreiUlmeyda/terminal-config-manager/actions/workflows/ci.yml/badge.svg)
+
 # terminal-config-manager
 
 This is an application to manage selected values scattered over many different
