@@ -27,6 +27,7 @@ library
   exposed-modules:
       Application.App
       Domain.FileSynchronization
+      Domain.ItemsCursor
       Domain.ItemSelection
       Domain.State
       Domain.ValueSelection
@@ -80,6 +81,7 @@ test-suite terminal-config-manager-test
   main-is: Spec.hs
   other-modules:
       Unit.Domain.FileSynchronizationSpec
+      Unit.Domain.ItemsCursorSpec
       Unit.Domain.ValueSelectionSpec
       Paths_terminal_config_manager
   hs-source-dirs:
