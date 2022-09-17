@@ -9,10 +9,10 @@ version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/terminal-config-manager#readme>
 homepage:       https://github.com/githubuser/terminal-config-manager#readme
 bug-reports:    https://github.com/githubuser/terminal-config-manager/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2022 Author name here
-license:        BSD3
+author:         Adrian Schurz
+maintainer:     ulmeyda.smile@gmail.com
+copyright:      2022 Adrian Schurz
+license:        MIT
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
@@ -48,7 +48,6 @@ library
       aeson
     , base >=4.7 && <5
     , brick
-    , cursor
     , strict
     , text
     , vty
@@ -68,7 +67,6 @@ executable terminal-config-manager
       aeson
     , base >=4.7 && <5
     , brick
-    , cursor
     , strict
     , terminal-config-manager
     , text
@@ -94,7 +92,6 @@ test-suite terminal-config-manager-test
     , aeson
     , base >=4.7 && <5
     , brick
-    , cursor
     , hspec
     , strict
     , terminal-config-manager

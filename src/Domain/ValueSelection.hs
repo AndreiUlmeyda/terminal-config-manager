@@ -11,30 +11,17 @@ module Domain.ValueSelection
     selectPreviousValue,
     elementAfter,
     elementBefore,
-    changeNthElement,
     valueMarker,
   )
 where
 
-import Cursor.Simple.List.NonEmpty
-  ( NonEmptyCursor,
-    makeNonEmptyCursor,
-    nonEmptyCursorCurrent,
-    nonEmptyCursorSelectIndex,
-    nonEmptyCursorSelection,
-    rebuildNonEmptyCursor,
-  )
-import Data.List.NonEmpty
-  ( NonEmpty,
-    fromList,
-    toList,
-  )
-import Data.Maybe
-  ( fromMaybe,
-  )
 import Data.Text
   ( Text,
     replace,
+  )
+import Domain.ItemsCursor
+  ( changeElementUnderCursor,
+    itemUnderCursor,
   )
 import Domain.State
   ( AppState (..),
@@ -64,16 +51,16 @@ selectPreviousValue = selectValueAndModifyTargetFile (cycleCurrentValue elementB
 --   Caution! Reading the file needs to be strict here in order to not have file handles open for subsequent
 --   modifications.
 selectValueAndModifyTargetFile :: (AppState -> AppState) -> AppState -> IO AppState
-selectValueAndModifyTargetFile selectionPolicy (MkAppState items) =
-  let (MkAppState newItems) = selectionPolicy (MkAppState items)
-      currentItem = nonEmptyCursorCurrent newItems
+selectValueAndModifyTargetFile selectionPolicy (MkAppState itemsCursor) =
+  let (MkAppState newItemsCursor) = selectionPolicy (MkAppState itemsCursor)
+      currentItem = itemUnderCursor newItemsCursor
       currentValue = targetValue currentItem
       currentPath = path currentItem
       currentPattern = matchingPattern currentItem
-      previousItem = nonEmptyCursorCurrent items
+      previousItem = itemUnderCursor itemsCursor
       previousValue = targetValue previousItem
       modification = modify previousValue currentValue currentPattern
-   in modifyFile currentPath modification >> return (MkAppState newItems)
+   in modifyFile currentPath modification >> return (MkAppState newItemsCursor)
 
 -- | This needs to be a substring of the matching pattern and is needed
 --   to determine the location of the values to replaced.
@@ -95,12 +82,6 @@ type ValueCyclingPolicy = TargetValue -> [TargetValue] -> TargetValue
 --   supplied policy
 cycleCurrentValue :: ValueCyclingPolicy -> AppState -> AppState
 cycleCurrentValue policy (MkAppState items) = (MkAppState . changeElementUnderCursor (cycleItemValue policy)) items
-
-type CursorPosition = Int
-
--- | Sets the cursor to a given position.
-restoreCursor :: CursorPosition -> NonEmptyCursor a -> NonEmptyCursor a
-restoreCursor cursorPosition nec = fromMaybe nec (nonEmptyCursorSelectIndex cursorPosition nec)
 
 -- | Switch the active target value to another value contained in possibleValues according to the supplied policy.
 cycleItemValue :: ValueCyclingPolicy -> ConfigItem -> ConfigItem
@@ -131,29 +112,3 @@ elementAfter = elementNextTo SelectSuccessor
 --   returns the element before it (one index down).
 elementBefore :: Eq t => t -> [t] -> t
 elementBefore = elementNextTo SelectPredecessor
-
--- | Apply a function to the element under the cursor.
-changeElementUnderCursor :: (a -> a) -> NonEmptyCursor a -> NonEmptyCursor a
-changeElementUnderCursor fn nec =
-  ( restoreCursor cursorPosition
-      . makeNonEmptyCursor
-      . changeNthElementNonEmpty cursorPosition fn
-      . rebuildNonEmptyCursor
-  )
-    nec
-  where
-    cursorPosition = nonEmptyCursorSelection nec
-
--- | Given an index, a function and a NonEmpty list it applies the function to
---   the element at that index.
-changeNthElementNonEmpty :: Int -> (t -> t) -> NonEmpty t -> NonEmpty t
-changeNthElementNonEmpty n fn = fromList . changeNthElement n fn . toList
-
--- | Given an index, a function and a list it applies the function to the
---   element at that index.
-changeNthElement :: Int -> (t -> t) -> [t] -> [t]
-changeNthElement _ _ [] = []
-changeNthElement n fn (x : xs)
-  | (n < 0) = x : xs
-  | (n == 0) = (fn x) : xs
-  | otherwise = x : (changeNthElement (n - 1) fn xs)

@@ -30,14 +30,14 @@ import Brick
 import Brick.Types
   ( Padding (Max),
   )
-import Cursor.Simple.List.NonEmpty
-  ( nonEmptyCursorCurrent,
-    nonEmptyCursorNext,
-    nonEmptyCursorPrev,
-  )
 import Data.Text
   ( Text,
     unpack,
+  )
+import Domain.ItemsCursor
+  ( itemUnderCursor,
+    itemsAfterCursor,
+    itemsBeforeCursor,
   )
 import Domain.State
   ( AppState (MkAppState),
@@ -51,7 +51,10 @@ import Graphics.Vty.Attributes
     dim,
     withStyle,
   )
-import Infrastructure.Config (ConfigItem (MkConfigItem), TargetValue (MkTargetValue))
+import Infrastructure.Config
+  ( ConfigItem (MkConfigItem),
+    TargetValue (MkTargetValue),
+  )
 
 attributeNameSelected :: Text
 attributeNameSelected = "selected"
@@ -72,9 +75,9 @@ drawTCM :: AppState -> [Widget ResourceName]
 drawTCM (MkAppState items) = [singleLayer]
   where
     singleLayer = (vBox . concat) [itemsAboveSelected, selectedItem, itemsBelowSelected, helpText]
-    itemsAboveSelected = map (drawItem NotHighlighted) (reverse (nonEmptyCursorPrev items))
-    selectedItem = [(withAttr ((attrName . unpack) attributeNameSelected) . drawItem Highlighted . nonEmptyCursorCurrent) items]
-    itemsBelowSelected = (map (drawItem NotHighlighted) . nonEmptyCursorNext) items
+    itemsAboveSelected = map (drawItem NotHighlighted) (itemsBeforeCursor items)
+    selectedItem = [(withAttr ((attrName . unpack) attributeNameSelected) . drawItem Highlighted . itemUnderCursor) items]
+    itemsBelowSelected = (map (drawItem NotHighlighted) . itemsAfterCursor) items
     helpText :: [Widget n]
     helpText = [padTop Max $ (withAttr ((attrName . unpack) attributeNameFaded)) helpTextWidget]
 

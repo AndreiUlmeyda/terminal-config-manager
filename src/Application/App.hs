@@ -23,17 +23,14 @@ import Brick
     defaultMain,
     showFirstCursor,
   )
-import Cursor.Simple.List.NonEmpty
-  ( makeNonEmptyCursor,
-  )
-import Data.List.NonEmpty as NE
-  ( nonEmpty,
-  )
 import Data.Text
   ( unpack,
   )
 import Domain.FileSynchronization
   ( synchronizeWithTargetFiles,
+  )
+import Domain.ItemsCursor
+  ( makeItemsCursor,
   )
 import Domain.State
   ( AppState (MkAppState),
@@ -107,6 +104,6 @@ attributeMap =
 -- | Wrap the config file entries in a nonempty list.
 buildInitialState :: Config -> IO AppState
 buildInitialState (MkConfig configItems) =
-  case NE.nonEmpty configItems of
+  case makeItemsCursor configItems of
     Nothing -> (die . unpack) errorMsgNoConfigEntries
-    Just ne -> (pure . MkAppState . makeNonEmptyCursor) ne
+    Just items -> (pure . MkAppState) items

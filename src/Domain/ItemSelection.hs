@@ -12,32 +12,18 @@ module Domain.ItemSelection
   )
 where
 
-import Cursor.Simple.List.NonEmpty
-  ( NonEmptyCursor,
-    nonEmptyCursorSelectNext,
-    nonEmptyCursorSelectPrev,
+import Domain.ItemsCursor
+  ( cursorDown,
+    cursorUp,
   )
 import Domain.State
   ( AppState (MkAppState),
   )
-import Infrastructure.Config
-  ( ConfigItem,
-  )
-
--- | A function type which, when applied to an application state, changes the
---   cursor position.
-data ItemSelectionPolicy = MkItemSelectionPolicy (NonEmptyCursor ConfigItem -> Maybe (NonEmptyCursor ConfigItem))
 
 -- | A function to change the cursor position to point at the next item.
 selectNextItem :: AppState -> AppState
-selectNextItem = selectItem (MkItemSelectionPolicy nonEmptyCursorSelectNext)
+selectNextItem (MkAppState itemsCursor) = MkAppState (cursorUp itemsCursor)
 
 -- | A function to change the cursor position to point at the previous item.
 selectPreviousItem :: AppState -> AppState
-selectPreviousItem = selectItem (MkItemSelectionPolicy nonEmptyCursorSelectPrev)
-
--- | Depending on the supplied policy, either select the next or previous item
-selectItem :: ItemSelectionPolicy -> AppState -> AppState
-selectItem (MkItemSelectionPolicy selectionPolicy) (MkAppState items) = case selectionPolicy items of
-  Nothing -> MkAppState items
-  Just newSelection -> MkAppState newSelection
+selectPreviousItem (MkAppState itemsCursor) = MkAppState (cursorDown itemsCursor)

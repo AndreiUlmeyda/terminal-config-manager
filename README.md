@@ -85,9 +85,6 @@ usually only when quickly quitting and restarting the program.
     running by extracting the current value on substitution as well, that way
     the substitution is guaranteed to work while the displayed value may not be
     accurate, also, explore System.FSNotify.Streaming
-- implement changeElementUnderCursor
-- implement changeElementUnderCursor using functions of the library itself
-- unify ValueCyclingPolicy and ValueSelectionPolicy
 - fix patterns like '{{value}}abc' matching backwards across line breaks
 - check rendering of long lists / scrolling
     (scrolling applies to the terminal, it is possible to navigate to places outside of the viewport)

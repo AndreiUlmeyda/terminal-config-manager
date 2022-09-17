@@ -1,8 +1,10 @@
 module Unit.Domain.ValueSelectionSpec where
 
-import Domain.ValueSelection
+import Domain.ItemsCursor
   ( changeNthElement,
-    elementAfter,
+  )
+import Domain.ValueSelection
+  ( elementAfter,
     elementBefore,
   )
 import Test.Hspec

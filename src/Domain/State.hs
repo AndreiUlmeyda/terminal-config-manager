@@ -16,11 +16,8 @@ import Brick
   ( EventM,
     Next,
   )
-import Cursor.Simple.List.NonEmpty
-  ( NonEmptyCursor,
-  )
-import Infrastructure.Config
-  ( ConfigItem,
+import Domain.ItemsCursor
+  ( ItemsCursor,
   )
 
 -- | An dummy type used only as a parameter of EventM
@@ -28,7 +25,7 @@ data ResourceName = MkResourceName deriving stock (Show, Eq, Ord)
 
 -- | The state of the application. It will guarantee that the list of items
 --   contains at least one element and keep track of a cursor position.
-data AppState = MkAppState (NonEmptyCursor ConfigItem) deriving stock (Show, Eq)
+data AppState = MkAppState ItemsCursor deriving stock (Show, Eq)
 
 -- | When reacting to an event the result needs to be of type EventM. Though
 --   not entirely accurate the synonym here is trying to communicate that, in
