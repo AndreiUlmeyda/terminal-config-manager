@@ -51,14 +51,13 @@ import Infrastructure.FileModification
 
 -- | When applied to an application state, select the next value of the item
 --   under the cursor and modify the corresponding file accordingly.
---   TODO AppState as input type
 selectNextValue :: AppState -> IO AppState
-selectNextValue state = selectValueAndModifyTargetFile (cycleCurrentValue elementAfter) state
+selectNextValue = selectValueAndModifyTargetFile (cycleCurrentValue elementAfter)
 
 -- | When applied to an application state, select the previous value of the item
 --   under the cursor and modify the corresponding file accordingly.
 selectPreviousValue :: AppState -> IO AppState
-selectPreviousValue state = selectValueAndModifyTargetFile (cycleCurrentValue elementBefore) state
+selectPreviousValue = selectValueAndModifyTargetFile (cycleCurrentValue elementBefore)
 
 -- | Depending on the supplied policy, either switch the value to the next or previous possible value.
 --   A switched value is written back to the configured file at the place identified by the pattern.
@@ -116,11 +115,12 @@ elementNextTo :: Eq t => NeighborSelection -> t -> [t] -> t
 elementNextTo neighborSelection targetItem list
   | null list = targetItem
   | not (elem targetItem list) = head list
-  | SelectSuccessor <- neighborSelection = chooseNextWrapping targetItem list
-  | SelectPredecessor <- neighborSelection = chooseNextWrapping targetItem (reverse list)
+  | SelectSuccessor <- neighborSelection = chooseNextWhileWrapping targetItem list
+  | SelectPredecessor <- neighborSelection = chooseNextWhileWrapping targetItem (reverse list)
 
-chooseNextWrapping :: Eq t => t -> [t] -> t
-chooseNextWrapping targetItem = (!! 1) . dropWhile (/= targetItem) . concat . replicate 2
+chooseNextWhileWrapping :: Eq t => t -> [t] -> t
+chooseNextWhileWrapping targetItem [] = targetItem
+chooseNextWhileWrapping targetItem list = (head . tail . dropWhile (/= targetItem) . concat . replicate 2) list
 
 -- | Finds the first element equal to the input element inside of a list and
 --   returns the element after it (one index up).
