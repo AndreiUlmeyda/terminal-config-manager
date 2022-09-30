@@ -93,15 +93,13 @@ usually only when quickly quitting and restarting the program.
 - possible values cannot contain an empty string
 
 ## Design considerations, unordered
-- domain concepts  line(?) selection, value selection, old file content, new
+- domain concepts line(?) selection, value selection, old file content, new
     file content
 - mode = LineSelection | ValueSelection
 - LineSelection = NextLine | PreviousLine
 - ValueSelection = NextValue | PreviousValue
 - DomainFunction :: mode -> OldFile -> NewFile
 - ModificationCommand
-- Line may be a rendering concept, rather than a domain concept -> item could
-    already be better
 
 ## Glossary
 - **item**: An element of the list inside of the config file. It

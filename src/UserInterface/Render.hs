@@ -110,5 +110,6 @@ selectionStyling = withStyle currentAttr bold
 valueStyling :: Attr
 valueStyling = withStyle (fg cyan) bold
 
+-- | Define the styling to be applied to the instructions at the bottom.
 fadedStyling :: Attr
 fadedStyling = withStyle currentAttr dim
