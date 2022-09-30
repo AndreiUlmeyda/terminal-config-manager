@@ -29,16 +29,16 @@ itemUnderCursor :: ItemsCursor -> ConfigItem
 itemUnderCursor (MkItemsCursor items cursorPosition) = items !! cursorPosition
 
 itemsBeforeCursor :: ItemsCursor -> [ConfigItem]
-itemsBeforeCursor (MkItemsCursor items cursorPosition) = (take (cursorPosition)) items
+itemsBeforeCursor (MkItemsCursor items cursorPosition) = take cursorPosition items
 
 itemsAfterCursor :: ItemsCursor -> [ConfigItem]
-itemsAfterCursor (MkItemsCursor items cursorPosition) = (drop (cursorPosition + 1)) items
-
-cursorUp :: ItemsCursor -> ItemsCursor
-cursorUp (MkItemsCursor items cp) = MkItemsCursor items (min (cp + 1) (length items - 1))
+itemsAfterCursor (MkItemsCursor items cursorPosition) = drop (cursorPosition + 1) items
 
 cursorDown :: ItemsCursor -> ItemsCursor
-cursorDown (MkItemsCursor items cp) = MkItemsCursor items (max (cp - 1) 0)
+cursorDown (MkItemsCursor items cp) = MkItemsCursor items (min (cp + 1) (length items - 1))
+
+cursorUp :: ItemsCursor -> ItemsCursor
+cursorUp (MkItemsCursor items cp) = MkItemsCursor items (max (cp - 1) 0)
 
 changeElementUnderCursor :: (ConfigItem -> ConfigItem) -> ItemsCursor -> ItemsCursor
 changeElementUnderCursor fn (MkItemsCursor items cursorPosition) = MkItemsCursor (changeNthElement cursorPosition fn items) cursorPosition
@@ -48,6 +48,6 @@ changeElementUnderCursor fn (MkItemsCursor items cursorPosition) = MkItemsCursor
 changeNthElement :: Int -> (t -> t) -> [t] -> [t]
 changeNthElement _ _ [] = []
 changeNthElement n fn (x : xs)
-  | (n < 0) = x : xs
-  | (n == 0) = (fn x) : xs
-  | otherwise = x : (changeNthElement (n - 1) fn xs)
+  | n < 0 = x : xs
+  | n == 0 = fn x : xs
+  | otherwise = x : changeNthElement (n - 1) fn xs

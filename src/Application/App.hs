@@ -91,7 +91,7 @@ tcmApp =
       appDraw = drawTCM,
       appAttrMap = (const . attrMap currentAttr) attributeMap,
       appChooseCursor = showFirstCursor,
-      appStartEvent = pure
+      appStartEvent = return ()
     }
 
 attributeMap :: [(AttrName, Attr)]

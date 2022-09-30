@@ -18,7 +18,8 @@ module UserInterface.Render
 where
 
 import Brick
-  ( Widget,
+  ( Padding (Max),
+    Widget,
     attrName,
     fg,
     hBox,
@@ -26,9 +27,6 @@ import Brick
     txt,
     vBox,
     withAttr,
-  )
-import Brick.Types
-  ( Padding (Max),
   )
 import Data.Text
   ( Text,
@@ -79,7 +77,7 @@ drawTCM (MkAppState items) = [singleLayer]
     selectedItem = [(withAttr ((attrName . unpack) attributeNameSelected) . drawItem Highlighted . itemUnderCursor) items]
     itemsBelowSelected = (map (drawItem NotHighlighted) . itemsAfterCursor) items
     helpText :: [Widget n]
-    helpText = [padTop Max $ (withAttr ((attrName . unpack) attributeNameFaded)) helpTextWidget]
+    helpText = [padTop Max $ withAttr ((attrName . unpack) attributeNameFaded) helpTextWidget]
 
 helpTextWidget :: Widget n
 helpTextWidget = txt "↑/↓: navigate ←/→: modify q: quit"

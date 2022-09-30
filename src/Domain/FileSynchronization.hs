@@ -50,16 +50,14 @@ import Prelude as P
 --   extracting the value by reading each file and determining the target value
 --   based on the pattern.
 --
---   This is done in sequence. Substituting 'sequence' for 'parallel' may appear
+--   This is done in sequence. Trying this in parallel may appear
 --   as an obvious optimization but it may lead to issues with open file
 --   desciptors when there are multiple items pointing to the same file. If the
 --   optimization is needed it could work if the items are grouped by path
 --   first, but even then they could be pointing to the same file through
 --   symbolic links.
 synchronizeWithTargetFiles :: Config -> IO Config
-synchronizeWithTargetFiles (MkConfig items) = do
-  newItems <- (sequence . map currentValueFromFile) items
-  (return . MkConfig) newItems
+synchronizeWithTargetFiles (MkConfig items) = fmap MkConfig (mapM currentValueFromFile items)
 
 -- | Read a file corresponding to an item and extract the target value according
 --   to the pattern.
@@ -93,7 +91,7 @@ extractValue (MkPattern pat) marker (MkContent content)
         (head linesContainingMarker)
   where
     splitAtValueMarker = splitOn marker pat
-    beforeMarker = splitAtValueMarker !! 0
+    beforeMarker = head splitAtValueMarker
     afterMarker = splitAtValueMarker !! 1
     linesContainingMarker = filter (\a -> T.isInfixOf beforeMarker a && T.isInfixOf afterMarker a) (T.lines content)
 

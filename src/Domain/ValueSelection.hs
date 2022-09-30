@@ -95,7 +95,7 @@ data NeighborSelection = SelectSuccessor | SelectPredecessor
 elementNextTo :: Eq t => NeighborSelection -> t -> [t] -> t
 elementNextTo neighborSelection targetItem list
   | null list = targetItem
-  | not (elem targetItem list) = head list
+  | targetItem `notElem` list = head list
   | SelectSuccessor <- neighborSelection = chooseNextWhileWrapping targetItem list
   | SelectPredecessor <- neighborSelection = chooseNextWhileWrapping targetItem (reverse list)
 

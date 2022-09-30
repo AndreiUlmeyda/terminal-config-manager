@@ -9,19 +9,18 @@ module UserInterface.Input (handleEvent) where
 
 import Brick
   ( BrickEvent (VtyEvent),
-    continue,
     halt,
   )
+import Brick.Types (EventM)
 import Control.Monad.IO.Class
   ( MonadIO (liftIO),
   )
-import Domain.ItemSelection
-  ( selectNextItem,
-    selectPreviousItem,
-  )
+import Control.Monad.State (get, modify, put)
+import Domain.ItemSelection (selectNextItem, selectPreviousItem)
 import Domain.State
-  ( AppState,
+  ( AppState (..),
     NextAppState,
+    ResourceName,
   )
 import Domain.ValueSelection
   ( selectNextValue,
@@ -53,16 +52,21 @@ pattern ArrowRight :: Event
 pattern ArrowRight = EvKey KRight []
 
 -- | Handle an event emitted by brick by unpacking the underlying vty event and passing it the appropriate handler.
-handleEvent :: AppState -> BrickEvent n e -> NextAppState
-handleEvent currentState event
-  | VtyEvent vtye <- event = handleVtyEvent vtye currentState
-  | otherwise = continue currentState
+handleEvent :: BrickEvent ResourceName e -> EventM ResourceName AppState ()
+handleEvent event
+  | VtyEvent vtye <- event = handleVtyEvent vtye
+  | otherwise = return ()
 
 -- | Handle a keyboard event, up and down keys for selection, left and right for changing the associated value and q to quit.
-handleVtyEvent :: Event -> AppState -> NextAppState
-handleVtyEvent KeyQ state = halt state
-handleVtyEvent ArrowDown state = (continue . selectNextItem) state
-handleVtyEvent ArrowUp state = (continue . selectPreviousItem) state
-handleVtyEvent ArrowRight state = continue =<< (liftIO . selectNextValue) state
-handleVtyEvent ArrowLeft state = continue =<< (liftIO . selectPreviousValue) state
-handleVtyEvent _ state = continue state
+handleVtyEvent :: Event -> NextAppState
+handleVtyEvent KeyQ = halt
+handleVtyEvent ArrowDown = modify selectPreviousItem
+handleVtyEvent ArrowUp = modify selectNextItem
+handleVtyEvent ArrowRight = modifyIO selectNextValue
+handleVtyEvent ArrowLeft = modifyIO selectPreviousValue
+handleVtyEvent _ = return ()
+
+modifyIO :: (AppState -> IO AppState) -> NextAppState
+modifyIO f = do
+  state <- get
+  put =<< liftIO (f state)

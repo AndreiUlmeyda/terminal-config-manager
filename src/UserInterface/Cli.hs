@@ -3,6 +3,7 @@ module UserInterface.Cli
   )
 where
 
+import Control.Monad (unless)
 import Data.Text
   ( Text,
     unpack,
@@ -18,9 +19,7 @@ import Prelude
 provideHelpText :: IO ()
 provideHelpText = do
   args <- getArgs
-  if not (null args)
-    then (die . unpack) helpText
-    else pure ()
+  unless (null args) ((die . unpack) helpText)
 
 helpText :: Text
 helpText =

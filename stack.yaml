@@ -17,7 +17,7 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-resolver: nightly-2022-06-06
+resolver: nightly-2022-09-17
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -29,7 +29,7 @@ resolver: nightly-2022-06-06
 #   - auto-update
 #   - wai
 packages:
-- .
+  - .
 # Dependency packages to be pulled from upstream that are not in the resolver.
 # These entries can reference officially published versions as well as
 # forks / in-progress versions pinned to a git hash. For example:
@@ -69,6 +69,6 @@ local-bin-path: bin
 build:
   haddock-arguments:
     haddock-args:
-    - "--odir=./doc/generated"
-    - "--hyperlinked-source"
-    - "--use-unicode"
+      - "--odir=./doc/generated"
+      - "--hyperlinked-source"
+      - "--use-unicode"

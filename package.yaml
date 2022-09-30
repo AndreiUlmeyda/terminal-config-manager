@@ -29,6 +29,7 @@ dependencies:
   - yaml
   - strict
   - aeson
+  - mtl
 
 library:
   source-dirs: src

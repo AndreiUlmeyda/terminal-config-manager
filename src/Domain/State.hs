@@ -6,7 +6,7 @@
 -- Maintainer  : adrian.schurz@check24.com
 -- Stability   : experimental
 module Domain.State
-  ( AppState (MkAppState),
+  ( AppState (..),
     NextAppState,
     ResourceName,
   )
@@ -14,7 +14,6 @@ where
 
 import Brick
   ( EventM,
-    Next,
   )
 import Domain.ItemsCursor
   ( ItemsCursor,
@@ -25,9 +24,9 @@ data ResourceName = MkResourceName deriving stock (Show, Eq, Ord)
 
 -- | The state of the application. It will guarantee that the list of items
 --   contains at least one element and keep track of a cursor position.
-data AppState = MkAppState ItemsCursor deriving stock (Show, Eq)
+data AppState = MkAppState {_itemsCursor :: ItemsCursor} deriving stock (Show, Eq)
 
 -- | When reacting to an event the result needs to be of type EventM. Though
 --   not entirely accurate the synonym here is trying to communicate that, in
 --   essence, a new state of the application is created.
-type NextAppState = EventM ResourceName (Next AppState)
+type NextAppState = EventM ResourceName AppState ()

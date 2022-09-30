@@ -29,6 +29,6 @@ data Content = MkContent Text
 --   consequently, modify the file on disk.
 modifyFile :: FilePath -> (Content -> Content) -> IO ()
 modifyFile path fn = do
-  oldContent <- (Strict.readFile) path
+  oldContent <- Strict.readFile path
   (MkContent newContent) <- (pure . fn . MkContent . pack) oldContent
-  (writeFile path) (unpack newContent)
+  writeFile path (unpack newContent)
