@@ -1,3 +1,12 @@
+-- |
+-- Module      : ItemsCursor
+-- Description : Provide a type representing a non empty list of ConfigItems as
+--   well as functions to manipulate the cursor and items located at the cursor
+--   position.
+-- Copyright   : (c) Adrian Schurz, 2022
+-- License     : MIT
+-- Maintainer  : adrian.schurz@check24.com
+-- Stability   : experimental
 module Domain.ItemsCursor
   ( ItemsCursor (..),
     makeItemsCursor,
@@ -15,33 +24,47 @@ import Infrastructure.Config (ConfigItem)
 
 type CursorPosition = Int
 
+-- | The type representing a non-empty list of ConfigItems in addition to a
+--   cursor.
 data ItemsCursor = MkItemsCursor
   { items :: [ConfigItem],
     cursorPosition :: CursorPosition
   }
   deriving stock (Show, Eq)
 
+defaultCursorPosition :: Int
+defaultCursorPosition = 0
+
+-- | Construct an ItemsCursor from a list of ConfigItems if it is not empty.
 makeItemsCursor :: [ConfigItem] -> Maybe ItemsCursor
 makeItemsCursor [] = Nothing
-makeItemsCursor items = Just (MkItemsCursor items 0)
+makeItemsCursor its = Just (MkItemsCursor its defaultCursorPosition)
 
+-- | Return the ConfigItem at the cursor position.
 itemUnderCursor :: ItemsCursor -> ConfigItem
-itemUnderCursor (MkItemsCursor items cursorPosition) = items !! cursorPosition
+itemUnderCursor (MkItemsCursor its cp) = its !! cp
 
+-- | Return the list of ConfigItems before the cursor position.
 itemsBeforeCursor :: ItemsCursor -> [ConfigItem]
-itemsBeforeCursor (MkItemsCursor items cursorPosition) = take cursorPosition items
+itemsBeforeCursor (MkItemsCursor its cp) = take cp its
 
+-- | Return the list of ConfigItems after the cursor position.
 itemsAfterCursor :: ItemsCursor -> [ConfigItem]
-itemsAfterCursor (MkItemsCursor items cursorPosition) = drop (cursorPosition + 1) items
+itemsAfterCursor (MkItemsCursor its cp) = drop (cp + 1) its
 
+-- | Increment the cursor position without exceeding the lower bound.
+--   Incrementing selects items further down the rendered list.
 cursorDown :: ItemsCursor -> ItemsCursor
-cursorDown (MkItemsCursor items cp) = MkItemsCursor items (min (cp + 1) (length items - 1))
+cursorDown (MkItemsCursor its cp) = MkItemsCursor its (min (cp + 1) (length its - 1))
 
+-- | Decrement the cursor position without exceeding the upper bound.
+--   Decrementing selects items further up the rendered list.
 cursorUp :: ItemsCursor -> ItemsCursor
-cursorUp (MkItemsCursor items cp) = MkItemsCursor items (max (cp - 1) 0)
+cursorUp (MkItemsCursor its cp) = MkItemsCursor its (max (cp - 1) 0)
 
+-- Apply a function to the item under the cursor.
 changeElementUnderCursor :: (ConfigItem -> ConfigItem) -> ItemsCursor -> ItemsCursor
-changeElementUnderCursor fn (MkItemsCursor items cursorPosition) = MkItemsCursor (changeNthElement cursorPosition fn items) cursorPosition
+changeElementUnderCursor fn (MkItemsCursor its cp) = MkItemsCursor (changeNthElement cp fn its) cp
 
 -- | Given an index, a function and a list it applies the function to the
 --   element at that index.

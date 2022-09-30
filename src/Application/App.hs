@@ -94,6 +94,7 @@ tcmApp =
       appStartEvent = return ()
     }
 
+-- | Provide a mapping from attribute names to styles.
 attributeMap :: [(AttrName, Attr)]
 attributeMap =
   [ ((attrName . unpack) attributeNameSelected, selectionStyling),
