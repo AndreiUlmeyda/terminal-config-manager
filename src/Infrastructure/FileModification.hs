@@ -22,7 +22,7 @@ import System.IO.Strict as Strict
   )
 
 -- | A type representing file content.
-data Content = MkContent Text
+newtype Content = MkContent Text
 
 -- | Given a filepath and a function which takes old content to
 --   new content, will apply the function to the file content and,

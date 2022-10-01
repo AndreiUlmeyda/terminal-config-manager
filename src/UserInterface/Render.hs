@@ -79,6 +79,7 @@ drawTCM (MkAppState items) = [singleLayer]
     helpText :: [Widget n]
     helpText = [padTop Max $ withAttr ((attrName . unpack) attributeNameFaded) helpTextWidget]
 
+-- | Provide a widget containing information about how to use the program.
 helpTextWidget :: Widget n
 helpTextWidget = txt "↑/↓: navigate ←/→: modify q: quit"
 

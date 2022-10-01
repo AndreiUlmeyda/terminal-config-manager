@@ -51,22 +51,27 @@ pattern ArrowLeft = EvKey KLeft []
 pattern ArrowRight :: Event
 pattern ArrowRight = EvKey KRight []
 
--- | Handle an event emitted by brick by unpacking the underlying vty event and passing it the appropriate handler.
+-- | Handle an event emitted by brick by unpacking the underlying vty event and
+--   passing it to the appropriate handler.
 handleEvent :: BrickEvent ResourceName e -> EventM ResourceName AppState ()
 handleEvent event
   | VtyEvent vtye <- event = handleVtyEvent vtye
   | otherwise = return ()
 
--- | Handle a keyboard event, up and down keys for selection, left and right for changing the associated value and q to quit.
+-- | Handle a keyboard event, up and down keys for selection, left and right for
+--   changing the associated value and q to quit.
 handleVtyEvent :: Event -> NextAppState
 handleVtyEvent KeyQ = halt
 handleVtyEvent ArrowDown = modify selectPreviousItem
 handleVtyEvent ArrowUp = modify selectNextItem
 handleVtyEvent ArrowRight = modifyIO selectNextValue
 handleVtyEvent ArrowLeft = modifyIO selectPreviousValue
-handleVtyEvent _ = return ()
+handleVtyEvent _ = continue
 
+-- | Modify an AppState in response to an Event when said modification
+--   involves an IO action.
 modifyIO :: (AppState -> IO AppState) -> NextAppState
-modifyIO f = do
-  state <- get
-  put =<< liftIO (f state)
+modifyIO func = get >>= liftIO . func >>= put
+
+continue :: EventM ResourceName AppState ()
+continue = return ()
