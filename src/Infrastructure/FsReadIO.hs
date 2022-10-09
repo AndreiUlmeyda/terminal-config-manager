@@ -21,7 +21,7 @@ fsIoReadFile :: FilePath -> FsReadIO Text
 fsIoReadFile = MkFsReadIO . fmap pack . Strict.readFile
 
 fsIoWriteFile :: FilePath -> Text -> FsReadIO ()
-fsIoWriteFile path content = MkFsReadIO $ Prelude.writeFile path (unpack content)
+fsIoWriteFile path content = MkFsReadIO $ writeFile path (unpack content)
 
 instance Applicative FsReadIO where
   pure = pure

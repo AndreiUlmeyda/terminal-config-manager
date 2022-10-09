@@ -64,7 +64,7 @@ selectValueAndModifyTargetFile selectionPolicy (MkAppState itemsCursor) =
    in modifyFile currentPath modification >> return (MkAppState newItemsCursor)
 
 -- | This needs to be a substring of the matching pattern and is needed
---   to determine the location of the values to replaced.
+--   to determine the location of the value which is to be replaced.
 valueMarker :: Text
 valueMarker = "{{value}}"
 
