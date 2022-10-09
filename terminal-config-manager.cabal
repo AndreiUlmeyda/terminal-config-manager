@@ -34,6 +34,7 @@ library
       Infrastructure.Config
       Infrastructure.Errors
       Infrastructure.FileModification
+      Infrastructure.FsReadIO
       UserInterface.Cli
       UserInterface.Input
       UserInterface.Render
@@ -42,7 +43,7 @@ library
   hs-source-dirs:
       src
   default-extensions:
-      DerivingStrategies OverloadedStrings DeriveGeneric PatternSynonyms
+      DerivingStrategies OverloadedStrings DeriveGeneric PatternSynonyms DeriveFunctor
   ghc-options: -O2 -Wall -Wincomplete-uni-patterns -Wmonomorphism-restriction -Wmissing-local-signatures -Wmissing-export-lists -Wmissing-home-modules -Widentities -Wredundant-constraints -Wpartial-fields -Wcpp-undef -Wmissing-deriving-strategies -Wunused-packages -Wunused-type-patterns -Wcompat
   build-depends:
       aeson
@@ -62,7 +63,7 @@ executable terminal-config-manager
   hs-source-dirs:
       ./
   default-extensions:
-      DerivingStrategies OverloadedStrings DeriveGeneric PatternSynonyms
+      DerivingStrategies OverloadedStrings DeriveGeneric PatternSynonyms DeriveFunctor
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -87,7 +88,7 @@ test-suite terminal-config-manager-test
   hs-source-dirs:
       test
   default-extensions:
-      DerivingStrategies OverloadedStrings DeriveGeneric PatternSynonyms
+      DerivingStrategies OverloadedStrings DeriveGeneric PatternSynonyms DeriveFunctor
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck

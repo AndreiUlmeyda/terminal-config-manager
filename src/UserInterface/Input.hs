@@ -30,6 +30,7 @@ import Graphics.Vty.Input.Events
   ( Event (EvKey),
     Key (KChar, KDown, KLeft, KRight, KUp),
   )
+import Infrastructure.FsReadIO (FsReadIO (runFsReadIO))
 
 -- | Pattern synonym for the event raised when hitting q
 pattern KeyQ :: Event
@@ -64,14 +65,14 @@ handleVtyEvent :: Event -> NextAppState
 handleVtyEvent KeyQ = halt
 handleVtyEvent ArrowDown = modify selectPreviousItem
 handleVtyEvent ArrowUp = modify selectNextItem
-handleVtyEvent ArrowRight = modifyIO selectNextValue
-handleVtyEvent ArrowLeft = modifyIO selectPreviousValue
+handleVtyEvent ArrowRight = modifyFsIO selectNextValue
+handleVtyEvent ArrowLeft = modifyFsIO selectPreviousValue
 handleVtyEvent _ = continue
 
 -- | Modify an AppState in response to an Event when said modification
 --   involves an IO action.
-modifyIO :: (AppState -> IO AppState) -> NextAppState
-modifyIO func = get >>= liftIO . func >>= put
+modifyFsIO :: (AppState -> FsReadIO AppState) -> NextAppState
+modifyFsIO func = get >>= liftIO . runFsReadIO . func >>= put
 
 continue :: EventM ResourceName AppState ()
 continue = return ()

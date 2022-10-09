@@ -35,22 +35,23 @@ import Infrastructure.FileModification
   ( Content (..),
     modifyFile,
   )
+import Infrastructure.FsReadIO (FsReadIO)
 
 -- | When applied to an application state, select the next value of the item
 --   under the cursor and modify the corresponding file accordingly.
-selectNextValue :: AppState -> IO AppState
+selectNextValue :: AppState -> FsReadIO AppState
 selectNextValue = selectValueAndModifyTargetFile (cycleCurrentValue elementAfter)
 
 -- | When applied to an application state, select the previous value of the item
 --   under the cursor and modify the corresponding file accordingly.
-selectPreviousValue :: AppState -> IO AppState
+selectPreviousValue :: AppState -> FsReadIO AppState
 selectPreviousValue = selectValueAndModifyTargetFile (cycleCurrentValue elementBefore)
 
 -- | Depending on the supplied policy, either switch the value to the next or previous possible value.
 --   A switched value is written back to the configured file at the place identified by the pattern.
 --   Caution! Reading the file needs to be strict here in order to not have file handles open for subsequent
 --   modifications.
-selectValueAndModifyTargetFile :: (AppState -> AppState) -> AppState -> IO AppState
+selectValueAndModifyTargetFile :: (AppState -> AppState) -> AppState -> FsReadIO AppState
 selectValueAndModifyTargetFile selectionPolicy (MkAppState itemsCursor) =
   let (MkAppState newItemsCursor) = selectionPolicy (MkAppState itemsCursor)
       currentItem = itemUnderCursor newItemsCursor

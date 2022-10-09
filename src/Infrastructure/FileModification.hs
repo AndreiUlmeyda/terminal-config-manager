@@ -14,11 +14,11 @@ where
 
 import Data.Text
   ( Text,
-    pack,
-    unpack,
   )
-import System.IO.Strict as Strict
-  ( readFile,
+import Infrastructure.FsReadIO
+  ( FsReadIO,
+    fsIoReadFile,
+    fsIoWriteFile,
   )
 
 -- | A type representing file content.
@@ -27,8 +27,8 @@ newtype Content = MkContent Text
 -- | Given a filepath and a function which takes old content to
 --   new content, will apply the function to the file content and,
 --   consequently, modify the file on disk.
-modifyFile :: FilePath -> (Content -> Content) -> IO ()
+modifyFile :: FilePath -> (Content -> Content) -> FsReadIO ()
 modifyFile path fn = do
-  oldContent <- Strict.readFile path
-  (MkContent newContent) <- (pure . fn . MkContent . pack) oldContent
-  writeFile path (unpack newContent)
+  oldContent <- fsIoReadFile path
+  (MkContent newContent) <- (pure . fn . MkContent) oldContent
+  fsIoWriteFile path newContent
