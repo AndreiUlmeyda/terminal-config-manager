@@ -1,11 +1,25 @@
 module Unit.Domain.ValueSelectionSpec where
 
+import Data.Text
+  ( Text,
+    append,
+    pack,
+  )
 import Domain.ItemsCursor
   ( changeNthElement,
   )
 import Domain.ValueSelection
   ( elementAfter,
     elementBefore,
+    modify,
+    valueMarker,
+  )
+import Infrastructure.Config
+  ( Pattern (..),
+    TargetValue (..),
+  )
+import Infrastructure.FileModification
+  ( Content (..),
   )
 import Test.Hspec
   ( Spec,
@@ -13,9 +27,31 @@ import Test.Hspec
     it,
     shouldBe,
   )
+import Test.Hspec.QuickCheck
+  ( modifyMaxSuccess,
+    prop,
+  )
+import Test.QuickCheck
+  ( Arbitrary (arbitrary),
+  )
+
+-- import Test.QuickCheck.Instances
+
+instance Arbitrary TargetValue where
+  arbitrary = fmap MkTargetValue arbitrary -- oneof [pure (MkTargetValue ""), pure (MkTargetValue "a")]
+
+instance Arbitrary Text where
+  arbitrary = fmap pack arbitrary
+
+-- | TODO incorporate the value marker with a high frequency
+instance Arbitrary Pattern where
+  arbitrary = fmap MkPattern arbitrary
+
+instance Arbitrary Content where
+  arbitrary = fmap MkContent arbitrary
 
 spec :: Spec
-spec = do
+spec = modifyMaxSuccess (const 1000) $ do
   describe "selecting the element after a given value" $ do
     it "given an empty list should default to the target value" $ do
       elementAfter 'a' "" `shouldBe` 'a'
@@ -59,3 +95,15 @@ spec = do
           someFunction = (+) 17
           outOfBoundsIndex = 500
        in changeNthElement outOfBoundsIndex someFunction someList `shouldBe` someList
+
+  describe "modifying a string according to a search pattern and a new value" $ do
+    prop "given empty content should leave the content unchanged" $
+      \tva tvb pat -> modify tva tvb pat (MkContent "") == MkContent ""
+    prop "given an empty pattern should leave the content unchanged" $
+      \tva tvb cont -> modify tva tvb (MkPattern "") cont == cont
+    prop "given that the old and new values are identical should leave the content unchanged" $
+      \tva pat cont -> modify tva tva pat cont == cont
+    it "given a pattern consisting only of the value marker should only substitute the first occurrence" $ do
+      modify (MkTargetValue "") (MkTargetValue "") (MkPattern "") (MkContent "") `shouldBe` MkContent ""
+    it "given all parameters being empty besides the first should not crash" $ do
+      modify (MkTargetValue "a") (MkTargetValue "") (MkPattern "") (MkContent "") `shouldBe` MkContent ""

@@ -12,11 +12,13 @@ module Domain.ValueSelection
     elementAfter,
     elementBefore,
     valueMarker,
+    modify,
   )
 where
 
-import Data.Text
+import Data.Text as T
   ( Text,
+    null,
     replace,
   )
 import Domain.ItemsCursor
@@ -70,9 +72,10 @@ valueMarker = "{{value}}"
 
 -- | Substitute the newly selected value into the old content of the target file. Both the previous value
 --   and the pattern are needed to choose the correct substitution.
-modify :: TargetValue -> TargetValue -> Pattern -> (Content -> Content)
-modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern matchPattern) (MkContent content) =
-  MkContent (replace oldSubstring newSubstring content)
+modify :: TargetValue -> TargetValue -> Pattern -> Content -> Content
+modify (MkTargetValue oldValue) (MkTargetValue newValue) (MkPattern matchPattern) (MkContent content)
+  | any T.null [oldValue, matchPattern] = MkContent content
+  | otherwise = MkContent (replace oldSubstring newSubstring content)
   where
     oldSubstring = replace valueMarker oldValue matchPattern
     newSubstring = replace oldValue newValue oldSubstring
@@ -95,7 +98,7 @@ data NeighborSelection = SelectSuccessor | SelectPredecessor
 --   returns an element next to it depending on the supplied selection policy.
 elementNextTo :: Eq t => NeighborSelection -> t -> [t] -> t
 elementNextTo neighborSelection targetItem list
-  | null list = targetItem
+  | Prelude.null list = targetItem
   | targetItem `notElem` list = head list
   | SelectSuccessor <- neighborSelection = chooseNextWhileWrapping targetItem list
   | SelectPredecessor <- neighborSelection = chooseNextWhileWrapping targetItem (reverse list)

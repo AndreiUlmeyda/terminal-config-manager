@@ -22,7 +22,7 @@ import Infrastructure.FsReadIO
   )
 
 -- | A type representing file content.
-newtype Content = MkContent Text
+newtype Content = MkContent Text deriving stock (Show, Eq)
 
 -- | Given a filepath and a function which takes old content to
 --   new content, will apply the function to the file content and,
