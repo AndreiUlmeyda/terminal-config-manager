@@ -53,44 +53,44 @@ instance Arbitrary Content where
 spec :: Spec
 spec = modifyMaxSuccess (const 1000) $ do
   describe "selecting the element after a given value" $ do
-    it "given an empty list should default to the target value" $ do
+    it "given an empty list should default to the target value" $
       elementAfter 'a' "" `shouldBe` 'a'
-    it "given a list containing only the target value should return it" $ do
+    it "given a list containing only the target value should return it" $
       elementAfter 'a' "a" `shouldBe` 'a'
-    it "given a first element equal to the target value should return the second element" $ do
+    it "given a first element equal to the target value should return the second element" $
       elementAfter '3' "321" `shouldBe` '2'
-    it "given the target value somewhere in the middle should return the successor" $ do
+    it "given the target value somewhere in the middle should return the successor" $
       elementAfter True [False, True, False] `shouldBe` False
-    it "given the target value as the last element should wrap around to the first one" $ do
+    it "given the target value as the last element should wrap around to the first one" $
       elementAfter '3' "123" `shouldBe` '1'
-    it "with the target value missing in the list should return the first element of the list" $ do
+    it "with the target value missing in the list should return the first element of the list" $
       elementAfter '3' "124" `shouldBe` '1'
 
   describe "selecting the element before a given value" $ do
-    it "given an empty list should default to the target value" $ do
+    it "given an empty list should default to the target value" $
       elementBefore 'a' "" `shouldBe` 'a'
-    it "given a list containing only the target value should return it" $ do
+    it "given a list containing only the target value should return it" $
       elementBefore 'a' "a" `shouldBe` 'a'
-    it "given a list containing the target somewhere in the middle, should return the element before it" $ do
+    it "given a list containing the target somewhere in the middle, should return the element before it" $
       elementBefore 'a' "bac" `shouldBe` 'b'
-    it "given the target value as the first element should wrap around to the last one" $ do
+    it "given the target value as the first element should wrap around to the last one" $
       elementBefore '1' "123" `shouldBe` '3'
 
   describe "changing the element at a certain index inside of a list" $ do
-    it "given index 0, an empty list and id as a function should do nothing" $ do
+    it "given index 0, an empty list and id as a function should do nothing" $
       let emptyList = [] :: [Int]
        in changeNthElement 0 id emptyList `shouldBe` emptyList
-    it "given a negative index, should do nothing" $ do
+    it "given a negative index, should do nothing" $
       let someList = [1, 2, 3] :: [Int]
           someFunction = (*) 2
           negativeIndex = -5
        in changeNthElement negativeIndex someFunction someList `shouldBe` someList
-    it "given a valid index and a function should apply it at the appropriate index" $ do
+    it "given a valid index and a function should apply it at the appropriate index" $
       let someList = [1, 2, 3] :: [Int]
           someFunction = (*) 2
           validIndex = 1
        in changeNthElement validIndex someFunction someList `shouldBe` [1, 4, 3]
-    it "given an index exceeding the length of the list should do nothing" $ do
+    it "given an index exceeding the length of the list should do nothing" $
       let someList = [1, 2, 3] :: [Int]
           someFunction = (+) 17
           outOfBoundsIndex = 500
@@ -103,7 +103,7 @@ spec = modifyMaxSuccess (const 1000) $ do
       \tva tvb cont -> modify tva tvb (MkPattern "") cont == cont
     prop "given that the old and new values are identical should leave the content unchanged" $
       \tva pat cont -> modify tva tva pat cont == cont
-    it "given a pattern consisting only of the value marker should only substitute the first occurrence" $ do
+    it "given all empty inputs should result in empty content" $
       modify (MkTargetValue "") (MkTargetValue "") (MkPattern "") (MkContent "") `shouldBe` MkContent ""
-    it "given all parameters being empty besides the first should not crash" $ do
+    it "given all parameters being empty besides the first should not crash" $
       modify (MkTargetValue "a") (MkTargetValue "") (MkPattern "") (MkContent "") `shouldBe` MkContent ""
