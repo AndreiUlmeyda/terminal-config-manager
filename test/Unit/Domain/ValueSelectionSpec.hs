@@ -103,6 +103,12 @@ spec = modifyMaxSuccess (const 1000) $ do
       \tva tvb cont -> modify tva tvb (MkPattern "") cont == cont
     prop "given that the old and new values are identical should leave the content unchanged" $
       \tva pat cont -> modify tva tva pat cont == cont
+    it "given a pattern consisting only of the value marker should substitute all occurrences" $
+      modify (MkTargetValue "ab") (MkTargetValue "xx") (MkPattern valueMarker) (MkContent "aabacaba") `shouldBe` MkContent "axxacxxa"
+    it "given a prefix to the value marker should only modify the occurrence having said prefix" $
+      modify (MkTargetValue "ab") (MkTargetValue "xx") (MkPattern ("z" `append` valueMarker)) (MkContent "azabacaba") `shouldBe` MkContent "azxxacaba"
+    it "given a suffix to the value marker should only modify the occurrence having said suffix" $
+      modify (MkTargetValue "ab") (MkTargetValue "xx") (MkPattern (valueMarker `append` "z")) (MkContent "aabzacaba") `shouldBe` MkContent "axxzacaba"
     it "given all empty inputs should result in empty content" $
       modify (MkTargetValue "") (MkTargetValue "") (MkPattern "") (MkContent "") `shouldBe` MkContent ""
     it "given all parameters being empty besides the first should not crash" $

@@ -20,12 +20,16 @@ import Test.Hspec
     shouldBe,
   )
 
+item :: ConfigItem
 item = MkConfigItem "" "" (MkPattern "") (MkTargetValue "") []
 
+changedItem :: ConfigItem
 changedItem = item {title = "new title"}
 
+nonEmptyList :: [ConfigItem]
 nonEmptyList = replicate 2 item
 
+itemsCursor :: ItemsCursor
 Just itemsCursor = makeItemsCursor nonEmptyList
 
 spec :: Spec
