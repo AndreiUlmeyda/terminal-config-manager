@@ -16,6 +16,9 @@ module Infrastructure.Config
   )
 where
 
+import Control.Monad
+  ( filterM,
+  )
 import Data.Aeson
   ( Key,
   )
@@ -38,11 +41,16 @@ import Infrastructure.Errors
     errorMsgInvalidConfigElements,
     errorMsgInvalidConfigTopLevel,
   )
+import System.Directory (doesFileExist)
 import System.Exit (die)
 
--- | The file path of the configuration file used during development.
-testYamlFilePath :: FilePath
-testYamlFilePath = "test/data/config.yaml"
+-- | The file paths of the possible configuration files in the order they are
+--   searched.
+configFilePaths :: [FilePath]
+configFilePaths =
+  [ "config.yaml",
+    "test/data/config.yaml"
+  ]
 
 -- | A configurations consists of multiple items.
 newtype Config = MkConfig [ConfigItem] deriving stock (Eq, Show)
@@ -123,7 +131,18 @@ instance FromJSON Pattern
 -- | Parse the YAML config file into the types specified above. Throw an error
 --   if something is missing.
 loadConfig :: () -> IO Config
-loadConfig = const $ decodeFileEither testYamlFilePath >>= handleParsingErrors
+loadConfig = const $ chooseConfigFile >>= decodeFileEither >>= handleParsingErrors
+
+-- | Check a number of possible config file paths for existing files. Choose
+--   the first existing one or show an error indicating that no config file
+--   was found.
+chooseConfigFile :: IO FilePath
+chooseConfigFile = filterM doesFileExist configFilePaths >>= chooseFirst
+
+-- | Choose the first config file path or show an error if there is none.
+chooseFirst :: [FilePath] -> IO FilePath
+chooseFirst [] = die ("Error: No config file found at any of the search paths: " ++ show configFilePaths)
+chooseFirst fps = (pure . head) fps
 
 -- | Indicate that the yaml errors encountered here happened during config file
 --   parsing.
