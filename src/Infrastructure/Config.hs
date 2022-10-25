@@ -35,14 +35,20 @@ import Data.Yaml
     decodeFileEither,
     (.:),
   )
-import GHC.Generics (Generic)
+import GHC.Generics
+  ( Generic,
+  )
 import Infrastructure.Errors
   ( errorMsgFailedConfigParsing,
     errorMsgInvalidConfigElements,
     errorMsgInvalidConfigTopLevel,
   )
-import System.Directory (doesFileExist)
-import System.Exit (die)
+import System.Directory
+  ( doesFileExist,
+  )
+import System.Exit
+  ( die,
+  )
 
 -- | The file paths of the possible configuration files in the order they are
 --   searched.

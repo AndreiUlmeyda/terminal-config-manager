@@ -3,7 +3,9 @@ module UserInterface.Cli
   )
 where
 
-import Control.Monad (unless)
+import Control.Monad
+  ( unless,
+  )
 import Data.Text
   ( Text,
     unpack,

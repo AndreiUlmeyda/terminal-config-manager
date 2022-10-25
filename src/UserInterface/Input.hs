@@ -11,12 +11,18 @@ import Brick
   ( BrickEvent (VtyEvent),
     halt,
   )
-import Brick.Types (EventM)
 import Control.Monad.IO.Class
   ( MonadIO (liftIO),
   )
-import Control.Monad.State (get, modify, put)
-import Domain.ItemSelection (selectNextItem, selectPreviousItem)
+import Control.Monad.State
+  ( get,
+    modify,
+    put,
+  )
+import Domain.ItemSelection
+  ( selectNextItem,
+    selectPreviousItem,
+  )
 import Domain.State
   ( AppState (..),
     NextAppState,
@@ -30,7 +36,9 @@ import Graphics.Vty.Input.Events
   ( Event (EvKey),
     Key (KChar, KDown, KLeft, KRight, KUp),
   )
-import Infrastructure.FsReadIO (FsReadIO (runFsReadIO))
+import Infrastructure.FsReadIO
+  ( FsReadIO (runFsReadIO),
+  )
 
 -- | Pattern synonym for the event raised when hitting q
 pattern KeyQ :: Event
@@ -54,10 +62,10 @@ pattern ArrowRight = EvKey KRight []
 
 -- | Handle an event emitted by brick by unpacking the underlying vty event and
 --   passing it to the appropriate handler.
-handleEvent :: BrickEvent ResourceName e -> EventM ResourceName AppState ()
+handleEvent :: BrickEvent ResourceName e -> NextAppState
 handleEvent event
   | VtyEvent vtye <- event = handleVtyEvent vtye
-  | otherwise = return ()
+  | otherwise = continue
 
 -- | Handle a keyboard event, up and down keys for selection, left and right for
 --   changing the associated value and q to quit.
@@ -74,5 +82,5 @@ handleVtyEvent _ = continue
 modifyFsIO :: (AppState -> FsReadIO AppState) -> NextAppState
 modifyFsIO func = get >>= liftIO . runFsReadIO . func >>= put
 
-continue :: EventM ResourceName AppState ()
+continue :: NextAppState
 continue = return ()
