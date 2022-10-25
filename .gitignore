@@ -10,3 +10,4 @@ bin/
 *.fdb_latexmk
 *.pygtex
 *.pygstyle
+test/System/lib
