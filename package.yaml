@@ -31,6 +31,7 @@ dependencies:
   - aeson
   - mtl
   - directory
+  - extra
 
 library:
   source-dirs: src

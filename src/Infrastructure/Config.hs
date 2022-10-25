@@ -49,7 +49,7 @@ import System.Exit (die)
 configFilePaths :: [FilePath]
 configFilePaths =
   [ "config.yaml",
-    "~/test/data/config.yaml"
+    "test/data/config.yaml"
   ]
 
 -- | A configurations consists of multiple items.

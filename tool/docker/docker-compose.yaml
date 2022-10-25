@@ -1,9 +1,0 @@
-version: "3.9"
-
-services:
-  tcm-test:
-    container_name: tcm-test
-    image: terminal-config-manager-system-tests:latest
-    volumes:
-      - ${PWD}/../../test/System/test_terminal_config_manager.sh:/home/makepkg/test_terminal_config_manager.sh
-      - ${PWD}/../../bin/terminal-config-manager:/home/makepkg/terminal-config-manager
