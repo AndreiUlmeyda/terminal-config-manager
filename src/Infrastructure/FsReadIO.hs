@@ -24,7 +24,7 @@ fsIoWriteFile :: FilePath -> Text -> FsReadIO ()
 fsIoWriteFile path content = MkFsReadIO $ writeFile path (unpack content)
 
 instance Applicative FsReadIO where
-  pure = pure
+  pure = MkFsReadIO . return
   (<*>) = liftA2 ($)
 
 instance Monad FsReadIO where
