@@ -1,0 +1,8 @@
+config_lines_to_manage:
+  - title: test
+    path: target.conf
+    pattern: "'statspush_enabled' => {{value}},"
+    targetValue: "true"
+    possibleValues:
+      - "true"
+      - "false"

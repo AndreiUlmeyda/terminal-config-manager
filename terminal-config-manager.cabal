@@ -50,7 +50,6 @@ library
     , base >=4.7 && <5
     , brick
     , directory
-    , extra
     , mtl
     , strict
     , text
@@ -72,7 +71,6 @@ executable terminal-config-manager
     , base >=4.7 && <5
     , brick
     , directory
-    , extra
     , mtl
     , strict
     , terminal-config-manager
@@ -100,7 +98,6 @@ test-suite terminal-config-manager-test
     , base >=4.7 && <5
     , brick
     , directory
-    , extra
     , hspec
     , mtl
     , strict

@@ -28,9 +28,14 @@ import Domain.ValueSelection
   )
 import Graphics.Vty.Input.Events
   ( Event (EvKey),
-    Key (KChar, KDown, KLeft, KRight, KUp),
+    Key (KChar, KDown, KLeft, KPause, KRight, KUp),
   )
-import Infrastructure.FsReadIO (FsReadIO (runFsReadIO))
+import Infrastructure.FsReadIO
+  ( FsReadIO (runFsReadIO),
+  )
+import System.Exit
+  ( die,
+  )
 
 -- | Pattern synonym for the event raised when hitting q
 pattern KeyQ :: Event
@@ -67,6 +72,7 @@ handleVtyEvent ArrowDown = modify selectPreviousItem
 handleVtyEvent ArrowUp = modify selectNextItem
 handleVtyEvent ArrowRight = modifyFsIO selectNextValue
 handleVtyEvent ArrowLeft = modifyFsIO selectPreviousValue
+handleVtyEvent (EvKey KPause []) = error "daaaaamn"
 handleVtyEvent _ = continue
 
 -- | Modify an AppState in response to an Event when said modification

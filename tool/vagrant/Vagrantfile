@@ -1,0 +1,32 @@
+# TTODO
+
+$installTestingDependencies = <<-SCRIPT
+
+# Full system update, mainly to get the latest certificates and enable subsequent installs.
+pacman --noconfirm -Syyu
+
+# Install dependencies. Vim is there just for convenience when
+# logged into the virtual machine.
+pacman --noconfirm --needed -S base-devel git vim entr
+
+# Install an AUR-helper.
+runuser -l vagrant -c 'git clone https://aur.archlinux.org/yay.git; cd yay; yes | makepkg -si'
+
+runuser -l vagrant -c 'yay --noconfirm -S ydotool-bin'
+
+cd test/System
+runuser -l vagrant -c 'git clone https://github.com/sstephenson/bats lib/bats'
+runuser -l vagrant -c 'git clone https://github.com/ztombol/bats-support lib/bats-support'
+runuser -l vagrant -c 'git clone https://github.com/ztombol/bats-file lib/bats-file'
+runuser -l vagrant -c 'git clone https://github.com/ztombol/bats-assert lib/bats-assert'
+
+systemctl start ydotool.service
+
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "archlinux/archlinux"
+  config.vm.provision "shell", inline: $installTestingDependencies
+  config.vm.synced_folder "../../test", "/home/vagrant/test"
+  config.vm.synced_folder "../../bin", "/home/vagrant/bin"
+end

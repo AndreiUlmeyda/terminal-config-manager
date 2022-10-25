@@ -20,8 +20,16 @@ import Brick
     AttrName,
     attrMap,
     attrName,
+    customMain,
     defaultMain,
     showFirstCursor,
+  )
+import Brick.BChan
+  ( newBChan,
+    writeBChan,
+  )
+import Control.Monad
+  ( join,
   )
 import Data.Text
   ( unpack,
@@ -35,6 +43,12 @@ import Domain.ItemsCursor
 import Domain.State
   ( AppState (MkAppState),
     ResourceName,
+  )
+import Graphics.Vty
+  ( Event (EvKey),
+    Key (KPause),
+    defaultConfig,
+    mkVty,
   )
 import Graphics.Vty.Attributes
   ( Attr,
@@ -79,8 +93,17 @@ runApp =
     >>= loadConfig
     >>= synchronizeWithTargetFiles
     >>= buildInitialState
-    >>= defaultMain tcmApp
+    >>= derp
     >>= const exitSuccess
+
+event = EvKey KPause []
+
+derp :: AppState -> IO AppState
+derp state = do
+  eventChan <- newBChan 10
+  let buildVty = mkVty defaultConfig
+  initialVty <- buildVty
+  customMain initialVty buildVty (Just (writeBChan eventChan ())) tcmApp state
 
 -- | For this application only event handling, drawing and some attributes need
 --   to be implemented. The rest are default implementations.
