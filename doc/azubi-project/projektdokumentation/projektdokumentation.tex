@@ -1,7 +1,8 @@
 %! Date = 18/07/2022
 
-\documentclass[a4paper,11pt]{article}
+\documentclass[a4paper,11pt]{scrartcl} % scrartcl scrreprt scrbook
 
+\usepackage{ebgaramond} % gillius ebgaramond
 \usepackage{amsmath}
 \usepackage[ngerman]{babel}
 \usepackage{relsize}
@@ -23,34 +24,154 @@
 \maketitle
 \pagenumbering{gobble}
 \newpage
-\pagenumbering{arabic}
 
 \section{Projektantrag}
 \paragraph{}
-Lorem Ipsum
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ac velit vel metus malesuada egestas. Fusce lorem purus, condimentum id elit id, lobortis suscipit risus. Quisque vehicula dui sit amet risus laoreet tristique. Morbi ac tincidunt dolor. Sed faucibus arcu vel rhoncus tempor. Phasellus ante tellus, tempus sed molestie et, feugiat cursus felis. Mauris vitae leo id justo tempor rhoncus eget ac metus. Proin faucibus et urna vel lobortis. Morbi et velit ac odio scelerisque posuere. Aenean rutrum tristique augue, id placerat diam vestibulum ac. Etiam pulvinar tortor eu auctor molestie.
 
 \section{Nachweisblatt}
 \paragraph{}
-Lorem Ipsum
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ac
+velit vel metus malesuada egestas. Fusce lorem purus, condimentum
+id elit id, lobortis suscipit risus. Quisque vehicula dui sit amet
+risus laoreet tristique. Morbi ac tincidunt dolor. Sed faucibus
+arcu vel rhoncus tempor. Phasellus ante tellus, tempus sed molestie et, feugiat cursus felis. Mauris vitae leo id justo tempor rhoncus eget ac metus. Proin faucibus et urna vel lobortis. Morbi et velit ac odio scelerisque posuere. Aenean rutrum tristique augue, id placerat diam vestibulum ac. Etiam pulvinar tortor eu auctor molestie.
 
 \newpage
 \tableofcontents
 \newpage
 
-%Textteil%
+% Textteil
+\pagenumbering{arabic}
 
 \section{Problemstellung}
 \paragraph{}
-Lorem Ipsum
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ac
+velit vel metus malesuada egestas. Fusce lorem purus, condimentum
+id elit id, lobortis suscipit risus. Quisque vehicula dui sit amet
+risus laoreet tristique. Morbi ac tincidunt dolor. Sed faucibus
+arcu vel rhoncus tempor. Phasellus ante tellus, tempus sed molestie
+et, feugiat cursus felis. Mauris vitae leo id justo tempor rhoncus
+eget ac metus. Proin faucibus et urna vel lobortis. Morbi et velit
+ac odio scelerisque posuere. Aenean rutrum tristique augue, id
+placerat diam vestibulum ac. Etiam pulvinar tortor eu auctor
+molestie.
 
-% TODO Literaturverzeichnis %
+% TODO Literaturverzeichnis
 
 \section{Glossar}
 
-% evtl. Abkürzungsverzeichnis %
+% evtl. Abkürzungsverzeichnis
 
 \section{Anlagen}
 
 \section{Kundendokumentation}
+
+\subsection{Beschreibung}
+Terminal-Config-Manager ist ein Linux-Programm mit welchem
+Passagen innerhalb meherer Textdateien schnell zwischen einer Reihe
+vorkonfigurierter Passagen umgeschalten werden können.
+
+Der Hauptanwendungsfall ist die effiziente  Manipulation von
+Konfigurationsdateien von Softwareanwendungen, die häufig angepasst
+werden müssen.
+
+\subsection{Installation}
+Es wurden vorkonfigurierte Pakete für sowohl ArchLinux-basierte als auch
+Debian-basierte Betriebssysteme bereitgestellt. Alternativ
+kann das Programm auch manuell installiert werden.
+
+\paragraph{Arch-Linux, via PKGBUILD Datei und pacman:}
+Im Projektverzeichnis unter
+
+\begin{minted}{bash}
+	/distribution/arch/PKGBUILD
+\end{minted}
+
+befindet sich ein eine Spezifikationsdatei anhand derer das Softwarepaket
+erstellt und anschließend installiert werden kann:
+
+\begin{minted}{bash}
+	cd distribution/arch
+	makepkg
+	pacman -U terminal-config-manager-x86_64.pkg.tar.zst
+\end{minted}
+
+Die Deinstallation erfolgt mittels
+
+\begin{minted}{bash}
+	pacman -R terminal-config-manager
+\end{minted}
+
+\paragraph{Debian, via .deb Datei und dpkg bzw. apt:}
+Im Projektverzeichnis unter
+
+\begin{minted}{bash}
+	/distribution/debian/terminal-config-manager.deb
+\end{minted}
+
+befindet sich ein Softwarepaket, das mittels \mintinline{bash}{dpkg} oder
+\mintinline{bash}{apt} installiert werden kann.
+
+\begin{minted}{bash}
+	cd distribution/debian
+	dpkg --install ./terminal-config-manager.deb
+	# apt install ./terminal-config-manager.deb
+\end{minted}
+
+Die Deinstallation erfolgt mittels
+
+\begin{minted}{bash}
+	dpkg --remove terminal-config-manager
+	# apt remove terminal-config-manager
+\end{minted}
+
+\paragraph{Alternative, ohne Paketmanager:}
+Wenn das Programm nicht vom systemeigenen Paketmanager verwaltet werden
+soll, dann kann es manuell kompiliert und in einem passenden
+Verzeichnis abgelegt werden.
+
+Voraussetzung hierfür ist, dass das Programm \mintinline{bash}{stack} auf dem
+System installiert ist.
+
+Im Projektverzeichnis wird mit
+
+\begin{minted}{bash}
+	stack build --test --copy-bins
+\end{minted}
+
+das Programm kompiliert, die Testsuite ausgeführt und die ausführbare Datei im
+Projektverzeichnis unter
+
+\begin{minted}{bash}
+	bin/terminal-config-manager
+\end{minted}
+
+abgelegt. Anschließend kann das Programm in ein Verzeichnis kopiert werden, das in die
+Systempfadliste eingetragen ist, beispielsweise
+
+\begin{minted}{bash}
+	cp bin/terminal-config-manager ~/.local/bin
+\end{minted}
+
+Die Deinstallation erfolgt mittels
+
+\begin{minted}{bash}
+	rm ~/.local/bin/terminal-config-manager
+	rm <Konfigurationsdateipfad>
+\end{minted}
+
+\subsection{Konfiguration}
+
+\subsection{Benutzung}
+
+\subsection{Problembehandlung}
+% TODO ausformulieren
+Fehler, keine Config -> die Datei fehlt an einem der üblichen Zielorte.
+-> Beispielconfig nehmen
+Fehler, Config parsing -> Die erste gefundene Configdatei ist falsch
+formatiert und/oder unvollständig -> Format prüfen mittels Schema
+oder mit Beispiel-Config vergleichen oder anhand der Parsing-Fehlermeldung
+den Fehler beheben.
 
 \end{document}
