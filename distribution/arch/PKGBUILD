@@ -1,0 +1,32 @@
+# Maintainer: Adrian Schurz schurz.adrian@gmail.com>
+pkgname=terminal-config-manager
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Terminal-Config-Manager ist ein Linux-Programm mit welchem Passagen innerhalb meherer Textdateien schnell zwischen einer Reihe vorkonfigurierter Passagen umgeschalten werden können."
+arch=('x86_64')
+url="https://github.com/AndreiUlmeyda/terminal-config-manager"
+license=('MIT')
+depends=('stack' 'bash')
+options=()
+install=
+source=("git+git://github.com/AndreiUlmeyda/terminal-config-manager")
+noextract=()
+sha256sums=('SKIP')
+validpgpkeys=()
+
+build() {
+	cd "$pkgname"
+	stack build --copy-bins
+}
+
+check() {
+	cd "$pkgname"
+	stack test
+}
+
+package() {
+	mkdir -p "$pkgdir/usr/bin/"
+
+	cd "$pkgname"
+	cp bin/terminal-config-manager "$pkgdir/usr/bin"
+}
