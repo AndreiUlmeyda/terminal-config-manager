@@ -1,0 +1,93 @@
+\subsection{Installation}
+Es wurden vorkonfigurierte Pakete für sowohl ArchLinux-basierte als auch
+Debian-basierte Betriebssysteme bereitgestellt. Alternativ
+kann das Programm auch manuell installiert werden.
+
+\begin{center}
+    \textbf{Arch-Linux, via PKGBUILD Datei und pacman}
+\end{center}
+
+Im Projektverzeichnis unter
+
+\begin{minted}[bgcolor=codebg]{bash}
+	/distribution/arch/PKGBUILD
+\end{minted}
+
+befindet sich eine Spezifikationsdatei anhand derer das Softwarepaket
+erstellt und anschließend installiert werden kann:
+
+\begin{minted}[bgcolor=codebg]{bash}
+	cd distribution/arch
+	makepkg
+	pacman -U terminal-config-manager-1.0.0-1-x86_64.pkg.tar.zst
+\end{minted}
+
+Die Deinstallation erfolgt mittels
+
+\begin{minted}[bgcolor=codebg]{bash}
+	pacman -R terminal-config-manager
+\end{minted}
+
+\begin{center}
+    \textbf{Debian, via .deb Datei und dpkg bzw. apt}
+\end{center}
+
+Im Projektverzeichnis unter
+
+\begin{minted}[bgcolor=codebg]{bash}
+	/distribution/debian/terminal-config-manager.deb
+\end{minted}
+
+befindet sich ein Softwarepaket, das mittels \mintinline{bash}{dpkg} oder
+\mintinline{bash}{apt} direkt installiert werden kann.
+
+\begin{minted}[bgcolor=codebg]{bash}
+	cd distribution/debian
+	dpkg --install ./terminal-config-manager.deb
+	# apt install ./terminal-config-manager.deb
+\end{minted}
+
+Die Deinstallation erfolgt mittels
+
+\begin{minted}[bgcolor=codebg]{bash}
+	dpkg --remove terminal-config-manager
+	# apt remove terminal-config-manager
+\end{minted}
+
+\begin{center}
+    \textbf{Alternative, ohne Paketmanager}
+\end{center}
+
+Wenn das Programm nicht vom systemeigenen Paketmanager verwaltet werden
+soll, dann kann es manuell kompiliert und in einem passenden
+Verzeichnis abgelegt werden.
+
+Voraussetzung hierfür ist, dass das Programm \mintinline{bash}{stack} auf dem
+System installiert ist.
+
+Im Projektverzeichnis wird mit
+
+\begin{minted}[bgcolor=codebg]{bash}
+	stack build --test --copy-bins
+\end{minted}
+
+das Programm kompiliert, die Testsuite ausgeführt und die ausführbare Datei im
+Projektverzeichnis unter
+
+\begin{minted}[bgcolor=codebg]{bash}
+	bin/terminal-config-manager
+\end{minted}
+
+abgelegt. Anschließend kann das Programm in ein Verzeichnis kopiert werden, das in die
+Systempfadliste eingetragen ist, beispielsweise
+
+\begin{minted}[bgcolor=codebg]{bash}
+	cp bin/terminal-config-manager ~/.local/bin
+\end{minted}
+
+Die Deinstallation erfolgt mittels
+
+\begin{minted}[bgcolor=codebg]{bash}
+	rm ~/.local/bin/terminal-config-manager
+	rm <Konfigurationsdateipfad>
+\end{minted}
