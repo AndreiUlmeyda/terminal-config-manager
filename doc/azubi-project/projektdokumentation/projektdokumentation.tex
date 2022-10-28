@@ -9,15 +9,35 @@
 \usepackage{caption}
 \usepackage{tabularx}
 \usepackage{minted}
+\usepackage{pdfpages}
+\usepackage[utf8]{inputenc}
+\usepackage[automake]{glossaries-extra}
 \usepackage[onehalfspacing]{setspace}
 
 \newcommand{\heading}[1]{\multicolumn{1}{c}{#1}}
 \setlength{\parindent}{0pt} % disable weird indentation after \begin...\end sections for now
 
+\makeglossaries
+
+\newglossaryentry{latex}
+{
+	name=latex,
+	description={Is a markup language specially suited
+			for scientific documents}
+}
+
+\newglossaryentry{maths}
+{
+    name=mathematics,
+    description={Mathematics is what mathematicians do}
+}
+
+\glsaddall
+
 \author{Adrian Schurz}
 \title{Terminal-Config-Manager\\
 	Informatik für Anwendungsentwicklung\\
-	Check24 Reisebla\\ % TODO
+	CHECK24 Tech Hub und Services GmbH\\
 	}
 
 \begin{document}
@@ -29,7 +49,7 @@
 \newpage
 
 \section{Projektantrag}
-\paragraph{}
+\includepdf[pages={-}]{../projektantrag/projektantrag_final.pdf}
 
 \section{Nachweisblatt}
 \paragraph{}
@@ -42,13 +62,9 @@
 \pagenumbering{arabic}
 
 \section{Problemstellung}
-\paragraph{}
+Lorem ipsum \gls{latex} derpledoo \gls{maths}
 
-% TODO Literaturverzeichnis
-
-\section{Glossar}
-
-% evtl. Abkürzungsverzeichnis
+\section{Literaturverzeichnis}
 
 \section{Anlagen}
 
@@ -63,5 +79,7 @@
 \input{subsections/benutzung.tex}
 
 \input{subsections/problembehandlung.tex}
+
+\printglossaries
 
 \end{document}

@@ -11,3 +11,9 @@ bin/
 *.pygstyle
 *.deb
 *.tar.zst
+*.ist
+*.glsdefs
+*.gls
+*.glo
+*.glg
+*.acn
