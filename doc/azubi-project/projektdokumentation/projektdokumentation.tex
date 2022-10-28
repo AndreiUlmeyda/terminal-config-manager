@@ -12,6 +12,7 @@
 \usepackage[onehalfspacing]{setspace}
 
 \newcommand{\heading}[1]{\multicolumn{1}{c}{#1}}
+\setlength{\parindent}{0pt} % disable weird indentation after \begin...\end sections for now
 
 \author{Adrian Schurz}
 \title{Terminal-Config-Manager\\
@@ -21,21 +22,17 @@
 
 \begin{document}
 
+\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+
 \maketitle
 \pagenumbering{gobble}
 \newpage
 
 \section{Projektantrag}
 \paragraph{}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ac velit vel metus malesuada egestas. Fusce lorem purus, condimentum id elit id, lobortis suscipit risus. Quisque vehicula dui sit amet risus laoreet tristique. Morbi ac tincidunt dolor. Sed faucibus arcu vel rhoncus tempor. Phasellus ante tellus, tempus sed molestie et, feugiat cursus felis. Mauris vitae leo id justo tempor rhoncus eget ac metus. Proin faucibus et urna vel lobortis. Morbi et velit ac odio scelerisque posuere. Aenean rutrum tristique augue, id placerat diam vestibulum ac. Etiam pulvinar tortor eu auctor molestie.
 
 \section{Nachweisblatt}
 \paragraph{}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ac
-velit vel metus malesuada egestas. Fusce lorem purus, condimentum
-id elit id, lobortis suscipit risus. Quisque vehicula dui sit amet
-risus laoreet tristique. Morbi ac tincidunt dolor. Sed faucibus
-arcu vel rhoncus tempor. Phasellus ante tellus, tempus sed molestie et, feugiat cursus felis. Mauris vitae leo id justo tempor rhoncus eget ac metus. Proin faucibus et urna vel lobortis. Morbi et velit ac odio scelerisque posuere. Aenean rutrum tristique augue, id placerat diam vestibulum ac. Etiam pulvinar tortor eu auctor molestie.
 
 \newpage
 \tableofcontents
@@ -46,16 +43,6 @@ arcu vel rhoncus tempor. Phasellus ante tellus, tempus sed molestie et, feugiat 
 
 \section{Problemstellung}
 \paragraph{}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ac
-velit vel metus malesuada egestas. Fusce lorem purus, condimentum
-id elit id, lobortis suscipit risus. Quisque vehicula dui sit amet
-risus laoreet tristique. Morbi ac tincidunt dolor. Sed faucibus
-arcu vel rhoncus tempor. Phasellus ante tellus, tempus sed molestie
-et, feugiat cursus felis. Mauris vitae leo id justo tempor rhoncus
-eget ac metus. Proin faucibus et urna vel lobortis. Morbi et velit
-ac odio scelerisque posuere. Aenean rutrum tristique augue, id
-placerat diam vestibulum ac. Etiam pulvinar tortor eu auctor
-molestie.
 
 % TODO Literaturverzeichnis
 
@@ -81,39 +68,39 @@ Es wurden vorkonfigurierte Pakete für sowohl ArchLinux-basierte als auch
 Debian-basierte Betriebssysteme bereitgestellt. Alternativ
 kann das Programm auch manuell installiert werden.
 
-\paragraph{Arch-Linux, via PKGBUILD Datei und pacman:}
+\paragraph{Arch-Linux, via PKGBUILD Datei und pacman}\mbox{}\\
 Im Projektverzeichnis unter
 
-\begin{minted}{bash}
+\begin{minted}[bgcolor=codebg]{bash}
 	/distribution/arch/PKGBUILD
 \end{minted}
 
-befindet sich ein eine Spezifikationsdatei anhand derer das Softwarepaket
+befindet sich eine Spezifikationsdatei anhand derer das Softwarepaket
 erstellt und anschließend installiert werden kann:
 
-\begin{minted}{bash}
+\begin{minted}[bgcolor=codebg]{bash}
 	cd distribution/arch
 	makepkg
-	pacman -U terminal-config-manager-x86_64.pkg.tar.zst
+	pacman -U terminal-config-manager-1.0.0-1-x86_64.pkg.tar.zst
 \end{minted}
 
 Die Deinstallation erfolgt mittels
 
-\begin{minted}{bash}
+\begin{minted}[bgcolor=codebg]{bash}
 	pacman -R terminal-config-manager
 \end{minted}
 
-\paragraph{Debian, via .deb Datei und dpkg bzw. apt:}
+\paragraph{Debian, via .deb Datei und dpkg bzw. apt}\mbox{}\\
 Im Projektverzeichnis unter
 
-\begin{minted}{bash}
+\begin{minted}[bgcolor=codebg]{bash}
 	/distribution/debian/terminal-config-manager.deb
 \end{minted}
 
 befindet sich ein Softwarepaket, das mittels \mintinline{bash}{dpkg} oder
-\mintinline{bash}{apt} installiert werden kann.
+\mintinline{bash}{apt} direkt installiert werden kann.
 
-\begin{minted}{bash}
+\begin{minted}[bgcolor=codebg]{bash}
 	cd distribution/debian
 	dpkg --install ./terminal-config-manager.deb
 	# apt install ./terminal-config-manager.deb
@@ -121,12 +108,12 @@ befindet sich ein Softwarepaket, das mittels \mintinline{bash}{dpkg} oder
 
 Die Deinstallation erfolgt mittels
 
-\begin{minted}{bash}
+\begin{minted}[bgcolor=codebg]{bash}
 	dpkg --remove terminal-config-manager
 	# apt remove terminal-config-manager
 \end{minted}
 
-\paragraph{Alternative, ohne Paketmanager:}
+\paragraph{Alternative, ohne Paketmanager}\mbox{}\\
 Wenn das Programm nicht vom systemeigenen Paketmanager verwaltet werden
 soll, dann kann es manuell kompiliert und in einem passenden
 Verzeichnis abgelegt werden.
@@ -136,32 +123,70 @@ System installiert ist.
 
 Im Projektverzeichnis wird mit
 
-\begin{minted}{bash}
+\begin{minted}[bgcolor=codebg]{bash}
 	stack build --test --copy-bins
 \end{minted}
 
 das Programm kompiliert, die Testsuite ausgeführt und die ausführbare Datei im
 Projektverzeichnis unter
 
-\begin{minted}{bash}
+\begin{minted}[bgcolor=codebg]{bash}
 	bin/terminal-config-manager
 \end{minted}
 
 abgelegt. Anschließend kann das Programm in ein Verzeichnis kopiert werden, das in die
 Systempfadliste eingetragen ist, beispielsweise
 
-\begin{minted}{bash}
+\begin{minted}[bgcolor=codebg]{bash}
 	cp bin/terminal-config-manager ~/.local/bin
 \end{minted}
 
 Die Deinstallation erfolgt mittels
 
-\begin{minted}{bash}
+\begin{minted}[bgcolor=codebg]{bash}
 	rm ~/.local/bin/terminal-config-manager
 	rm <Konfigurationsdateipfad>
 \end{minted}
 
 \subsection{Konfiguration}
+Die Zieldateien und -textpassagen müssen vor Ausführung des Programms
+über eine Datei im YAML-Format konfiguriert werden.
+Das Programm erwartet, dass sich eine solche Datei in einem der folgenden
+Verzeichnisse befindet. Die Reihenfolge entspricht der absteigenden Priorität
+beim Vorhandensein mehrerer Konfigurationsdateien:
+
+\begin{enumerate}
+	\item ./config.yaml
+	\item \{\$HOME\}/.config/terminal-config-manager/config.yaml \textbf{(empfohlen)}
+	\item \{\$HOME\}/.terminal-config-manager.yaml
+\end{enumerate}
+
+Der Dateipfad 1 bezeichnet den Ort der ausführbaren Datei selbst und sollte nur
+zu Debugging- oder Entwicklungszecken genutzt werden. Die Pfade 2 und 3 sind
+gängige Ablageorte für nutzerspezifische Konfigurationsdateien unter Linux.
+
+\begin{minted}[bgcolor=codebg]{yaml}
+config_lines_to_manage:
+  - title: Beispieltitel 1
+    path: /home/alice/zieldatei.conf
+    pattern: "'statspush_enabled' => {{value}},"
+    targetValue: "true"
+    possibleValues:
+      - "true"
+      - "false"
+
+  - title: Beispieltitel 2
+    path: /home/alice/verzeichnis/weitere-zieldatei.txt
+    pattern: "SOFTWARE_ENV={{value}}"
+    targetValue: production
+    possibleValues:
+      - testing
+      - staging
+      - production
+      - local
+
+  - ...
+\end{minted}
 
 \subsection{Benutzung}
 
