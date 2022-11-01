@@ -1,6 +1,6 @@
 %! Date = 18/07/2022
 
-\documentclass[a4paper,11pt,draft=false]{scrartcl} % scrartcl scrreprt scrbook
+\documentclass[a4paper,11pt,draft=false,bibliography=totoc]{scrartcl} % scrartcl scrreprt scrbook
 
 \usepackage{ebgaramond} % gillius ebgaramond
 \usepackage{amsmath}
@@ -41,7 +41,7 @@
 \section{Projektantrag}
 \includepdf[pages={-}]{../projektantrag/projektantrag_final.pdf}
 
-\section{Nachweisblatt}
+\section{Nachweisblatt} \label{Nachweisblatt}
 \paragraph{}
 
 \newpage
@@ -51,13 +51,11 @@
 % Textteil
 \pagenumbering{arabic}
 
-\section{Problemstellung}
+\section{Problemstellung} \label{Problemstellung}
 
-\section{Literaturverzeichnis}
+\section{Anlagen} \label{Anlagen}
 
-\section{Anlagen}
-
-\section{Kundendokumentation}
+\section{Kundendokumentation} \label{Kundendokumentation}
 
 \input{subsections/beschreibung.tex}
 

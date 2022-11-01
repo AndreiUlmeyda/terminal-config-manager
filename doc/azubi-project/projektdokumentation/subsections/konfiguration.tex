@@ -1,4 +1,4 @@
-\subsection{Konfiguration}
+\subsection{Konfiguration} \label{Konfiguration}
 Die Zieldateien und -textpassagen müssen vor Ausführung des Programms
 über eine Datei im YAML-Format \cite{yaml} konfiguriert werden.
 
@@ -15,7 +15,8 @@ beim Vorhandensein mehrerer Konfigurationsdateien:
 
 Der Dateipfad 1 bezeichnet den Ort der ausführbaren Datei selbst und sollte nur
 zu Debugging- oder Entwicklungszecken genutzt werden. Die Pfade 2 und 3 sind
-gängige Ablageorte für nutzerspezifische Konfigurationsdateien unter Linux.
+gängige Ablageorte für nutzerspezifische Konfigurationsdateien unter Linux und
+sind für die normale Nutzung geeignet.
 
 \newenvironment{code}{\captionsetup{type=listing}}{}
 \SetupFloatingEnvironment{listing}{name=Abbildung}
@@ -49,15 +50,19 @@ gängige Ablageorte für nutzerspezifische Konfigurationsdateien unter Linux.
 
 \paragraph{Aufbau}
 In Abb. \ref{fig:sample-config} ist der Aufbau der Konfigurationsdatei
-illustriert. Das äußere Element
+illustriert.
 
-\begin{minted}[bgcolor=codebg]{yaml}
-  config_lines_to_manage:
-\end{minted}
+\begin{itemize}
+  \item \begin{minted}[bgcolor=codebg]{yaml}
+    config_lines_to_manage:
+  \end{minted}
+        Dies ist das äußere Element der Konfigurationsdatei und \textbf{muss}
+        vorhanden sein. Innerhalb dessen befindet sich eine Liste von Einträgen.
+        Jeder Eintrag gehört zu genau einer \gls{Textpassage}, die mithilfe des
+        Programms gezielt verändert werden soll.
+\end{itemize}
 
-muss vorhanden sein. Innerhalb dessen befindet sich eine Liste von Einträgen.
-Jeder Eintrag gehört zu genau einer \gls{Textpassage}, die mithilfe des
-Programms gezielt verändert werden soll.
+
 
 Jeder Eintrag hat folgende Unterelemente:
 
@@ -65,9 +70,9 @@ Jeder Eintrag hat folgende Unterelemente:
   \item \begin{minted}[bgcolor=codebg]{yaml}
     title: Beispieltitel 1
   \end{minted}
-        Der Titel kann frei gewählt werden. Idealerweise wird dafür eine sehr
-        kurze Beschreibung des von der Ziel-\gls{Textpassage} gesteuerten
-        Anwendungsverhaltens benutzt.
+        Dies ist ein Titel der frei gewählt werden kann und vom Programm angzeigt
+        wird. Idealerweise wird dafür eine sehr kurze Beschreibung des von der
+        Ziel-\gls{Textpassage} gesteuerten Anwendungsverhaltens benutzt.
   \item \begin{minted}[bgcolor=codebg]{yaml}
     path: /home/alice/zieldatei.conf
   \end{minted}
@@ -76,6 +81,30 @@ Jeder Eintrag hat folgende Unterelemente:
   \item \begin{minted}[bgcolor=codebg]{yaml}
     pattern: "'statspush_enabled' => {{value}},"
   \end{minted}
-        Dieses Feld enthält ein \gls{Zielmuster}
-        Mithilfe dieses Musters wird vom Programm der genaue Ort der
+        Dieses Feld enthält ein \gls{Zielmuster}. Mithilfe dieses Musters das einen
+        \gls{Platzhalter} enthält wird vom Programm der genaue Ort der Ziel-\gls{Textpassage}
+        identifiziert. Das \gls{Zielmuster} sollte sowohl den \gls{Platzhalter}
+        als auch an die Ziel-\gls{Textpassage} angrenzenden Text enthalten.
+        \textbf{Wenn die Kombination aus \gls{Platzhalter} und angrenzendem Text
+          die Ziel-\gls{Textpassage} nicht eindeutig eingrenzt, dann wird vom
+          Programm ausschließlich die erste übereinstimmende \gls{Textpassage}
+          modifiziert}.
+  \item \begin{minted}[bgcolor=codebg]{yaml}
+    targetValue: "true"
+  \end{minted}
+        Der aktuelle Wert der Ziel-\gls{Textpassage}.
+        \textbf{Da das Programm in neueren Versionen beim Start den aktuellen
+          Wert selbstständig ausliest, wird dieser Konfigurationswert in einer
+          der folgenden Versionen entfernt werden. Aktuell muss er jedoch weiterhin
+          in der Konfigurationsdatei angegeben werden}.
+  \item \begin{minted}[bgcolor=codebg]{yaml}
+    possibleValues:
+          - "true"
+          - "false"
+  \end{minted}
+        Dies ist die Liste der Werte die mithilfe des Programms ausgewählt und
+        anstelle der Ziel-\gls{Textpassage} in die Zieldatei geschrieben werden
+        können. \textbf{Wenn sich der aktuelle Wert nicht in dieser Liste befindet,
+          dann kann mit dem Programm auch nicht auf den ursprünglichen Wert
+          zurückgewechselt werden}.
 \end{itemize}

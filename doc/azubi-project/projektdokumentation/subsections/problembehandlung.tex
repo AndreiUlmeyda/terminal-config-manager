@@ -1,8 +1,66 @@
-\subsection{Problembehandlung}
-% TODO ausformulieren
-Fehler, keine Config -> die Datei fehlt an einem der üblichen Zielorte.
--> Beispielconfig nehmen
-Fehler, Config parsing -> Die erste gefundene Configdatei ist falsch
-formatiert und/oder unvollständig -> Format prüfen mittels Schema
-oder mit Beispiel-Config vergleichen oder anhand der Parsing-Fehlermeldung
-den Fehler beheben.
+\subsection{Problembehandlung} \label{Problembehandlung}
+\paragraph{Fehlende Konfigurationsdatei} Wenn beim Programmstart der Fehler
+\begin{minted}[bgcolor=codebg]{bash}
+    Error: No config file found at any of the search paths: ...
+\end{minted}
+auftritt, dann bedeutet das, dass bei der Suche nach Konfigurationsdateien an
+keinem der angegebenen Pfade eine Datei gefunden wurde.
+\paragraph{Lösung}
+Es wird wie in Kapitel \ref{Konfiguration} (Konfiguration) beschrieben eine
+Konfigurationsdatei an einem der validen Dateipfade angelegt. Im Dateisystempfad
+unter
+
+\begin{minted}[bgcolor=codebg]{bash}
+    /usr/share/terminal-config-manager/config.yaml
+\end{minted}
+
+befindet sich eine Beispielkonfigurationsdatei, welche als Vorlage genutzt
+werden kann:
+
+\begin{minted}[bgcolor=codebg]{bash}
+    mkdir ~/.config/terminal-config-manager
+    cp  /usr/share/terminal-config-manager/config.yaml \
+        ~/.config/terminal-config-manager
+\end{minted}
+
+\paragraph{Falsches Konfigurationsdateiformat} \label{missing-config} Wenn beim
+Programmstart ein Fehler ähnlich
+
+\begin{minted}[bgcolor=codebg]{text}
+    An error occured while parsing the configuration file.
+    The details are: ...
+\end{minted}
+
+auftritt, dann bedeutet das, dass die erste vom Programm gefundene Konfigurationsdatei
+entweder nicht dem YAML-Format \cite{yaml} entspricht und/oder fehlende Elemente aufweist.
+
+\paragraph{Lösung}
+Die Fehlermeldung wird weitere Detailinformationen enthalten wie beispielsweise:
+
+\begin{minted}[bgcolor=codebg]{text}
+    The top level of the config file
+    should be an object named 'config_lines_to_manage'
+\end{minted}
+
+anhand derer sich das Problem identifizieren lässt. Im Zweifelsfall sollte dem
+Kapitel \ref{Konfiguration} (Konfiguration) bzw. der Problembehandlung für
+fehlende Konfigurationsdateien in Kapitel \ref{missing-config} folgend eine valide Konfigurationsdatei
+per Hand angelegt werden.
+
+\paragraph{Fehlende Dateizugriffsrechte} Wenn bei der Auswahl eines neuen Werts
+der Fehler
+
+\begin{minted}[bgcolor=codebg]{text}
+    ...
+\end{minted}
+
+auftritt, dann bedeutet das, dass ... .
+
+\paragraph{Lösung}
+Herp:
+
+\begin{minted}[bgcolor=codebg]{text}
+    ...
+\end{minted}
+
+derp.
