@@ -1,6 +1,6 @@
 %! Date = 18/07/2022
 
-\documentclass[a4paper,11pt]{scrartcl} % scrartcl scrreprt scrbook
+\documentclass[a4paper,11pt,draft=false]{scrartcl} % scrartcl scrreprt scrbook
 
 \usepackage{ebgaramond} % gillius ebgaramond
 \usepackage{amsmath}
@@ -17,22 +17,7 @@
 \newcommand{\heading}[1]{\multicolumn{1}{c}{#1}}
 \setlength{\parindent}{0pt} % disable weird indentation after \begin...\end sections for now
 
-\makeglossaries
-
-\newglossaryentry{latex}
-{
-	name=latex,
-	description={Is a markup language specially suited
-			for scientific documents}
-}
-
-\newglossaryentry{maths}
-{
-    name=mathematics,
-    description={Mathematics is what mathematicians do}
-}
-
-\glsaddall
+\input{sections/glossar.tex}
 
 \author{Adrian Schurz}
 \title{Terminal-Config-Manager\\
@@ -62,7 +47,6 @@
 \pagenumbering{arabic}
 
 \section{Problemstellung}
-Lorem ipsum \gls{latex} derpledoo \gls{maths}
 
 \section{Literaturverzeichnis}
 
