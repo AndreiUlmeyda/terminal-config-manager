@@ -42,7 +42,7 @@ Die Fehlermeldung wird weitere Detailinformationen enthalten wie beispielsweise:
     should be an object named 'config_lines_to_manage'
 \end{minted}
 
-anhand derer sich das Problem identifizieren lässt. Im Zweifelsfall sollte dem
+anhand derer sich das Problem identifizieren lässt. Im Zweifelsfall muss dem
 Kapitel \ref{Konfiguration} (Konfiguration) bzw. der Problembehandlung für
 fehlende Konfigurationsdateien in Kapitel \ref{missing-config} folgend eine valide Konfigurationsdatei
 per Hand angelegt werden.
@@ -51,16 +51,29 @@ per Hand angelegt werden.
 der Fehler
 
 \begin{minted}[bgcolor=codebg]{text}
-    ...
+    terminal-config-manager: <Zieldateipfad>: withFile:
+    permission denied
 \end{minted}
 
-auftritt, dann bedeutet das, dass ... .
+auftritt, dann bedeutet das, dass dem aktuellen Linux-Nutzer die nötigen
+Zugriffsrechte fehlen um die Zieldatei zu modifizieren.
 
 \paragraph{Lösung}
-Herp:
+Es muss sichergestellt werden, dass alle in der Konfigurationsdatei definierten
+Zieldateien vom aktuellen Nutzer modifiziert werden können. Im häufisten Fall
+ist der aktuelle Nutzer nicht als \mintinline{bash}{owner} der Datei eingetragen:
 
-\begin{minted}[bgcolor=codebg]{text}
-    ...
-\end{minted}
+\begin{itemize}
+    \item Wenn dies angebracht ist, dann kann der Nutzer der Datei geändert werden:
+          \begin{minted}[bgcolor=codebg]{text}
+            chown <Nutzer> <Zieldateipfad>
+        \end{minted}
+    \item Wenn dies angebracht ist, dann können die Schreibrechte der Zieldatei
+          angepasst werden:
+          \begin{minted}[bgcolor=codebg]{text}
+            chmod o+w <Zieldateipfad>
+        \end{minted}
+\end{itemize}
 
-derp.
+\textbf{Wenn keine der beiden oben genannten Optionen anwendbar ist, dann ist diese
+    Zieldatei nicht für die Modifizierung durch das Programm geeignet}.
