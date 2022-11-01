@@ -1,6 +1,6 @@
 \subsection{Konfiguration}
 Die Zieldateien und -textpassagen müssen vor Ausführung des Programms
-über eine Datei im YAML-Format konfiguriert werden.
+über eine Datei im YAML-Format \cite{yaml} konfiguriert werden.
 
 \paragraph{Verzeichnis}
 Das Programm erwartet, dass sich eine solche Datei in einem der folgenden
@@ -49,4 +49,33 @@ gängige Ablageorte für nutzerspezifische Konfigurationsdateien unter Linux.
 
 \paragraph{Aufbau}
 In Abb. \ref{fig:sample-config} ist der Aufbau der Konfigurationsdatei
-illustriert. In \cite{latex2e}
+illustriert. Das äußere Element
+
+\begin{minted}[bgcolor=codebg]{yaml}
+  config_lines_to_manage:
+\end{minted}
+
+muss vorhanden sein. Innerhalb dessen befindet sich eine Liste von Einträgen.
+Jeder Eintrag gehört zu genau einer \gls{Textpassage}, die mithilfe des
+Programms gezielt verändert werden soll.
+
+Jeder Eintrag hat folgende Unterelemente:
+
+\begin{itemize}
+  \item \begin{minted}[bgcolor=codebg]{yaml}
+    title: Beispieltitel 1
+  \end{minted}
+        Der Titel kann frei gewählt werden. Idealerweise wird dafür eine sehr
+        kurze Beschreibung des von der Ziel-\gls{Textpassage} gesteuerten
+        Anwendungsverhaltens benutzt.
+  \item \begin{minted}[bgcolor=codebg]{yaml}
+    path: /home/alice/zieldatei.conf
+  \end{minted}
+        Hier wird der absolute Dateisystempfad der Zieldatei angegeben innerhalb
+        derer \gls{Textpassage}n  verändert werden sollen.
+  \item \begin{minted}[bgcolor=codebg]{yaml}
+    pattern: "'statspush_enabled' => {{value}},"
+  \end{minted}
+        Dieses Feld enthält ein \gls{Zielmuster}
+        Mithilfe dieses Musters wird vom Programm der genaue Ort der
+\end{itemize}

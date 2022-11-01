@@ -1,11 +1,32 @@
 \makeglossaries
 
-\newglossaryentry{Passage}
+\newglossaryentry{Textpassage}
 {
-    name=Passage,
-    description={Bezeichnet ein Stück Text aus einer Textdatei. Dabei
+    name=Textpassage,
+    description={Ein Stück Text aus einer Textdatei. Dabei
             wird sich meist auf eine in der Konfigurationsdatei spezifizierte
             Zieldatei des Programms bezogen.}
+}
+
+\newglossaryentry{Zielmuster}
+{
+    name=Zielmuster,
+    description={Ein Element innerhalb der Konfigurationsdatei. Es bezeichnet ein
+            Stück Text das einen speziellen \gls{Platzhalter}, den Text \mintinline{bash}{{{value}}},
+            enhält. Es wird vom Programm dazu genutzt den genauen Ort der Ziel-\gls{Textpassage}
+            innerhalb der Zieldatei zu identifizieren. Das Zielmuster sollte}
+}
+
+\newglossaryentry{Platzhalter}
+{
+    name=Platzhalter,
+    description={Ein vordefinierter Text: das englische Wort \mintinline{bash}{value}
+            umgeben von doppelten geschweiften Klammern:
+            \mintinline{bash}{{{value}}} Das Format des Platzhalters ist an die
+            die Template-Engine \cite{template-engine} Jinja2 \cite{jinja2} angelehnt.
+            Er ist Teil des \gls{Zielmuster}s das zusätzlich Text vor und nach
+            der Ziel-\gls{Textpassage} enthält. Er markiert den Ort der Ziel-\gls{Textpassage}
+            relativ zum \gls{Zielmuster} innerhalb der Zieldatei.}
 }
 
 \glsaddall
