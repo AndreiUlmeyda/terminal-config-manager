@@ -8,14 +8,22 @@
 \usepackage{relsize}
 \usepackage{caption}
 \usepackage{tabularx}
-\usepackage{minted}
+\usepackage[newfloat=true]{minted}
 \usepackage{pdfpages}
 \usepackage[utf8]{inputenc}
 \usepackage[automake]{glossaries-extra}
 \usepackage[onehalfspacing]{setspace}
+\usepackage{graphicx}
+\usepackage{biblatex}
 
-\newcommand{\heading}[1]{\multicolumn{1}{c}{#1}}
+%\bibliographystyle{plain} % We choose the "plain" reference style
+% \usepackage{listings}
+\bibliography{refs} % Entries are in the refs.bib file
+
+%\newcommand{\heading}[1]{\multicolumn{1}{c}{#1}}
+% \renewcommand{\lstlistingname}{Auflistung}
 \setlength{\parindent}{0pt} % disable weird indentation after \begin...\end sections for now
+\graphicspath{ {./images/} }
 
 \input{sections/glossar.tex}
 
@@ -63,6 +71,8 @@
 \input{subsections/benutzung.tex}
 
 \input{subsections/problembehandlung.tex}
+
+\printbibliography
 
 \printglossaries
 

@@ -17,3 +17,7 @@ bin/
 *.glo
 *.glg
 *.acn
+*.bbl
+*.bcf
+*.blg
+*.run.xml

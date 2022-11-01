@@ -1,41 +1,52 @@
 \subsection{Konfiguration}
 Die Zieldateien und -textpassagen müssen vor Ausführung des Programms
 über eine Datei im YAML-Format konfiguriert werden.
+
+\paragraph{Verzeichnis}
 Das Programm erwartet, dass sich eine solche Datei in einem der folgenden
 Verzeichnisse befindet. Die Reihenfolge entspricht der absteigenden Priorität
 beim Vorhandensein mehrerer Konfigurationsdateien:
 
 \begin{enumerate}
-	\item ./config.yaml
-	\item \{\$HOME\}/.config/terminal-config-manager/config.yaml \textbf{(empfohlen)}
-	\item \{\$HOME\}/.terminal-config-manager.yaml
+  \item ./config.yaml
+  \item \$\{HOME\}/.config/terminal-config-manager/config.yaml \textbf{(empfohlen)}
+  \item \$\{HOME\}/.terminal-config-manager.yaml
 \end{enumerate}
 
 Der Dateipfad 1 bezeichnet den Ort der ausführbaren Datei selbst und sollte nur
 zu Debugging- oder Entwicklungszecken genutzt werden. Die Pfade 2 und 3 sind
 gängige Ablageorte für nutzerspezifische Konfigurationsdateien unter Linux.
 
-\begin{minted}[bgcolor=codebg]{yaml}
-config_lines_to_manage:
-  - title: Beispieltitel 1
-    path: /home/alice/zieldatei.conf
-    pattern: "'statspush_enabled' => {{value}},"
-    targetValue: "true"
-    possibleValues:
-      - "true"
-      - "false"
+\newenvironment{code}{\captionsetup{type=listing}}{}
+\SetupFloatingEnvironment{listing}{name=Abbildung}
 
-  - title: Beispieltitel 2
-    path: /home/alice/verzeichnis/weitere-zieldatei.txt
-    pattern: "SOFTWARE_ENV={{value}}"
-    targetValue: production
-    possibleValues:
-      - testing
-      - staging
-      - production
-      - local
+\begin{figure}
+  \caption{Beispielaufbau der Konfigurationsdatei}
+  \label{fig:sample-config}
+  \begin{minted}[bgcolor=codebg]{yaml}
+    config_lines_to_manage:
+      - title: Beispieltitel 1
+        path: /home/alice/zieldatei.conf
+        pattern: "'statspush_enabled' => {{value}},"
+        targetValue: "true"
+        possibleValues:
+          - "true"
+          - "false"
 
-  - ...
-\end{minted}
+      - title: Beispieltitel 2
+        path: /home/alice/verzeichnis/weitere-zieldatei.txt
+        pattern: "SOFTWARE_ENV={{value}}"
+        targetValue: production
+        possibleValues:
+          - testing
+          - staging
+          - production
+          - local
 
-In Abb
+      - ...
+  \end{minted}
+\end{figure}
+
+\paragraph{Aufbau}
+In Abb. \ref{fig:sample-config} ist der Aufbau der Konfigurationsdatei
+illustriert. In \cite{latex2e}
