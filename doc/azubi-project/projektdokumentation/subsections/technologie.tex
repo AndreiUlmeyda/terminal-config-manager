@@ -16,7 +16,22 @@ Als hauptsächliche Wege dies zu erreichen werden folgende Ansätze gewählt:
     \item Wahl einer Programmiersprache mit strenger Typisierung
     \item Wahl einer kompilierten Programmiersprache mit vergleichsweise starken
           Garantien zum Laufzeitverhalten
-    \item Einbeziehung von \gls{Property-Based-Testing} in das Konzept der Softwaretests
+    \item Einbeziehung von \gls{Property-Based-Testing} \cite{property-based-testing} in das Konzept der Softwaretests
 \end{itemize}
 
 \paragraph{Ausführliche, vom Quellcode abgeleitete Moduldokumentation}
+Neben der Projektdokumentation soll eine Dokumentation der einzelnen
+Softwaremodule entstehen. Um dem Problem zu begegnen das Dokumentation und
+Quellcode im Laufe der Entwicklung auseinanderlaufen soll die Moduldokumentation
+direkt aus den Quellcodekommentaren generierbar sein.
+
+\paragraph{Auswahl}
+Als Programmiersprache und Build-System wurden auf Basis der obengenannten Ziele
+Haskell \cite{haskell} und Stack \cite{stack} gewählt.
+
+\paragraph{}
+Stack bietet neben seiner Hauptaufgabe die Software-Abhängigkeiten des Projekts
+zu verwalten und den Buildvorgang zu steuern die Möglichkeit Moduldokumentation
+in einer Vielzahl von Formaten zu generieren während Haskell eine typsichere,
+kompilierte Programmiersprache mit Unterstützung für \gls{Property-Based-Testing}
+darstellt.
