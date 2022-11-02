@@ -1,0 +1,47 @@
+\section{Textteil - vorläufiger Titel} \label{Textteil}
+\subsection{Problemstellung}
+\paragraph{}
+Der Bedarf für die im Rahmen dieser Projektarbeit erstellte Softwarelösung ergab
+sich bei der Arbeit an Software-Anwendungen, welche eng mit einer Vielzahl
+anderer solcher Anwendungen über mehrere Umgebungen hinweg interagieren.
+
+\paragraph{}
+Der Großteil dieser Anwendungen besitzt weitläufige Konfigurationsmöglichkeiten
+welche ihren Betrieb in verschiedensten Szenarien steuern. Beispiele für
+Konfigurationsmöglichkeiten und deren Ausprägungen sind:
+
+\begin{itemize}
+    \item Das Loggingverhalten der Anwendung
+          \begin{itemize}
+              \item Logging gegen die Logverarbeitungssoftware der Produktionsumgebung
+              \item Logging gegen eine lokale Instanz der Logverarbeitungssoftware
+              \item Logging auf das Dateisystem
+              \item Logging mit verschiedenen Logleveln
+          \end{itemize}
+    \item Die Zieldatenbank der Anwendung \begin{itemize}
+              \item Datenbank der Produktionsumgebung
+              \item Datenbank der Testumgebung
+              \item lokale Datenbank
+          \end{itemize}
+    \item Die Ausführung von Softwaretests \begin{itemize}
+              \item Ausführen von ausschließlich Unittests
+              \item Ausführen von Akzeptanztests
+              \item Ausführen der Gesamtheit der Tests
+              \item Anpassung der Ziel-IP einer weiteren, für die Testausführung
+                    notwendigen Anwendung
+          \end{itemize}
+    \item uvm.
+\end{itemize}
+
+\paragraph{}
+Der Kontext der Arbeit an der Software wechselt regelmäßig zwischen Entwicklung und
+dem Suchen bzw. Nachvollziehen von potentiellen Softwarefehlern, welche im Produktions-
+oder Testbetrieb auftreten.
+
+Um das beobachtete Verhalten der Anwendung korrekt zu interpretieren sind u.a. zwei
+Arbeitsschritte häufig zu erledigen:
+
+\begin{itemize}
+    \item Prüfen der aktuellen Konfiguration
+    \item Anpassen der aktuellen Konfiguration
+\end{itemize}
