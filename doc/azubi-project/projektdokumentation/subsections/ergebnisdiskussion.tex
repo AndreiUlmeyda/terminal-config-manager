@@ -38,6 +38,19 @@ Die Abdeckung der Funktionalität des Programms auf Unittest-Ebene ist, besonder
 dank der Verwendung von \gls{Property-Based-Testing} \cite{property-based-testing}
 zufriedenstellend.
 
+\paragraph{}
+Eines der angestrebten Ziele war jedoch neben ausführlichen Unittests ebenso ausführliche
+Akzeptanztests bereitzustellen. Dies ist trotz erheblichem Aufwand gescheitert.
+Das Programm ist eine Konsolenanwendung, welche auf Tasteneingaben reagiert. Das
+bedeutet, dass automatisierte Tests in einer kontrollierten Umgebung Terminal-Emulatoren
+starten und ihnen Tasteneingaben simulieren müssen um das Programm zu testen. Je nach
+der verwendeten grafischen Benutzeroberfläche des Betriebssystems unterscheiden sich
+die Ansätze dies zu erreichen jedoch stark. Es existieren mehr oder weniger gut
+gepflegte Open-Source-Softwaretools für die Teilaufgabe der Eingabeemulation. Verschiedene
+Kombinationen dieser Tools (xdotool vs ydotool) wurden mit verschiedenen Displayservern
+(xorg vs. wayland), Betriebssystemen (Ubuntu vs Arch), und Virtualisierungslösungen
+(virtualbox vs docker) evaluiert. Keine der Varianten führte zum Erfolg.
+
 \paragraph{Bekannte Fehler}
 Es sind zwei Bugs in Software-Abhängigkeiten des verwendeten \gls{GUI}-Frameworks
 bekannt, welche mit geringer Häufigkeit das \gls{Rendering} bzw. den Start des Programms
