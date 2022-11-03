@@ -1,0 +1,33 @@
+\subsection{Projektorganisation}
+Die Hauptelemente der Verzeichnisstruktur des Projekts sind wie folgt organisiert.
+
+\begin{minted}[bgcolor=codebg]{text}
+    \src
+    \test
+    \doc
+    \distribution
+    \bin
+    \tool
+    package.yaml
+    README.md
+\end{minted}
+
+Die Verzeichnisse enhalten dabei in der angezeigten Reihenfolge
+
+\begin{itemize}
+    \item Quellcodedes des Programms
+    \item Quellcode der Unit- und Integrationstests
+    \item generierte Moduldokumentation und Projektdokumentation
+    \item Skripte um Softwarepakete für verschiedene Betriebssysteme zu erstellen
+    \item kompilierte, ausführbare Dateien
+    \item Hilfsskripte, z.B. zur Generierung des Modulabhängigkeitsgraph
+\end{itemize}
+
+\paragraph{}
+Die Datei \mintinline{bash}{package.yaml} enthält die für Stack notwendigen Metadaten,
+beispielsweise Deklarationen der verwendeten Softwarebibliotheken und Konfiguration
+des Buildprozesses.
+
+\paragraph{}
+Die Datei \mintinline{bash}{README.md} enthält eine kurze Beschreibung des
+Programms und eine Nutzungsanleitung zusammen mit TODOs und Zusatzinformationen.
