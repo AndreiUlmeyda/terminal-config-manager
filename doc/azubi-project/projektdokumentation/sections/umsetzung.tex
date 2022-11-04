@@ -17,7 +17,10 @@ der Graph der Modulabhängigkeiten neu generiert wird und Tools zur Formatierung
 und statischen Codeanalyse ausgeführt werden.
 
 \subsection{Entwicklung}
-TODO
+Es wurde eine neues Stack\cite{stack}-Projekt angelegt und die resultierenden
+Verzeichnisse und Dateien wurden zur Versionskontrolle in einem Git\cite{git}-Repository organisiert.
+Anschließend wurde das Repository auf dem unternehmenseigenen Bitbucket-Server \cite{bitbucket}
+bereitgestellt.
 
 \subsection{Dokumentation}
 Das Projekt wurde sowohl auf Quellcodeebene zum Zwecke der Weiterentwicklung als
@@ -29,7 +32,12 @@ den Abbildungen \ref{codecomment-module} und \ref{codecomment-declaration} darst
 Anhand dieser Informationen wird mittels Haddock \cite{haddock}, während des Buildprozesses,
 eine navigierbare und übersichtliche Moduldokumentation im HTML-Format erstellt,
 die sowohl die Module des Programms selbst als auch die der verwendeten Softwarebibiliotheken
-beschreibt und im Projektverzeichnis unter \mintinline{bash}{/doc/generated}
+beschreibt und im Projektverzeichnis unter
+
+\begin{minted}[bgcolor=codebg]{bash}
+    /doc/generated
+\end{minted}
+
 abgelegt ist.
 
 \begin{figure}
@@ -62,7 +70,12 @@ selectNextItem :: AppState -> AppState
 \paragraph{Projektdokumentation}
 Die Dokumentation der Projektarbeit selbst erfolgt mittels \LaTeX \cite{latex} und
 wird im \gls{PDF}-Format exportiert. Alle Quelldateien für dieses Dokument sind
-ebenfalls im Projektverzeichnis unter \mintinline{bash}{/doc/azubi-project/projektdokumentation}
+ebenfalls im Projektverzeichnis unter
+
+\begin{minted}[bgcolor=codebg]{bash}
+    /doc/azubi-project/projektdokumentation
+\end{minted}
+
 auffindbar.
 
 \subsection{Qualitätssicherung}
@@ -75,7 +88,7 @@ pro Test die Ausgabe einer Funktion für einen speziellen Eingabewert mit einem
 korrekten Ausgabewert verglichen. Diese Art des Testens einzelner Codesegmente ist
 sinnvoll, aber aufgrund der beschränkten menschlichen Kreativität nicht besonders
 gut geeignet um Grenzfälle mit besonders großen, besonders absurden oder anderweitig
-unerwarteten Eingabewerten zu ausfindig zu machen.
+unerwarteten Eingabewerten ausfindig zu machen.
 
 \begin{figure}
     \caption{Beispiel eines Unittests, aus Platzgründen mit ... eingekürzt und inklusive
@@ -131,9 +144,9 @@ Nutzerinteraktion, prüfen, von hohem Wert. Es wurde versucht mit Mitteln des
 Unittesting in Bash \cite{bats} , virtualisierten Betriebssystemen \cite{virtualbox} \cite{docker}
 bzw. \gls{Terminalemulator}en und Tools zur Emulation von Tastatureingaben \cite{xdotool} \cite{ydotool}
 solche Test zu realisieren. Das Ergebnis ist in Kapitel
-\ref{Testabdeckung} - Testabdeckung dokumentiert. Akzeptanztests, welche nicht
-automatisiert durchgeführt werden konnten, wurden regelmäßig händische Tests des
-kompilierten Programms auf dem Entwicklungsrechner durchgeführt. Ab einem
+\ref{Testabdeckung} - Testabdeckung dokumentiert. Anstelle von Akzeptanztests,
+welche nicht automatisiert durchgeführt werden konnten, wurden regelmäßig händische
+Tests des kompilierten Programms auf dem Entwicklungsrechner durchgeführt. Ab einem
 gewissen Zeitpunkt während der Entwicklung befand sich das Programm bereits in einem nutzbaren
 Zustand. Es wurde vom Entwickler selbst von da an produktiv eingesetzt was,
 ähnlich dem Konzept des \gls{Betatesting}s, eine praktisch wertvolle, wenn auch wenig rigorose,

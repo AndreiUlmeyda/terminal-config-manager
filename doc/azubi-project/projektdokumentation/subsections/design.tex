@@ -1,5 +1,5 @@
 \subsection{Design}
-\paragraph{}
+\paragraph{Nutzerinteraktion}
 Für die Art der Benutzerinteraktion des Programms sind mehrere Ansätze denkbar.
 Beispielsweise könnte das Programm mit jeweils verschiedenen, aufeinanderfolgenden
 Befehlen von der Kommandozeile aus aufgerufen werden wie in Abb. \ref{simple-gui-example}
@@ -35,3 +35,34 @@ im Kapitel \ref{Kundendokumentation} - Kundendokumentation).
     \label{graphical-gui-example}
     \centering\includegraphics[scale=0.6]{gui-example.png}
 \end{figure}
+
+\paragraph{Softwaredesign}
+Jeweils funktional zusammengehörige Teile des Quellcodes wurden so gut wie möglich
+von anderen Teilen separiert. Die hauptsächliche Organisationsebene bilden dabei
+Module, die sich in jeweils einer Quellcodedatei befinden. Beispielsweise ist dadurch
+Programmcode, der mit der Verarbeitung von Tasteneingaben betraut ist, im Modul
+
+\begin{minted}[bgcolor=codebg]{bash}
+    src/UserInterface/Input.hs
+\end{minted}
+
+lokalisiert. Programmcode, welcher mit dem Dateisystem interagiert, dagegen
+hier:
+
+\begin{minted}[bgcolor=codebg]{bash}
+    src/Infrastructure/FileModification.hs
+\end{minted}
+
+Den einzelnen Modulen übergeordnet befindet sich eine Organisationsebene, welche
+versucht einem möglichen Ansatz aus dem Kontext des Domain-Driven-Design \cite{domain-driven-design} gerecht
+zu werden. Dabei werden Teile des Programmcode in verschiedene Gruppen organisiert,
+beispielsweise \textbf{Application}, \textbf{Domain}, \textbf{Infrastructure} und \textbf{Userinterface}, und es wird
+darauf geachtet, dass Abhängigkeiten zwischen Modulen dieser Gruppen stets in
+eine bestimmte Richtung zeigen. Wenn dieses Schema eingehalten wird, dann können
+Probleme, wie zyklische Abhängigkeiten oder schlecht erweiterbare Module, reduziert
+oder ganz vermieden werden. Das angestrebte Schema ist dem Buch Domain-Driven-Design \cite{domain-driven-design}
+entnommen und ist in Abb. \ref{domain-driven-design-layers} im Angang dargestellt.
+Zum Vergleich wurden die tatsächlichen Modulabhängigkeiten mit Unterstützung von
+Softwaretools \cite{graphmod} \cite{xdot} ausgelesen und in einem Graphen dargestellt.
+In Kapitel \ref{domain-driven-design-result} - Ergebnisdiskussion wird ein Vergleich
+angestellt.
