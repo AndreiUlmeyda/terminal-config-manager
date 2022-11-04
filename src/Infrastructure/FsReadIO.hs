@@ -1,3 +1,11 @@
+-- |
+-- Module      : FsReadIO
+-- Description : Provide a custom IO Monad which is restricted to file
+--   access.
+-- Copyright   : (c) Adrian Schurz, 2022
+-- License     : MIT
+-- Maintainer  : adrian.schurz@check24.com
+-- Stability   : experimental
 module Infrastructure.FsReadIO
   ( fsIoReadFile,
     fsIoWriteFile,

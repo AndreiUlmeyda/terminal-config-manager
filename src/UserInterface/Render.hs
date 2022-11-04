@@ -1,7 +1,7 @@
 -- |
 -- Module      : Render
 -- Description : Expose a function to draw an application state to the screen
---   and two different styling, one for the description text and one for the value
+--   and two different stylings, one for the description text and one for the value
 -- Copyright   : (c) Adrian Schurz, 2022
 -- License     : MIT
 -- Maintainer  : adrian.schurz@check24.com

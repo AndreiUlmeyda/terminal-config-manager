@@ -1,3 +1,12 @@
+-- |
+-- Module      : FileSynchronization
+-- Description : Expose a function which, for a given config item will read the
+--  corresponding file and determine the current value as it would be identified
+--  by the pattern.
+-- Copyright   : (c) Adrian Schurz, 2022
+-- License     : MIT
+-- Maintainer  : adrian.schurz@check24.com
+-- Stability   : experimental
 module Domain.FileSynchronization
   ( synchronizeWithTargetFiles,
     extractValue,

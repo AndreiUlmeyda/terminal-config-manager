@@ -1,3 +1,10 @@
+-- |
+-- Module      : Cli
+-- Description : Provide help texts in case the program is invoked incorrectly.
+-- Copyright   : (c) Adrian Schurz, 2022
+-- License     : MIT
+-- Maintainer  : adrian.schurz@check24.com
+-- Stability   : experimental
 module UserInterface.Cli
   ( provideHelpText,
   )
