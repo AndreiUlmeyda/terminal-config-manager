@@ -98,11 +98,11 @@ changing the element at a certain index inside of a list
 
 \paragraph{\gls{Property-Based-Testing}}
 Um die obengenannte Schwäche von reinen Unittests auszugleichen wurden zusätzlich
-sogenannt Propertytests verfasst, welche mit einer großen Anzahl von zufällig generierten
+sogenannte Propertytests verfasst, welche mit einer großen Anzahl von zufällig generierten
 Eingabewerten bestimmte Eigenschaften der Ausgabewerte prüfen. In Abb. \ref{property-test}
 ist ein Test illustriert, der sicherstellt, dass die Zieldatei, unabhängig von
 sowohl ihrem Inhalt als auch dem konfigurierten \gls{Zielmuster}, unverändert
-bleiben muss wannimmer der aktuelle Wert und der neue Zielwert identisch sind. Zu
+bleibt wannimmer der aktuelle Wert und der neue Zielwert identisch sind. Zu
 jeder Ausführung der Testsuite werden dafür eine große Anzahl zufälliger Dateiinhalte
 und Zielmuster generiert und die Funktion damit geprüft.
 
@@ -122,3 +122,19 @@ modifying a string according to a search pattern ...
         +++ OK, passed 1000 tests.
     \end{minted}
 \end{figure}
+
+\paragraph{Akzeptanztests}
+Bestimmte Klassen von Softwarefehlern lassen sich allein mit Unittests nicht
+zuverlässig auschließen. Für die umfänglichste Überprüfung der Software sind
+Tests, welche die Ausführung des kompilierten Programms, inklusiver simulierter
+Nutzerinteraktion, prüfen, von hohem Wert. Es wurde versucht mit Mitteln des
+Unittesting in Bash \cite{bats} , virtualisierten Betriebssystemen \cite{virtualbox} \cite{docker}
+bzw. \gls{Terminalemulator}en und Tools zur Emulation von Tastatureingaben \cite{xdotool} \cite{ydotool}
+solche Test zu realisieren. Das Ergebnis ist in Kapitel
+\ref{Testabdeckung} - Testabdeckung dokumentiert. Akzeptanztests, welche nicht
+automatisiert durchgeführt werden konnten, wurden regelmäßig händische Tests des
+kompilierten Programms auf dem Entwicklungsrechner durchgeführt. Ab einem
+gewissen Zeitpunkt während der Entwicklung befand sich das Programm bereits in einem nutzbaren
+Zustand. Es wurde vom Entwickler selbst von da an produktiv eingesetzt was,
+ähnlich dem Konzept des \gls{Betatesting}s, eine praktisch wertvolle, wenn auch wenig rigorose,
+Testabdeckung ermöglicht hat.
