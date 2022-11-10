@@ -10,14 +10,16 @@ sudo-Passwortabfrage auszulösen. Letzteres ist nicht Teil der
 usprünglichen Anforderungen und wird daher erst zukünftig umgesetzt.
 
 \subsection{Domain Driven Design} \label{domain-driven-design-result}
-Das Ziel die Abhängigkeiten der einzelnene Softwaremodule untereinander einem
-mit dem Domain-Driven-Design kompatiblen Schema folgend zu organisieren ist mit
-einer Ausnahme geglückt. Im Anhang, Abb. \ref{domain-driven-design-layers}, sind Module
-der Applikationsebene abhängig von Modulen des User-Interface. Das verwendete
-\gls{GUI}-Framework, Brick, führt durch sein Interface allerdings zu einem Muster bei
-dem diese Abhängigkeit umgekehrt ist. Letzteres wird deutlich beim Vergleich des Schemas mit den
-tatsächlichen Modulabhängigkeiten (siehe Abb. \ref{module-dependency-graph} im Anhang).
-Dieser Umstand stellt für den Moment eine vernachlässigbare Designschwäche dar die ohne weitere
+Eines der Nebenziele war es, die Abhängigkeiten der einzelnene Softwaremodule
+untereinander einem speziellen Schema folgen zu lassen (siehe Paragraph
+Softwaredesign in Kapitel \ref{par:softwaredesign}). Die ist mit einer Ausnahme
+geglückt. Im Zielschema im Anhang, Abb. \ref{domain-driven-design-layers}, sind Module
+der Applikationsebene ausschließlich abhängig von Modulen des User-Interface.
+Das verwendete \gls{GUI}-Framework, Brick, führt durch sein Interface allerdings
+zu einem Muster bei dem diese Abhängigkeit umgekehrt ist. Letzteres wird deutlich
+beim Vergleich des Schemas mit den tatsächlichen Modulabhängigkeiten (siehe Abb.
+\ref{module-dependency-graph} im Anhang). Dieser Umstand stellt für den Moment
+eine vernachlässigbare Designschwäche dar die ohne weitere
 Konquenz ist. Aus diesem Grund erhielt die Aufgabe dies zu beheben eine niedrige
 Priorität und steht vorerst noch aus. Alle sonstigen Module halten das angestrebte
 Schema ein.
@@ -36,7 +38,9 @@ Zukunft seitens der Entwickler der beiden Tools behoben wird.
 \subsection{Testabdeckung} \label{Testabdeckung}
 Die Abdeckung der Funktionalität des Programms auf Unittest-Ebene ist, besonders
 dank der Verwendung von \gls{Property-Based-Testing} \cite{property-based-testing}
-zufriedenstellend.
+zufriedenstellend. Einen grobe Überblick über die Unittests der einzelnene Module
+gibt eine Beispielausgabe der Ausführung der Testsuite in Abb. \ref{unit-test} im
+Anhang.
 
 \paragraph{}
 Eines der angestrebten Ziele war jedoch neben ausführlichen Unittests ebenso ausführliche
@@ -61,3 +65,7 @@ beeinträchtigen. Diese Bugs sind dokumentiert (siehe \cite{bug-vty-startup-cras
 aktuelle Wert eines Eintrags weiß statt blau gerendert wird und ist schwer
 reproduzierbar (1x ca. pro 50-100 Programmstarts). Der andere Fehler führt zu
 einem Crash des Programms beim Start (1x ca. pro 30-50 Programmstarts).
+
+Beide Softwarefehler befinden sich in eingebundenen Open-Source-Softwarebibliotheken.
+Bugfixes dieser Projekte werden, sobald sie verfügbar werden, für dieses Projekt
+übernommen.
