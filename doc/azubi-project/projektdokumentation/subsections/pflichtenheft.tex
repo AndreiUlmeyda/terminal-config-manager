@@ -1,0 +1,72 @@
+\subsection{Pflichtenheft} \label{Pflichtenheft}
+Dieses Kapitel dient als Pflichtenheft des Projekts. Es enthält, aufbauend auf
+der Analyse aus dem vorhergehenden Kapitel eine explizite Auflistung der Anforderungen
+an die fertige Software inklusive der Abnahmekriterien. Das Projektumfeld und
+sonstige Dopplungen mit den vorangestellten Kapiteln werden dabei ausgespart.
+
+\paragraph{Schnittstellenübersicht}
+Das zu erstellende Programm ...
+\begin{itemize}
+    \item erlaubt die Interaktion mittels Tastatureingaben.
+    \item erzeugt Ausgaben in einem Terminal(-emulator).
+    \item bietet keine sonstigen Schnittstellen an.
+\end{itemize}
+
+\paragraph{Lebenszyklusanalyse}
+Das Vorgehen bei der Erstellung des Programms folgt dem Wasserfall-Modell. Die
+Auslieferung an den Nutzer erfolgt durch die Bereitstellung eines Zugriffs auf
+das Hauptverzeichnis des Projekts. Dies kann beispielsweise über das Hosting des
+Git-Projekts per Bitbucket oder Github geschehen. Das Projekt gilt nach
+Auslieferung als fertiggestellt, jedoch kann über ebengenannte Hosting-Plattformen
+Feedback von Nutzern gesammelt werden. Sollten Softwarefehler durch Nutzer
+entdeckt werden, dann werden diese so bald wie möglich beseitigt. Ebenfalls
+denkbar ist eine Wandlung des Projekts in ein Open-Source-Projekt. Das hätte zur
+Folge, dass Fehler der Software in Kollaboration mit Nutzern und auch durch die
+Nutzer selbst behoben werden können.
+
+\paragraph{Funktionale Anforderungen}
+Das Programm ...
+\begin{itemize}
+    \item lässt sich von der Kommandozeile aus starten.
+    \item erlaubt die Konfiguration der Menge an Zieldateien.
+    \item erlaubt die Konfiguration der zu ändernden Werte pro Zieldatei.
+    \item kann über eine Datei im YAML-Format konfiguriert werden.
+    \item erlaubt mehrere gängige Pfade für Konfigurationsdateien unter Linux.
+    \item zeigt vom Start bis zum Beenden des Programms pro Zieldatei eine Textzeile an.
+    \item zeigt pro Textzeile die zur Zieldatei gehörige Beschreibung und den aktuellen Wert an.
+    \item hebt die aktuell markierte Zeile sichtbar hervor.
+    \item erlaubt die Auswahl einer Zeile mit den Tasten "Pfeil hoch" bzw. "Pfeil runter"
+    \item erlaubt die Auswahl eines neuen Werts innerhalb Zieldatei der markierten
+          Zeile mit den Tasten "Pfeil links" und "Pfeil rechts".
+    \item schreibt bei Auswahl eines neuen Werts diesen in die Zieldatei und ersetzt
+          damit ausschließlich den vorherigen Wert.
+    \item zeigt zu jeder Zeit am unteren Rand des Terminals Hinweise zur Nutzung
+          des Programms an.
+    \item informiert den Nutzer im Falle einer Fehlkonfiguration.
+    \item informiert den Nutzer im Falle eines fehlerhaften Aufrufs des Programms.
+    \item lässt sich mit der Taste "q" beenden und kehrt anschließend zur Kommandozeile zurück.
+\end{itemize}
+
+\paragraph{Nichtfunktionale Anforderungen}
+Das Programm ...
+\begin{itemize}
+    \item lässt sich auf Debian- und Arch-Linux-Betriebssystemen über die gängigen
+          Paketmanager installieren.
+    \item ist in seiner Funktionalität mit Unit- und Akzeptanztest abgedeckt.
+    \item ist mit ausführlichen Quellcodekommentaren versehen.
+    \item ist mit einer navigierbaren Moduldokumentation im HTML-Format versehen.
+\end{itemize}
+
+\paragraph{Abnahmekriterien}
+Im Projektverzeichnis wird
+\begin{minted}[bgcolor=codebg]{bash}
+    stack test
+\end{minted}
+und damit alle automatisierten Tests ausgeführt. Alle Tests müssen erfolgreich
+sein. Desweiteren wird jeder Punkt unter "Funktionale Anforderungen" und
+"Nichtfunktionale Anforderungen" händisch geprüft.
+
+\paragraph{Lieferumfang}
+Das Programm wird als vollständiges Git-Repository, zusammen mit dem Quellcode,
+Moduldokumentation, der ausführbaren Datei und installierbaren Linux-Paketen
+ausgeliefert.
