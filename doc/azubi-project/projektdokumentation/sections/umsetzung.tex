@@ -3,14 +3,14 @@
 \subsection{Einrichtung}
 \paragraph{}
 Es wurde der zur Entwicklung im Tagesgeschäft bei Check24 bereitgestellte Laptop
-für das Projekt genutzt auf dem bereits ein Linux-Betriebssystem installiert war.
+für das Projekt genutzt, auf dem bereits ein Linux-Betriebssystem installiert war.
 Auch die genutzte \gls{IDE} war bereits aufgrund anderer Projekte vorinstalliert.
 Lediglich die \LaTeX-Entwicklungsumgebung und Details der Build-Umgebung mussten
 speziell für dieses Projekt konfiguriert werden.
 
 \paragraph{}
 Zu diesem Zweck wurde über das Betriebssystem \TeX-Live \cite{texlive} installiert
-und ein Plugin für die \gls{IDE} \cite{latex-workshop}. Die Buildumgebung
+und ein Plugin für die \gls{IDE} \cite{latex-workshop}. Die Build-Umgebung
 wurde so konfiguriert, dass bei jedem Speichern einer Datei das Programm kompiliert wird,
 sämtliche Softwaretests ausgeführt werden, sowohl die Moduldokumentation als auch
 der Graph der Modulabhängigkeiten neu generiert wird und Tools zur Formatierung
@@ -29,9 +29,9 @@ auch für Nutzer bzw. Kunden dokumentiert (siehe Kapitel \ref{Kundendokumentatio
 \paragraph{Code- und Moduldokumentation}
 Jedes Modul und jede Deklaration im Code ist mit Codekommentaren versehen wie in
 den Abbildungen \ref{codecomment-module} und \ref{codecomment-declaration} darstellt.
-Anhand dieser Informationen wird mittels Haddock \cite{haddock}, während des Buildprozesses,
+Anhand dieser Informationen wird mittels Haddock \cite{haddock}, während des Build-Prozesses,
 eine navigierbare und übersichtliche Moduldokumentation im HTML-Format erstellt,
-die sowohl die Module des Programms selbst als auch die der verwendeten Softwarebibiliotheken
+die sowohl die Module des Programms selbst als auch die der verwendeten Softwarebibliotheken
 beschreibt und im Projektverzeichnis unter
 
 \begin{minted}[bgcolor=codebg]{bash}
@@ -115,7 +115,7 @@ sogenannte Propertytests verfasst, welche mit einer großen Anzahl von zufällig
 Eingabewerten bestimmte Eigenschaften der Ausgabewerte prüfen. In Abb. \ref{property-test}
 ist ein Test illustriert, der sicherstellt, dass die Zieldatei, unabhängig von
 sowohl ihrem Inhalt als auch dem konfigurierten \gls{Zielmuster}, unverändert
-bleibt wann immer der aktuelle Wert und der neue Zielwert identisch sind. Zu
+bleibt, wann immer der aktuelle Wert und der neue Zielwert identisch sind. Zu
 jeder Ausführung der Testsuite werden dafür eine große Anzahl zufälliger Dateiinhalte
 und Zielmuster generiert und die Funktion damit geprüft.
 
@@ -138,12 +138,12 @@ modifying a string according to a search pattern ...
 
 \paragraph{Akzeptanztests}
 Bestimmte Klassen von Softwarefehlern lassen sich allein mit Unittests nicht
-zuverlässig auschließen. Für die umfänglichste Überprüfung der Software sind
+zuverlässig ausschließen. Für die umfänglichste Überprüfung der Software sind
 Tests, welche die Ausführung des kompilierten Programms, inklusiver simulierter
 Nutzerinteraktion, prüfen, von hohem Wert. Es wurde versucht mit Mitteln des
-Unittesting in Bash \cite{bats} , virtualisierten Betriebssystemen \cite{virtualbox} \cite{docker}
+Unit-Testing in Bash \cite{bats}, virtualisierten Betriebssystemen \cite{virtualbox} \cite{docker}
 bzw. \gls{Terminalemulator}en und Tools zur Emulation von Tastatureingaben \cite{xdotool} \cite{ydotool}
-solche Test zu realisieren. Das Ergebnis ist in Kapitel
+solche Tests zu realisieren. Das Ergebnis ist in Kapitel
 \ref{Testabdeckung} - Testabdeckung dokumentiert. Anstelle von Akzeptanztests,
 welche nicht automatisiert durchgeführt werden konnten, wurden regelmäßig händische
 Tests des kompilierten Programms auf dem Entwicklungsrechner durchgeführt. Ab einem
