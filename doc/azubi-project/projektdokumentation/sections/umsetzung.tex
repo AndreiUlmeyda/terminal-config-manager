@@ -9,15 +9,15 @@ Lediglich die \LaTeX-Entwicklungsumgebung und Details der Build-Umgebung mussten
 speziell für dieses Projekt konfiguriert werden.
 
 \paragraph{}
-Zu diesem Zweck wurde über das Betriebssystem \TeX-Live \cite{texlive} installiert
-und ein Plugin für die \gls{IDE} \cite{latex-workshop}. Die Build-Umgebung
+Zu diesem Zweck wurden über den Paketmanager des Betriebssystems \TeX-Live \cite{texlive}
+und ein Plugin für die \gls{IDE} \cite{latex-workshop} installiert. Die Build-Umgebung
 wurde so konfiguriert, dass bei jedem Speichern einer Datei das Programm kompiliert wird,
 sämtliche Softwaretests ausgeführt werden, sowohl die Moduldokumentation als auch
 der Graph der Modulabhängigkeiten neu generiert wird und Tools zur Formatierung
 und statischen Codeanalyse ausgeführt werden.
 
 \subsection{Entwicklung}
-Es wurde ein Stack\cite{stack}-Projekt angelegt und die resultierenden
+Es wurde ein Stack-Projekt \cite{stack} angelegt und die resultierenden
 Verzeichnisse und Dateien wurden zur Versionskontrolle in einem Git\cite{git}-Repository organisiert.
 Anschließend wurde das Repository auf dem unternehmenseigenen Bitbucket-Server \cite{bitbucket}
 bereitgestellt.
@@ -148,6 +148,6 @@ solche Tests zu realisieren. Das Ergebnis ist in Kapitel
 welche nicht automatisiert durchgeführt werden konnten, wurden regelmäßig händische
 Tests des kompilierten Programms auf dem Entwicklungsrechner durchgeführt. Ab einem
 gewissen Zeitpunkt während der Entwicklung befand sich das Programm bereits in einem nutzbaren
-Zustand. Es wurde vom Entwickler selbst von da an produktiv eingesetzt was,
-ähnlich dem Konzept des \gls{Betatesting}s, eine praktisch wertvolle, wenn auch wenig rigorose,
-Testabdeckung ermöglicht hat.
+Zustand. Es wurde vom Entwickler selbst von da an produktiv eingesetzt und hat
+dadurch, ähnlich dem Konzept des \gls{Betatesting}s, eine praktisch wertvolle,
+wenn auch wenig rigorose, Testabdeckung ermöglicht.

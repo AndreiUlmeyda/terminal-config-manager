@@ -15,7 +15,7 @@ untereinander einem speziellen Schema folgen zu lassen (siehe Paragraf
 Softwaredesign in Kapitel \ref{par:softwaredesign}). Die ist mit einer Ausnahme
 geglückt. Im Zielschema im Anhang, Abb. \ref{domain-driven-design-layers}, sind Module
 der Applikationsebene ausschließlich abhängig von Modulen des User-Interface.
-Das verwendete \gls{GUI}-Framework, Brick, führt durch sein Interface allerdings
+Das verwendete \gls{GUI}-Framework, Brick \cite{brick}, führt durch sein Interface allerdings
 zu einem Muster, bei dem diese Abhängigkeit umgekehrt ist. Letzteres wird deutlich
 beim Vergleich des Schemas mit den tatsächlichen Modulabhängigkeiten (siehe Abb.
 \ref{module-dependency-graph} im Anhang). Dieser Umstand stellt für den Moment
@@ -25,7 +25,7 @@ Priorität und steht vorerst noch aus. Alle sonstigen Module halten das angestre
 Schema ein.
 
 \subsection{Moduldokumentation}
-Das Ziel die Moduldokumentation ständig, während des Buildprozesses, aktuell zu
+Das Ziel die Moduldokumentation stetig während des Buildprozesses aktuell zu
 halten ist teilweise geglückt. Im Projektverzeichnis liegt die ausführliche Moduldokumentation,
 einschließlich jener der eingebundenen Softwarebibliotheken im HTML-Format vor.
 Auszüge davon sind in den Abbildungen \ref{module-doc-index} und \ref{module-doc-state} dargestellt.
@@ -63,8 +63,8 @@ bekannt, welche mit geringer Häufigkeit das \gls{Rendering} bzw. den Start des 
 beeinträchtigen. Diese Bugs sind dokumentiert (siehe \cite{bug-vty-startup-crash} und
 \cite{bug-vty-terminal-capabilities}). Einer dieser Fehler führt dazu, dass der
 aktuelle Wert eines Eintrags weiß statt blau gerendert wird und ist schwer
-reproduzierbar (1x ca. pro 50-100 Programmstarts). Der andere Fehler führt zu
-einem Crash des Programms beim Start (1x ca. pro 30-50 Programmstarts).
+reproduzierbar (ca. 1 von 50 bis 100 Programmstarts). Der andere Fehler führt zu
+einem Crash des Programms beim Start (ca. 1 von 30 bis 50 Programmstarts).
 
 Beide Softwarefehler befinden sich in eingebundenen Open-Source-Softwarebibliotheken.
 Bugfixes dieser Projekte werden, sobald sie verfügbar werden, für dieses Projekt
