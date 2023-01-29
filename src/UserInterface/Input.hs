@@ -48,17 +48,33 @@ pattern KeyQ = EvKey (KChar 'q') []
 pattern ArrowDown :: Event
 pattern ArrowDown = EvKey KDown []
 
+-- | Pattern synonym for the event raised when hitting s, a synonym for down
+pattern S :: Event
+pattern S = EvKey (KChar 's') []
+
 -- | Pattern synonym for the event raised when hitting arrow up
 pattern ArrowUp :: Event
 pattern ArrowUp = EvKey KUp []
+
+-- | Pattern synonym for the event raised when hitting w, a synonym for up
+pattern W :: Event
+pattern W = EvKey (KChar 'w') []
 
 -- | Pattern synonym for the event raised when hitting arrow left
 pattern ArrowLeft :: Event
 pattern ArrowLeft = EvKey KLeft []
 
+-- | Pattern synonym for the event raised when hitting a, a synonym for left
+pattern A :: Event
+pattern A = EvKey (KChar 'a') []
+
 -- | Pattern synonym for the event raised when hitting arrow right
 pattern ArrowRight :: Event
 pattern ArrowRight = EvKey KRight []
+
+-- | Pattern synonym for the event raised when hitting d, a synonym for right
+pattern D :: Event
+pattern D = EvKey (KChar 'd') []
 
 -- | Handle an event emitted by brick by unpacking the underlying vty event and
 --   passing it to the appropriate handler.
@@ -72,9 +88,13 @@ handleEvent event
 handleVtyEvent :: Event -> NextAppState
 handleVtyEvent KeyQ = halt
 handleVtyEvent ArrowDown = modify selectPreviousItem
+handleVtyEvent S = modify selectPreviousItem
 handleVtyEvent ArrowUp = modify selectNextItem
+handleVtyEvent W = modify selectNextItem
 handleVtyEvent ArrowRight = modifyFsIO selectNextValue
+handleVtyEvent D = modifyFsIO selectNextValue
 handleVtyEvent ArrowLeft = modifyFsIO selectPreviousValue
+handleVtyEvent A = modifyFsIO selectPreviousValue
 handleVtyEvent _ = continue
 
 -- | Modify an AppState in response to an Event when said modification

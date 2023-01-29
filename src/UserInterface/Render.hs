@@ -81,7 +81,7 @@ drawTCM (MkAppState items) = [singleLayer]
 
 -- | Provide a widget containing information about how to use the program.
 helpTextWidget :: Widget n
-helpTextWidget = txt "↑/↓: navigate ←/→: modify q: quit"
+helpTextWidget = txt "↑/↓/w/s: navigate ←/→/a/d: modify q: quit"
 
 -- | A type representing whether an item should be rendered highlighted or not.
 data Highlighting = Highlighted | NotHighlighted deriving stock (Eq)
