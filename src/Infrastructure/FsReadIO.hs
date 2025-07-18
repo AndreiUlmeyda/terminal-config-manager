@@ -13,7 +13,6 @@ module Infrastructure.FsReadIO
   )
 where
 
-
 import Data.Text
   ( Text,
     pack,

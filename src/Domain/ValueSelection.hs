@@ -96,23 +96,23 @@ data NeighborSelection = SelectSuccessor | SelectPredecessor
 
 -- | Finds the first element equal to the input element inside of a list and
 --   returns an element next to it depending on the supplied selection policy.
-elementNextTo :: Eq t => NeighborSelection -> t -> [t] -> t
+elementNextTo :: (Eq t) => NeighborSelection -> t -> [t] -> t
 elementNextTo neighborSelection targetItem list
   | Prelude.null list = targetItem
   | targetItem `notElem` list = head list
   | SelectSuccessor <- neighborSelection = chooseNextWhileWrapping targetItem list
   | SelectPredecessor <- neighborSelection = chooseNextWhileWrapping targetItem (reverse list)
 
-chooseNextWhileWrapping :: Eq t => t -> [t] -> t
+chooseNextWhileWrapping :: (Eq t) => t -> [t] -> t
 chooseNextWhileWrapping targetItem [] = targetItem
 chooseNextWhileWrapping targetItem list = (head . tail . dropWhile (/= targetItem) . concat . replicate 2) list
 
 -- | Finds the first element equal to the input element inside of a list and
 --   returns the element after it (one index up).
-elementAfter :: Eq t => t -> [t] -> t
+elementAfter :: (Eq t) => t -> [t] -> t
 elementAfter = elementNextTo SelectSuccessor
 
 -- | Finds the first element equal to the input element inside of a list and
 --   returns the element before it (one index down).
-elementBefore :: Eq t => t -> [t] -> t
+elementBefore :: (Eq t) => t -> [t] -> t
 elementBefore = elementNextTo SelectPredecessor

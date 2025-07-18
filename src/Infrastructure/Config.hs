@@ -94,22 +94,22 @@ instance FromJSON Config where
   parseJSON (Object v) =
     MkConfig
       <$> v
-      .: topLevelConfigElement
+        .: topLevelConfigElement
   parseJSON _ = fail (unpack errorMsgInvalidConfigTopLevel)
 
 instance FromJSON ConfigItem where
   parseJSON (Object v) =
     MkConfigItem
       <$> v
-      .: configElementTitle
+        .: configElementTitle
       <*> v
-      .: configElementPath
+        .: configElementPath
       <*> v
-      .: configElementPattern
+        .: configElementPattern
       <*> v
-      .: configElementValue
+        .: configElementValue
       <*> v
-      .: configElementPossibleValues
+        .: configElementPossibleValues
   parseJSON _ = fail (unpack errorMsgInvalidConfigElements)
 
 -- | A substring inside of the file you want to manage. Its occurence inside of

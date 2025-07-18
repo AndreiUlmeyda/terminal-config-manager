@@ -77,12 +77,18 @@ stack exec --profile -- terminal-config-manager +RTS -p
 
 ## Code Review Checklist
 
-### Before Committing
+### Verification Pipeline (MANDATORY)
+- [ ] **Code formatted**: `stack exec ormolu -- --mode check src/**/*.hs test/**/*.hs`
+- [ ] **Linting passed**: `stack exec hlint -- src/ test/` (zero warnings)
+- [ ] **Clean build**: `stack build --ghc-options="-Wall -Werror"`
+- [ ] **All tests pass**: `stack test` (100% pass rate)
+- [ ] **Integration test**: `stack exec terminal-config-manager` works correctly
+
+### Code Quality
 - [ ] All functions have type signatures
 - [ ] Exports are minimal and necessary
 - [ ] Error handling is appropriate
 - [ ] Documentation is updated
-- [ ] Tests pass
 - [ ] No unused imports or variables
 - [ ] Follow consistent naming conventions
 - [ ] Architecture layers are respected
