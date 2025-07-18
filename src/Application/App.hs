@@ -34,7 +34,7 @@ import Domain.ItemsCursor
   )
 import Domain.State
   ( AppState (MkAppState),
-    ResourceName,
+    WidgetId,
   )
 import Graphics.Vty.Attributes
   ( Attr,
@@ -84,7 +84,7 @@ runApp =
 
 -- | For this application only event handling, drawing and some attributes need
 --   to be implemented. The rest are default implementations.
-tcmApp :: App AppState e ResourceName
+tcmApp :: App AppState e WidgetId
 tcmApp =
   App
     { appHandleEvent = handleEvent,

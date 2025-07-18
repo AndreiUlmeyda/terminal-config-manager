@@ -39,7 +39,7 @@ import Domain.ItemsCursor
   )
 import Domain.State
   ( AppState (MkAppState),
-    ResourceName,
+    WidgetId,
   )
 import Graphics.Vty.Attributes
   ( Attr,
@@ -69,7 +69,7 @@ titleValueSeparator = " → "
 -- | The rendering consists of a single layer, each line consists of an items
 --   title and current value. The selected line is rendered boldface, the
 --   selected value, additionally, has a separate color.
-drawTCM :: AppState -> [Widget ResourceName]
+drawTCM :: AppState -> [Widget WidgetId]
 drawTCM (MkAppState items) = [singleLayer]
   where
     singleLayer = (vBox . concat) [itemsAboveSelected, selectedItem, itemsBelowSelected, helpText]
@@ -89,7 +89,7 @@ data Highlighting = Highlighted | NotHighlighted deriving stock (Eq)
 -- | Transform a config item into a simple widget and, optionally, add an
 --   attribute to it which is later used to apply different styling to
 --   highlighted lines.
-drawItem :: Highlighting -> ConfigItem -> Widget ResourceName
+drawItem :: Highlighting -> ConfigItem -> Widget WidgetId
 drawItem highlighting (MkConfigItem title _ _ (MkTargetValue currentValue) _) =
   hBox
     [ txt title,

@@ -26,7 +26,7 @@ import Domain.ItemSelection
 import Domain.State
   ( AppState (..),
     NextAppState,
-    ResourceName,
+    WidgetId,
   )
 import Domain.ValueSelection
   ( selectNextValue,
@@ -78,7 +78,7 @@ pattern D = EvKey (KChar 'd') []
 
 -- | Handle an event emitted by brick by unpacking the underlying vty event and
 --   passing it to the appropriate handler.
-handleEvent :: BrickEvent ResourceName e -> NextAppState
+handleEvent :: BrickEvent WidgetId e -> NextAppState
 handleEvent event
   | VtyEvent vtye <- event = handleVtyEvent vtye
   | otherwise = continue
