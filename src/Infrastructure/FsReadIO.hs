@@ -13,7 +13,7 @@ module Infrastructure.FsReadIO
   )
 where
 
-import Control.Applicative (Applicative (liftA2))
+
 import Data.Text
   ( Text,
     pack,
