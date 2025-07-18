@@ -1,0 +1,23 @@
+# Cursor Configuration
+# Include most configuration files for team consistency
+
+# Exclude user-specific settings
+user-settings.json
+personal-notes.md
+
+# Exclude temporary files
+*.tmp
+*.temp
+.DS_Store
+
+# Exclude logs and debug files
+*.log
+debug-*
+
+# Include all documentation and rules
+!docs/
+!context/
+!config.json
+!rules
+!instructions.md
+!README.md 

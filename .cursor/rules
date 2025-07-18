@@ -1,0 +1,50 @@
+# Cursor AI Rules for Terminal Config Manager
+
+## Language & Style
+- Use Haskell with explicit type signatures for all top-level functions
+- Prefer newtype wrappers over type aliases for domain concepts
+- Use record syntax with explicit field names for data types
+- Follow Haskell naming conventions: camelCase for functions, PascalCase for types
+- Import modules explicitly, avoid wildcard imports
+
+## Architecture
+- Maintain clean architecture separation: Domain → Infrastructure ← UserInterface ← Application
+- Keep Domain layer pure (no IO operations)
+- Use custom monads (like FsReadIO) to restrict and control side effects
+- Place all file I/O operations in Infrastructure layer
+
+## Code Organization
+- One main type/function per module when reasonable
+- Export only what's needed by other modules
+- Use meaningful module names that reflect their responsibility
+- Group related functions together within modules
+
+## Error Handling
+- Use Either types for operations that can fail
+- Create descriptive error messages in Infrastructure.Errors
+- Handle errors at appropriate levels (don't let them bubble up unnecessarily)
+- Use die from System.Exit for unrecoverable errors
+
+## Dependencies
+- Stick to LTS 22.44 resolver versions
+- Prefer widely-used, stable libraries
+- Justify any new dependencies in terms of project needs
+- Use Stack for dependency management
+
+## Testing
+- Write unit tests for pure domain logic
+- Focus on testing business rules and edge cases
+- Use property-based testing where appropriate
+- Keep test data in test/data/ directory
+
+## UI Guidelines
+- Use Brick framework conventions
+- Keep rendering logic separate from business logic
+- Handle keyboard events in dedicated Input module
+- Use meaningful widget names and attributes
+
+## Performance
+- Lazy evaluation is generally fine for this application size
+- Be explicit about strictness only when needed
+- Profile before optimizing
+- Prefer readability over micro-optimizations 
