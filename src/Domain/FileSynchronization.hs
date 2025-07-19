@@ -10,6 +10,8 @@
 module Domain.FileSynchronization
   ( synchronizeWithTargetFiles,
     extractValue,
+    removeBeforeAndIncluding,
+    removeAfterAndIncluding,
   )
 where
 
@@ -89,19 +91,27 @@ extractValue (MkPattern pat) marker (MkContent content)
   | any T.null [pat, marker, content] = Nothing
   | pat == marker = (Just . MkTargetValue . head . T.lines) content
   | P.length linesContainingMarker /= 1 = (error . unpack) errorInvalidPattern
-  | otherwise = Just $ MkTargetValue $ extractValueBetweenMarkers beforeMarker afterMarker (head linesContainingMarker)
+  | otherwise =
+      ( Just
+          . MkTargetValue
+          . removeAfterAndIncluding afterMarker
+          . removeBeforeAndIncluding beforeMarker
+      )
+        (head linesContainingMarker)
   where
     splitAtValueMarker = splitOn marker pat
     beforeMarker = head splitAtValueMarker
     afterMarker = splitAtValueMarker !! 1
     linesContainingMarker = filter (\a -> T.isInfixOf beforeMarker a && T.isInfixOf afterMarker a) (T.lines content)
 
-    -- Extract text between two markers using standard Text operations
-    extractValueBetweenMarkers :: Text -> Text -> Text -> Text
-    extractValueBetweenMarkers before after line
-      | T.null before && T.null after = line
-      | T.null before = fst $ T.breakOn after line
-      | T.null after = T.drop (T.length before) $ snd $ T.breakOn before line
-      | otherwise =
-          let afterPrefix = T.drop (T.length before) $ snd $ T.breakOn before line
-           in fst $ T.breakOn after afterPrefix
+-- | Given a string and another string which may or may not be a substring of
+--   the first one, remove the substring and every part of the string before it.
+removeBeforeAndIncluding :: Text -> Text -> Text
+removeBeforeAndIncluding "" = id
+removeBeforeAndIncluding needle = T.drop (T.length needle) . snd . breakOn needle
+
+-- | Given a string and another string which may or may not be a substring of
+--   the first one, remove the substring and every part of the string after it.
+removeAfterAndIncluding :: Text -> Text -> Text
+removeAfterAndIncluding "" = id
+removeAfterAndIncluding needle = fst . breakOn needle
