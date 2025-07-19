@@ -7,8 +7,6 @@ import Data.Text
   )
 import Domain.FileSynchronization
   ( extractValue,
-    removeAfterAndIncluding,
-    removeBeforeAndIncluding,
   )
 import Infrastructure.Config
   ( Pattern (..),
@@ -74,18 +72,3 @@ spec = do
             content = "before newline\n" `append` "content" `append` "irrelevant"
             matchingPattern = valueMarker `append` "irrelevant"
          in extractValue (MkPattern matchingPattern) valueMarker (MkContent content) `shouldBe` Just (MkTargetValue "content")
-
-  describe "Remove a substring from a given string and everything before it" $ do
-    it "given completely empty input, should result in the empty string" $
-      removeBeforeAndIncluding "" "" `shouldBe` ""
-    it "given a prefix, should remove it" $
-      removeBeforeAndIncluding "a" "abc" `shouldBe` "bc"
-    it "given a substring which is not a prefix, should remove it and everything before it" $
-      removeBeforeAndIncluding "b" "abc" `shouldBe` "c"
-  describe "Remove a substring from a given string and everything after it" $ do
-    it "given completely empty input, should result in the empty string" $
-      removeAfterAndIncluding "" "" `shouldBe` ""
-    it "given a prefix, should remove everything" $
-      removeAfterAndIncluding "a" "abc" `shouldBe` ""
-    it "given a substring somewhere in the middle, should remove it and everything after it" $
-      removeAfterAndIncluding "b" "abc" `shouldBe` "a"
