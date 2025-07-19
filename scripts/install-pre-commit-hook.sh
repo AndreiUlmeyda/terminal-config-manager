@@ -26,9 +26,9 @@ else
     
     # Fallback to manual checks
     echo "📋 Checking code formatting..."
-    if ! stack exec ormolu -- --mode check $(find src test -name "*.hs" 2>/dev/null); then
-        echo "❌ Code formatting issues found!"
-        echo "💡 Run: stack exec ormolu -- --mode inplace \$(find src test -name \"*.hs\")"
+    if ! stack exec ormolu -- --mode check $(fd -e hs src test 2>/dev/null); then
+    echo "❌ Code formatting issues found!"
+    echo "💡 Run: stack exec ormolu -- --mode inplace \$(fd -e hs src test)"
         exit 1
     fi
     

@@ -31,6 +31,66 @@
 - Justify any new dependencies in terms of project needs
 - Use Stack for dependency management
 
+## Development Environment & Tooling
+
+### Command-Line Tool Aliases
+This project environment uses modern CLI tool aliases:
+- `grep` → `rg` (ripgrep)
+- `find` → `fd` (fd-find)
+
+### Tool Syntax Differences
+When suggesting commands, be aware of syntax differences:
+
+#### File Finding
+```bash
+# Traditional find syntax (avoid in this environment)
+find . -name "*.hs"
+find src -type f -name "*.hs"
+
+# Modern fd syntax (preferred)
+fd "\.hs$"
+fd -e hs . src/
+fd "\.hs$" src test
+
+# Explicit compatibility (works with both)
+fd -e hs src test  # For multiple directories
+fd -e hs          # For current directory
+```
+
+#### Text Searching  
+```bash
+# Traditional grep syntax (avoid in this environment)
+grep -r "pattern" src/
+grep -n "import" *.hs
+
+# Modern rg syntax (preferred)
+rg "pattern" src/
+rg -n "import" --type haskell
+rg "FsReadIO" --type haskell
+
+# File type filters with rg
+rg "pattern" -t haskell    # Haskell files only
+rg "pattern" -g "*.hs"     # Glob pattern
+```
+
+### Recommended Commands for This Project
+Use these specific commands that work reliably:
+
+```bash
+# Find all Haskell source files
+fd -e hs src test
+
+# Search in Haskell files only  
+rg "pattern" -t haskell
+
+# Format specific file sets
+stack exec ormolu -- --mode inplace $(fd -e hs src)
+stack exec ormolu -- --mode inplace $(fd -e hs test)
+
+# Check formatting on specific files
+stack exec ormolu -- --mode check $(fd -e hs src test)
+```
+
 ## Testing
 - Write unit tests for pure domain logic
 - Focus on testing business rules and edge cases
@@ -53,9 +113,9 @@
 MANDATORY: All code changes must pass this verification pipeline before commit:
 
 ### 1. Code Formatting
-- Run Ormolu formatter: `stack exec ormolu -- --mode inplace src/**/*.hs`
-- Verify no formatting changes needed: `stack exec ormolu -- --mode check src/**/*.hs`
-- Format test files: `stack exec ormolu -- --mode inplace test/**/*.hs`
+- Run Ormolu formatter: `stack exec ormolu -- --mode inplace $(fd -e hs src test)`
+- Verify no formatting changes needed: `stack exec ormolu -- --mode check $(fd -e hs src test)`
+- Alternative for specific directories: `stack exec ormolu -- --mode inplace src/*/*.hs test/Spec.hs test/Unit/*/*.hs`
 
 ### 2. Linting
 - Run HLint on all source files: `stack exec hlint -- src/`
@@ -95,7 +155,7 @@ Add these convenience commands to your workflow:
 #!/bin/bash
 set -e
 echo "Running code verification..."
-stack exec ormolu -- --mode check src/**/*.hs test/**/*.hs
+stack exec ormolu -- --mode check $(fd -e hs src test)
 stack exec hlint -- src/ test/
 stack build --ghc-options="-Wall -Werror"
 stack test
@@ -106,5 +166,5 @@ echo "✅ All checks passed!"
 Ensure the following runs in continuous integration:
 - `stack build --test --haddock --no-haddock-deps`
 - `stack exec hlint -- src/ test/`
-- `stack exec ormolu -- --mode check $(find . -name "*.hs")`
+- `stack exec ormolu -- --mode check $(fd -e hs)`
 - `stack test --coverage` 
