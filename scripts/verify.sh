@@ -33,11 +33,11 @@ print_error() {
 
 # Step 1: Code Formatting
 print_step "Step 1: Checking code formatting with Ormolu..."
-if stack exec ormolu -- --mode check $(fd -e hs src test) 2>/dev/null; then
+if stack exec ormolu -- --mode check $(fd '\.hs$' src test) 2>/dev/null; then
     print_success "Code formatting is correct"
 else
     print_error "Code formatting issues found!"
-    print_warning "Run: stack exec ormolu -- --mode inplace \$(fd -e hs src test)"
+    print_warning "Run: stack exec ormolu -- --mode inplace \$(fd '\\.hs\$' src test)"
     exit 1
 fi
 

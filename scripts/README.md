@@ -75,7 +75,7 @@ git commit -m "Your commit message"
    ./scripts/verify.sh
    
    # Fix any issues found
-   stack exec ormolu -- --mode inplace $(fd -e hs src test)
+   stack exec ormolu -- --mode inplace $(fd "\.hs$" src test)
    stack exec hlint -- src/ test/  # Fix warnings
    ```
 
@@ -92,10 +92,10 @@ If you prefer to run individual checks:
 
 ```bash
 # Format code
-stack exec ormolu -- --mode inplace $(fd -e hs src test)
+stack exec ormolu -- --mode inplace $(fd "\.hs$" src test)
 
 # Check formatting
-stack exec ormolu -- --mode check $(fd -e hs src test)
+stack exec ormolu -- --mode check $(fd "\.hs$" src test)
 
 # Run linter
 stack exec hlint -- src/ test/
@@ -119,7 +119,7 @@ For continuous integration, use these commands:
 stack build --test --haddock --no-haddock-deps
 
 # Formatting check
-stack exec ormolu -- --mode check $(fd -e hs)
+stack exec ormolu -- --mode check $(fd "\.hs$")
 
 # Linting
 stack exec hlint -- src/ test/
@@ -142,7 +142,7 @@ ls terminal-config-manager.cabal
 ### Formatting Issues
 ```bash
 # Auto-fix formatting
-stack exec ormolu -- --mode inplace $(fd -e hs src test)
+stack exec ormolu -- --mode inplace $(fd "\.hs$" src test)
 ```
 
 ### HLint Warnings

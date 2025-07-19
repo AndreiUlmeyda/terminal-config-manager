@@ -37,7 +37,8 @@ import Graphics.Vty.Input.Events
     Key (KChar, KDown, KLeft, KRight, KUp),
   )
 import Infrastructure.FsReadIO
-  ( FsReadIO (runFsReadIO),
+  ( FsReadIO,
+    runFsReadIO,
   )
 
 -- | Pattern synonym for the event raised when hitting q

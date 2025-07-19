@@ -48,13 +48,13 @@ find . -name "*.hs"
 find src -type f -name "*.hs"
 
 # Modern fd syntax (preferred)
-fd "\.hs$"
-fd -e hs . src/
-fd "\.hs$" src test
+fd "\.hs$"                    # All .hs files recursively
+fd "\.hs$" src test          # In specific directories
+fd -e hs                     # Alternative extension syntax
 
-# Explicit compatibility (works with both)
-fd -e hs src test  # For multiple directories
-fd -e hs          # For current directory
+# Explicit compatibility (works reliably)
+fd "\.hs$" src test          # For multiple directories (recommended)
+fd "\.hs$"                   # For current directory
 ```
 
 #### Text Searching  
@@ -78,17 +78,17 @@ Use these specific commands that work reliably:
 
 ```bash
 # Find all Haskell source files
-fd -e hs src test
+fd "\.hs$" src test
 
 # Search in Haskell files only  
 rg "pattern" -t haskell
 
 # Format specific file sets
-stack exec ormolu -- --mode inplace $(fd -e hs src)
-stack exec ormolu -- --mode inplace $(fd -e hs test)
+stack exec ormolu -- --mode inplace $(fd "\.hs$" src)
+stack exec ormolu -- --mode inplace $(fd "\.hs$" test)
 
 # Check formatting on specific files
-stack exec ormolu -- --mode check $(fd -e hs src test)
+stack exec ormolu -- --mode check $(fd "\.hs$" src test)
 ```
 
 ## Testing
@@ -113,8 +113,8 @@ stack exec ormolu -- --mode check $(fd -e hs src test)
 MANDATORY: All code changes must pass this verification pipeline before commit:
 
 ### 1. Code Formatting
-- Run Ormolu formatter: `stack exec ormolu -- --mode inplace $(fd -e hs src test)`
-- Verify no formatting changes needed: `stack exec ormolu -- --mode check $(fd -e hs src test)`
+- Run Ormolu formatter: `stack exec ormolu -- --mode inplace $(fd "\.hs$" src test)`
+- Verify no formatting changes needed: `stack exec ormolu -- --mode check $(fd "\.hs$" src test)`
 - Alternative for specific directories: `stack exec ormolu -- --mode inplace src/*/*.hs test/Spec.hs test/Unit/*/*.hs`
 
 ### 2. Linting
@@ -155,7 +155,7 @@ Add these convenience commands to your workflow:
 #!/bin/bash
 set -e
 echo "Running code verification..."
-stack exec ormolu -- --mode check $(fd -e hs src test)
+stack exec ormolu -- --mode check $(fd "\.hs$" src test)
 stack exec hlint -- src/ test/
 stack build --ghc-options="-Wall -Werror"
 stack test
@@ -166,5 +166,5 @@ echo "✅ All checks passed!"
 Ensure the following runs in continuous integration:
 - `stack build --test --haddock --no-haddock-deps`
 - `stack exec hlint -- src/ test/`
-- `stack exec ormolu -- --mode check $(fd -e hs)`
+- `stack exec ormolu -- --mode check $(fd "\.hs$")`
 - `stack test --coverage` 
