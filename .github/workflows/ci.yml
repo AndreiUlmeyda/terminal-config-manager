@@ -26,5 +26,5 @@ jobs:
       with:
         path: ~/.stack
         key: ${{ runner.os }}-store-${{ hashFiles('stack.yaml.lock') }}-${{ hashFiles('terminal-config-manager.cabal') }}
-    - name: build and tests
+    - name: build and run all tests (unit + integration)
       run: stack build --test
