@@ -83,6 +83,7 @@ test-suite terminal-config-manager-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Integration.TUIWorkflowSpec
       Unit.Domain.FileSynchronizationSpec
       Unit.Domain.ItemsCursorSpec
       Unit.Domain.ValueSelectionSpec
@@ -101,6 +102,7 @@ test-suite terminal-config-manager-test
     , hspec
     , mtl
     , strict
+    , temporary
     , terminal-config-manager
     , text
     , vty

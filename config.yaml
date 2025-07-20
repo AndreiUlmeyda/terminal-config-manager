@@ -1,0 +1,6 @@
+config_lines_to_manage:
+  - title: "Test Setting"
+    path: "/tmp/test-target.conf"
+    pattern: "setting={{value}}"
+    targetValue: "initial"
+    possibleValues: ["initial", "changed", "final"]

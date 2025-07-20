@@ -74,3 +74,4 @@ tests:
       - terminal-config-manager
       - hspec
       - QuickCheck
+      - temporary
