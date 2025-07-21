@@ -5,8 +5,16 @@ set timeout 5
 # Start the TUI application
 spawn stack exec terminal-config-manager
 
-# Give the application time to start
-sleep 2
+# Wait for the application to display its interface
+expect {
+    timeout {
+        puts "ERROR: Application failed to start within timeout"
+        exit 1
+    }
+    "quit" {
+        # Application is ready when help text appears
+    }
+}
 
 # Quit the application
 send "q"
