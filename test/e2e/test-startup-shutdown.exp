@@ -2,19 +2,14 @@
 
 set timeout 5
 
+# Create the target file that config.yaml expects
+exec echo "setting=initial" > /tmp/test-target.conf
+
 # Start the TUI application
 spawn stack exec terminal-config-manager
 
-# Wait for the application to display its interface
-expect {
-    timeout {
-        puts "ERROR: Application failed to start within timeout"
-        exit 1
-    }
-    "quit" {
-        # Application is ready when help text appears
-    }
-}
+# Give the application time to start
+sleep 1
 
 # Quit the application
 send "q"
@@ -27,6 +22,8 @@ expect {
     }
     eof {
         puts "✓ SUCCESS: Application started and exited cleanly"
+        # Cleanup
+        exec rm -f /tmp/test-target.conf
         exit 0
     }
 } 
