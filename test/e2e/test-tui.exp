@@ -20,7 +20,13 @@ expect {
 send "q"
 
 # Wait for application to exit
-expect eof
-
-puts "✓ SUCCESS: Application started and exited cleanly"
-exit 0 
+expect {
+    timeout {
+        puts "ERROR: Application did not exit within timeout"
+        exit 1
+    }
+    eof {
+        puts "✓ SUCCESS: Application started and exited cleanly"
+        exit 0
+    }
+} 
