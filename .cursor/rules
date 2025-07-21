@@ -99,47 +99,11 @@ rg "pattern" -t haskell
 ## Performance
 - Lazy evaluation is generally fine for this application size
 - Be explicit about strictness only when needed
-- Profile before optimizing
 - Prefer readability over micro-optimizations
 
 ## Code Verification Pipeline
-MANDATORY: All code changes must pass this verification pipeline before commit:
+MANDATORY: All code changes must pass running "scripts/verification.sh"
 
-### 1. Code Formatting
-- Run Ormolu formatter: `stack exec ormolu -- --mode inplace $(fd "\.hs$" src test)`
-- Verify no formatting changes needed: `stack exec ormolu -- --mode check $(fd "\.hs$" src test)`
-- Alternative for specific directories: `stack exec ormolu -- --mode inplace src/*/*.hs test/Spec.hs test/Unit/*/*.hs`
-
-### 2. Linting
-- Run HLint on all source files: `stack exec hlint -- src/`
-- Run HLint on test files: `stack exec hlint -- test/`
-- Address all warnings and suggestions (aim for zero HLint warnings)
-- Use `{-# HLINT ignore "Warning name" #-}` only when justified
-
-### 3. Type Checking & Compilation
-- Ensure clean build: `stack build --fast`
-- Verify no warnings: `stack build --ghc-options="-Wall -Werror"`
-- Check test compilation: `stack build --test --no-run-tests`
-
-### 4. Unit Testing
-- Run all tests: `stack test`
-- Ensure 100% test pass rate
-- Check test coverage if available: `stack test --coverage`
-- Add tests for new functionality before implementing
-
-### 5. Integration Testing
-- Build and run the application: `stack exec terminal-config-manager`
-- Test with example configuration files
-- Verify UI interactions work correctly
-- Test error handling with malformed configs
-
-## Automation Commands
-Add these convenience commands to your workflow:
-
-### Quick Verification
-```bash
-# Format, lint, build, and test in one command
-./scripts/verify.sh  # Create this script
 ```
 
 ### Pre-commit Hook
