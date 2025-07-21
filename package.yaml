@@ -31,6 +31,7 @@ dependencies:
   - aeson
   - mtl
   - directory
+  - filepath
 
 library:
   source-dirs: src

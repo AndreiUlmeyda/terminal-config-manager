@@ -45,18 +45,27 @@ import Infrastructure.Errors
   )
 import System.Directory
   ( doesFileExist,
+    getHomeDirectory,
   )
 import System.Exit
   ( die,
   )
+import System.FilePath
+  ( (</>),
+  )
 
 -- | The file paths of the possible configuration files in the order they are
---   searched.
-configFilePaths :: [FilePath]
-configFilePaths =
-  [ "config.yaml",
-    "test/data/config.yaml"
-  ]
+--   searched. This function dynamically resolves the user's home directory.
+getConfigFilePaths :: IO [FilePath]
+getConfigFilePaths = do
+  homeDir <- getHomeDirectory
+  let userConfigDir = homeDir </> ".config" </> "terminal-config-manager"
+      userConfigFile = userConfigDir </> "config.yaml"
+  return
+    [ userConfigFile, -- ~/.config/terminal-config-manager/config.yaml
+      "config.yaml", -- ./config.yaml (current directory)
+      "test/data/config.yaml" -- For testing
+    ]
 
 -- | A configurations consists of multiple items.
 newtype Config = MkConfig [ConfigItem] deriving stock (Eq, Show)
@@ -143,12 +152,12 @@ loadConfig = const $ chooseConfigFile >>= decodeFileEither >>= handleParsingErro
 --   the first existing one or show an error indicating that no config file
 --   was found.
 chooseConfigFile :: IO FilePath
-chooseConfigFile = filterM doesFileExist configFilePaths >>= chooseFirst
-
--- | Choose the first config file path or show an error if there is none.
-chooseFirst :: [FilePath] -> IO FilePath
-chooseFirst [] = die ("Error: No config file found at any of the search paths: " ++ show configFilePaths)
-chooseFirst fps = (pure . head) fps
+chooseConfigFile = do
+  configPaths <- getConfigFilePaths
+  existingPaths <- filterM doesFileExist configPaths
+  case existingPaths of
+    [] -> die ("Error: No config file found at any of the search paths: " ++ show configPaths)
+    (first : _) -> pure first
 
 -- | Indicate that the yaml errors encountered here happened during config file
 --   parsing.
