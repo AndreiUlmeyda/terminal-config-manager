@@ -8,17 +8,14 @@
     "enabled": true,
     "languages": ["haskell"],
     "contextFiles": [
-      ".cursor/docs/**",
       ".cursor/context/**"
     ]
   },
   "chat": {
-    "systemMessage": "You are a Haskell expert helping with a terminal-based configuration management tool. Follow clean architecture principles and maintain type safety. Reference the project documentation in .cursor/docs/ for context.",
+    "systemMessage": "You are a Haskell expert helping with a terminal-based configuration management tool. Follow clean architecture principles and maintain type safety.",
     "includeProjectContext": true,
     "contextFiles": [
-      ".cursor/rules",
-      ".cursor/docs/project-overview.md",
-      ".cursor/context/haskell-patterns.md"
+      ".cursor/rules"
     ]
   },
   "codeActions": {
@@ -29,7 +26,7 @@
   "formatting": {
     "enabled": true,
     "tool": "ormolu",
-    "lineLength": 80
+    "lineLength": 120
   },
   "linting": {
     "enabled": true,

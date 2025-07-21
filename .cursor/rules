@@ -32,6 +32,7 @@
 - Use Stack for dependency management
 
 ## Development Environment & Tooling
+- Instead of checking code formatting of specific files, eagerly run the code formatting tool on the whole project early and often
 
 ### Command-Line Tool Aliases
 This project environment uses modern CLI tool aliases:
@@ -78,18 +79,10 @@ Use these specific commands that work reliably:
 
 ```bash
 # Find all Haskell source files
-fd "\.hs$" src test
+fd .hs src test
 
 # Search in Haskell files only  
 rg "pattern" -t haskell
-
-# Format specific file sets
-stack exec ormolu -- --mode inplace $(fd "\.hs$" src)
-stack exec ormolu -- --mode inplace $(fd "\.hs$" test)
-
-# Check formatting on specific files
-stack exec ormolu -- --mode check $(fd "\.hs$" src test)
-```
 
 ## Testing
 - Write unit tests for pure domain logic
