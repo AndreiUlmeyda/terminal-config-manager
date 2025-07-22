@@ -145,14 +145,19 @@ instance FromJSON Pattern
 
 -- | Parse the YAML config file into the types specified above. Throw an error
 --   if something is missing.
-loadConfig :: () -> IO Config
-loadConfig = const $ chooseConfigFile >>= decodeFileEither >>= handleParsingErrors
+loadConfig :: Maybe FilePath -> IO Config
+loadConfig maybeConfigPath = chooseConfigFile maybeConfigPath >>= decodeFileEither >>= handleParsingErrors
 
 -- | Check a number of possible config file paths for existing files. Choose
 --   the first existing one or show an error indicating that no config file
---   was found.
-chooseConfigFile :: IO FilePath
-chooseConfigFile = do
+--   was found. If a specific config file path is provided, use that instead.
+chooseConfigFile :: Maybe FilePath -> IO FilePath
+chooseConfigFile (Just configPath) = do
+  exists <- doesFileExist configPath
+  if exists
+    then pure configPath
+    else die ("Error: Specified config file not found: " ++ configPath)
+chooseConfigFile Nothing = do
   configPaths <- getConfigFilePaths
   existingPaths <- filterM doesFileExist configPaths
   case existingPaths of

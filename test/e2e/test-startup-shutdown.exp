@@ -2,14 +2,47 @@
 
 set timeout 5
 
-# Create the target file that config.yaml expects
+# Create the target file and config file
 exec echo "setting=initial" > /tmp/test-target.conf
 
-# Start the TUI application
-spawn stack exec terminal-config-manager
+# Create config file using proper file operations
+set config_file [open /tmp/test-config.yaml w]
+puts $config_file "config_lines_to_manage:"
+puts $config_file "  - title: \"Test Setting\""
+puts $config_file "    path: \"/tmp/test-target.conf\""
+puts $config_file "    pattern: \"setting={{value}}\""
+puts $config_file "    targetValue: \"initial\""
+puts $config_file "    possibleValues: \[\"initial\", \"changed\", \"final\"\]"
+close $config_file
 
-# Give the application time to start
-sleep 1
+# Start the TUI application with specific config file
+spawn stack exec terminal-config-manager -- --config /tmp/test-config.yaml
+
+# Wait for the application to display its interface
+expect {
+    timeout {
+        puts "ERROR: Application failed to start within timeout"
+        exit 1
+    }
+    "Error:" {
+        puts "ERROR: Application failed to start"
+        exit 1
+    }
+    "No config file found" {
+        puts "ERROR: Config file not found"
+        exit 1
+    }
+    "navigate" {
+        # Application is ready when help text appears
+    }
+    "Test Setting" {
+        # Application is ready when config item appears
+    }
+    eof {
+        puts "ERROR: Application exited unexpectedly"
+        exit 1
+    }
+}
 
 # Quit the application
 send "q"
@@ -23,7 +56,7 @@ expect {
     eof {
         puts "✓ SUCCESS: Application started and exited cleanly"
         # Cleanup
-        exec rm -f /tmp/test-target.conf
+        exec rm -f /tmp/test-target.conf /tmp/test-config.yaml
         exit 0
     }
 } 

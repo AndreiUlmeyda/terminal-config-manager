@@ -52,7 +52,8 @@ import System.Exit
     exitSuccess,
   )
 import UserInterface.Cli
-  ( provideHelpText,
+  ( CliOptions (..),
+    parseCliArgs,
   )
 import UserInterface.Input
   ( handleEvent,
@@ -71,12 +72,12 @@ import UserInterface.Render
 --   an initial state and then delegating to Brick. Unless a yaml parsing
 --   exception is printed to facilitate config file debugging, there is no
 --   failure condition and the program can exit successfully. This situation
---   may change after permission issues are considered. Provide a program
---   description and help text as well.
+--   may change after permission issues are considered. Parse command line
+--   arguments first to handle help text and config file options.
 runApp :: IO ()
-runApp =
-  provideHelpText
-    >>= loadConfig
+runApp = do
+  cliOptions <- parseCliArgs
+  loadConfig (configFile cliOptions)
     >>= synchronizeWithTargetFiles
     >>= buildInitialState
     >>= defaultMain tcmApp

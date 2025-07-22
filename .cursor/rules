@@ -90,6 +90,31 @@ rg "pattern" -t haskell
 - Use property-based testing where appropriate
 - Keep test data in test/data/ directory
 
+### End-to-End Testing with Expect
+🚨 **CRITICAL**: When writing E2E tests with expect scripts:
+- **NEVER use `sleep` calls** - they are unreliable and slow
+- **ALWAYS use `expect{}` directives** to wait for specific output patterns
+- Wait for actual application output like "navigate", config item titles, or help text
+- Use `timeout {}` blocks to handle failure cases gracefully
+- Structure expect blocks to catch both success and error patterns
+
+Example:
+```expect
+expect {
+    timeout {
+        puts "ERROR: Application failed to start"
+        exit 1
+    }
+    "navigate" {
+        # App is ready when help text appears
+    }
+    "Error:" {
+        puts "ERROR: Application startup failed"
+        exit 1
+    }
+}
+```
+
 ## UI Guidelines
 - Use Brick framework conventions
 - Keep rendering logic separate from business logic
@@ -102,7 +127,11 @@ rg "pattern" -t haskell
 - Prefer readability over micro-optimizations
 
 ## Code Verification Pipeline
-MANDATORY: All code changes must pass running "build-and-test.sh"
+🚨 CRITICAL: ALWAYS run ./build-and-test.sh immediately after making ANY code changes to src/ files.
+- If you modify ANY Haskell source files, you MUST run ./build-and-test.sh before proceeding
+- Fix ALL compilation errors, warnings, and test failures before continuing
+- No exceptions - this prevents breaking changes from being committed
+- The script includes: formatting, linting, building, unit tests, integration tests, and E2E tests
 
 ```
 
@@ -118,6 +147,13 @@ stack build --ghc-options="-Wall -Werror"
 stack test
 echo "✅ All checks passed!"
 ```
+
+## 🔥 CRITICAL WORKFLOW RULE 🔥
+**NEVER SKIP THIS**: After changing ANY .hs file in src/, IMMEDIATELY run:
+```bash
+./build-and-test.sh
+```
+Fix any errors before proceeding. This is NON-NEGOTIABLE.
 
 ### CI/CD Pipeline
 Ensure the following runs in continuous integration:

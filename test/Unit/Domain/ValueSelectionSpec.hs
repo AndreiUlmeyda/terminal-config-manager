@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 module Unit.Domain.ValueSelectionSpec where
 
 import Data.Text

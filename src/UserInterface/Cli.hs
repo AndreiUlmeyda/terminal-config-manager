@@ -6,13 +6,11 @@
 -- Maintainer  : adrian.schurz@check24.com
 -- Stability   : experimental
 module UserInterface.Cli
-  ( provideHelpText,
+  ( parseCliArgs,
+    CliOptions (..),
   )
 where
 
-import Control.Monad
-  ( unless,
-  )
 import Data.Text
   ( Text,
     unpack,
@@ -25,14 +23,27 @@ import System.Exit
   )
 import Prelude
 
-provideHelpText :: IO ()
-provideHelpText = do
+-- | Command line options
+newtype CliOptions = CliOptions
+  { configFile :: Maybe FilePath
+  }
+  deriving stock (Show, Eq)
+
+-- | Parse command line arguments and return options or show help
+parseCliArgs :: IO CliOptions
+parseCliArgs = do
   args <- getArgs
-  unless (null args) ((die . unpack) helpText)
+  case args of
+    [] -> return $ CliOptions Nothing
+    ["--help"] -> (die . unpack) helpText
+    ["-h"] -> (die . unpack) helpText
+    ["--config", path] -> return $ CliOptions (Just path)
+    _ -> (die . unpack) $ "Invalid arguments. " <> helpText
 
 helpText :: Text
 helpText =
   "terminal config manager\n  Manage selected values scattered over many \
-  \different files quickly\n\nUsage\n  Invoke without any arguments/parameters\n  \
-  \Arrow ↑/↓/w/s in order to navigate items\n  Arrow ←/→/a/d to change the value\n  \
+  \different files quickly\n\nUsage\n  terminal-config-manager [OPTIONS]\n\n\
+  \Options:\n  --config PATH    Use specific config file\n  --help, -h       Show this help\n\n\
+  \Navigation:\n  Arrow ↑/↓/w/s in order to navigate items\n  Arrow ←/→/a/d to change the value\n  \
   \Hit q to quit"

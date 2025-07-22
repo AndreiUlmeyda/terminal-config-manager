@@ -1,7 +1,6 @@
 module Integration.TUIWorkflowSpec where
 
 import Control.Monad.State
-import Data.Text (Text, pack, unpack)
 import Data.Text.IO as TIO
 import Domain.FileSynchronization (synchronizeWithTargetFiles)
 import Domain.ItemSelection (selectNextItem, selectPreviousItem)
@@ -10,7 +9,6 @@ import Domain.State (AppState (MkAppState))
 import Domain.ValueSelection (selectNextValue, selectPreviousValue)
 import Infrastructure.Config (Config (MkConfig), ConfigItem (..), Pattern (MkPattern), TargetValue (MkTargetValue))
 import Infrastructure.FsReadIO (runFsReadIO)
-import System.Directory (createDirectoryIfMissing, removeFile)
 import System.IO.Temp (withSystemTempDirectory)
 import Test.Hspec
 
@@ -20,8 +18,7 @@ spec = describe "TUI Workflow Integration Tests" $ do
     it "should start up, navigate, change values, and modify files correctly" $
       withSystemTempDirectory "tui-test" $ \tmpDir -> do
         -- Setup: Create test config file and target file
-        let configFile = tmpDir ++ "/test-config.txt"
-            targetFile = tmpDir ++ "/target.conf"
+        let targetFile = tmpDir ++ "/target.conf"
 
         -- Create target file with initial content
         TIO.writeFile targetFile "setting1=initial\nsetting2=value2\n"
@@ -49,11 +46,13 @@ spec = describe "TUI Workflow Integration Tests" $ do
         syncedConfig <- synchronizeWithTargetFiles testConfig
 
         -- Step 2: Create initial app state (simulates app startup)
-        let Just initialCursor = makeItemsCursor (case syncedConfig of MkConfig items -> items)
-            initialState = MkAppState initialCursor
+        initialCursor <- case makeItemsCursor (case syncedConfig of MkConfig items -> items) of
+          Just cursor -> pure cursor
+          Nothing -> fail "Failed to create items cursor"
+        let initialState = MkAppState initialCursor
 
         -- Step 3: Simulate user interactions
-        result <-
+        _ <-
           runTUIWorkflow
             initialState
             [ NavigateDown, -- Move to second item
@@ -81,11 +80,13 @@ spec = describe "TUI Workflow Integration Tests" $ do
                 ]
 
         syncedConfig <- synchronizeWithTargetFiles testConfig
-        let Just cursor = makeItemsCursor (case syncedConfig of MkConfig items -> items)
-            state = MkAppState cursor
+        cursor <- case makeItemsCursor (case syncedConfig of MkConfig items -> items) of
+          Just c -> pure c
+          Nothing -> fail "Failed to create items cursor"
+        let appState = MkAppState cursor
 
         -- Test navigation sequence
-        result <- runTUIWorkflow state [NavigateDown, NavigateDown, ChangeValueNext, NavigateUp, NavigateUp, ChangeValueNext]
+        _ <- runTUIWorkflow appState [NavigateDown, NavigateDown, ChangeValueNext, NavigateUp, NavigateUp, ChangeValueNext]
 
         finalContent <- TIO.readFile targetFile
         finalContent `shouldBe` "option1=x\noption2=b\noption3=z\n"

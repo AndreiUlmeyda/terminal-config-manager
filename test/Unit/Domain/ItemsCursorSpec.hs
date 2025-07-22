@@ -30,7 +30,9 @@ nonEmptyList :: [ConfigItem]
 nonEmptyList = replicate 2 item
 
 itemsCursor :: ItemsCursor
-Just itemsCursor = makeItemsCursor nonEmptyList
+itemsCursor = case makeItemsCursor nonEmptyList of
+  Just cursor -> cursor
+  Nothing -> error "Failed to create test cursor"
 
 spec :: Spec
 spec = do
@@ -50,5 +52,5 @@ spec = do
       (cursorPosition . cursorUp) itemsCursor `shouldBe` 0
   describe "Changing the item at the cursor position" $ do
     it "given multiple items with the cursor position somewhere in the middle should modify the item at the correct position" $
-      let titleChange item = item {title = "new title"}
+      let titleChange configItem = configItem {title = "new title"}
        in changeElementUnderCursor titleChange (cursorDown itemsCursor) `shouldBe` (cursorDown . fromJust . makeItemsCursor) [item, changedItem]
