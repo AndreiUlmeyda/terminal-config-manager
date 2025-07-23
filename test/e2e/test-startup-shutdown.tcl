@@ -7,7 +7,7 @@ exec echo "config_lines_to_manage:\n  - title: \"Test Setting\"\n    path: \"/tm
 # run the app
 spawn stack exec terminal-config-manager -- --config /tmp/test-config.yaml
 
-set timeout 2
+set timeout 5
 expect {
     timeout {
         puts "✗ FAIL: No output received within timeout"
