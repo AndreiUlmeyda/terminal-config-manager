@@ -64,6 +64,9 @@ jobs:
           echo "expect is already installed, skipping installation"
         fi
     
+    - name: Build project and run tests
+      run: stack build --test
+    
     - name: Run end-to-end tests
       env:
         TERM: xterm-256color
