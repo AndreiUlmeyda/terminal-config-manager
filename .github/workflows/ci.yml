@@ -41,8 +41,29 @@ jobs:
           ${{ runner.os }}-project-build-${{ hashFiles('package.yaml', 'stack.yaml', 'terminal-config-manager.cabal') }}-
           ${{ runner.os }}-project-build-
     
+    # Cache 3: APT packages (for expect and other system dependencies)
+    - name: Cache APT packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          /var/cache/apt/archives
+          /var/lib/apt/lists
+        key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/ci.yml') }}-${{ github.run_number }}
+        restore-keys: |
+          ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/ci.yml') }}-
+          ${{ runner.os }}-apt-
+    
     - name: Install expect for end-to-end tests
-      run: sudo apt-get update && sudo apt-get install -y expect
+      run: |
+        # Check if expect is already installed
+        if ! command -v expect &> /dev/null; then
+          echo "Installing expect..."
+          sudo apt-get update
+          sudo apt-get install -y expect
+        else
+          echo "expect is already installed, skipping installation"
+        fi
+    
     - name: Run end-to-end tests
       env:
         TERM: xterm-256color
