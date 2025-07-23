@@ -3,6 +3,6 @@
 set -e
 cd "$(dirname "$0")"
 
-for test in *.exp; do
+for test in *.tcl; do
     ./"$test"
 done 
