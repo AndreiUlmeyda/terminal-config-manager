@@ -48,9 +48,8 @@ jobs:
         path: |
           /var/cache/apt/archives
           /var/lib/apt/lists
-        key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/ci.yml') }}-${{ github.run_number }}
+        key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/ci.yml') }}
         restore-keys: |
-          ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/ci.yml') }}-
           ${{ runner.os }}-apt-
     
     - name: Install expect for end-to-end tests
