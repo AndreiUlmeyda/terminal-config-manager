@@ -29,4 +29,6 @@ jobs:
     - name: Install expect for end-to-end tests
       run: sudo apt-get update && sudo apt-get install -y expect
     - name: Run end-to-end tests
+      env:
+        TERM: xterm-256color
       run: test/e2e/run-all-e2e-tests.sh
