@@ -65,7 +65,7 @@ jobs:
         fi
     
     - name: Build project and run tests
-      run: stack build --test
+      run: stack build --test --copy-bins
     
     - name: Run end-to-end tests
       env:
