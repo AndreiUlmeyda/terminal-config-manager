@@ -72,3 +72,8 @@ build:
       - "--odir=./doc/generated"
       - "--hyperlinked-source"
       - "--use-unicode"
+  # Keep more build artifacts for faster incremental builds
+  keep-going: true
+  
+  # Interleaved output for better CI visibility
+  interleaved-output: true

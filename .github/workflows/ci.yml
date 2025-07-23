@@ -19,13 +19,28 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
-    - name: Cache dependencies (Unix)
+    
+    # Cache 1: Complete Stack ecosystem (GHC, dependencies, metadata, tools)
+    - name: Cache Stack ecosystem
       uses: actions/cache@v4
       with:
-        path: ~/.stack
-        key: ${{ runner.os }}-store-${{ hashFiles('stack.yaml.lock') }}-${{ hashFiles('terminal-config-manager.cabal') }}
-    - name: build and run all tests (unit + integration)
-      run: stack build --test
+        path: |
+          ~/.stack
+          ~/.local/bin
+        key: ${{ runner.os }}-stack-ecosystem-${{ hashFiles('stack.yaml.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-stack-ecosystem-
+    
+    # Cache 2: Project build artifacts
+    - name: Cache project build
+      uses: actions/cache@v4
+      with:
+        path: .stack-work
+        key: ${{ runner.os }}-project-build-${{ hashFiles('**/*.hs', 'package.yaml', 'stack.yaml', 'terminal-config-manager.cabal') }}
+        restore-keys: |
+          ${{ runner.os }}-project-build-${{ hashFiles('package.yaml', 'stack.yaml', 'terminal-config-manager.cabal') }}-
+          ${{ runner.os }}-project-build-
+    
     - name: Install expect for end-to-end tests
       run: sudo apt-get update && sudo apt-get install -y expect
     - name: Run end-to-end tests
